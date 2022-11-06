@@ -26,25 +26,33 @@ The current version 1.0 is compatible with Delphi 11.0 Alexandria and most
 likely with 10.4 Sydney.
 
 ## What is the current status of this project?
-Development just started.
+The current version in this repository is considered to be a release candidate for
+V1.0. It looks like it still has a few small quirks with disabling next button in
+editing mode but other than that it looks fine.
 
 ## Where can I get further information? For example if I'd like to contribute?
 In the root folder of the project you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 
 ## How to install?
-Just run the installer provided in the Install\Output directory.
-Run the ??? from the installation directory where you installed the tool.
-When run for the first time it will display a dialog you can use to add it to the Tools
-menus of all Delphi versions/profiles it finds on your computer.
+Just open and run the project provided in the Source directory.
+When run for the first time or when you installed another version of the IDE it will 
+display a dialog you can use to add it to the Tools menus of all Delphi 
+versions/profiles it finds on your computer.
 
 ## How to use it?
 
-1. Make sure your project has MAP-file generation turned on in linker settings.
-2. If not done yet develop some DUnit/DUnitX unit tests for your peoject.
-3. Run the tool and generate a code coverage project for your project. The tool provides
+1. Make sure your project has detailed MAP-file generation turned on in linker settings.
+2. If not done yet develop some DUnit/DUnitX unit tests for your project. If you set it
+   up as a console project, you only need to press enter after the tests have run, 
+   otherwise you need to start them manually when running code coverage. 
+3. Run this tool and generate a code coverage project for your project. The tool provides
    a wizzard for this.
 4. Save the generated project.
 5. Run the generated project. It should start your unit tests.
-6. Run your unit testsand close the test runner.
-7. The coverage report should be generated in the format(s) you specified in the wizard
+6. Run your unit tests and close the test runner.
+7. The coverage report should be generated in the format(s) you specified in the wizard. 
+   If you checked HTML format, the result will be displayed in code coverage wizard plus,
+   but you can still open it in any browser outside this tool.
+   
+   Now: enjoy!

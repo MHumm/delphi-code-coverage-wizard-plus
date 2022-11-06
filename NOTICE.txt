@@ -4,8 +4,7 @@ Version 1.0
 This work is based on prior art from TridenT and on the code coverage
 library/tool, which is included in binary form.
 
-Copyright (c) 2022 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
+Copyright (c) 2022-2022 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
 
 This software is licensed to you under the MPL 1.1 license.
-A copy of the license text can be found in the LICENSE.txt file in this project.Parts of the work loosely based on the works of Wolfgang Erhardt, who is
-unfortunately dead already.
+A copy of the license text can be found in the LICENSE.txt file in this project.
