@@ -26,13 +26,13 @@ object FormMain: TFormMain
     Width = 624
     Height = 400
     Align = alClient
-    ActiveCard = crd_Finished
+    ActiveCard = crd_Start
     BevelEdges = []
     BevelOuter = bvNone
     Caption = 'cp_Main'
     TabOrder = 0
-    ExplicitWidth = 620
-    ExplicitHeight = 399
+    ExplicitWidth = 618
+    ExplicitHeight = 391
     object crd_Start: TCard
       Left = 0
       Top = 0
@@ -190,8 +190,6 @@ object FormMain: TFormMain
       Caption = 'crd_EditSettings'
       CardIndex = 1
       TabOrder = 1
-      ExplicitWidth = 620
-      ExplicitHeight = 399
       DesignSize = (
         624
         400)
@@ -201,12 +199,10 @@ object FormMain: TFormMain
         Width = 424
         Height = 289
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_UnitTestExecutable
+        ActiveCard = crd_SaveAndRun
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
-        ExplicitWidth = 420
-        ExplicitHeight = 288
         object crd_UnitTestExecutable: TCard
           Left = 1
           Top = 1
@@ -217,8 +213,6 @@ object FormMain: TFormMain
           CardIndex = 0
           TabOrder = 0
           OnEnter = crd_UnitTestExecutableEnter
-          ExplicitWidth = 418
-          ExplicitHeight = 286
           DesignSize = (
             422
             287)
@@ -251,7 +245,6 @@ object FormMain: TFormMain
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 0
             OnChange = EditExeFileChange
-            ExplicitWidth = 351
           end
           object EditMapFile: TEdit
             Left = 8
@@ -261,7 +254,6 @@ object FormMain: TFormMain
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 1
             OnChange = EditMapFileChange
-            ExplicitWidth = 351
           end
           object ButtonOpenExe: TButton
             Left = 369
@@ -275,7 +267,6 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons16
             TabOrder = 2
             OnClick = ButtonOpenExeClick
-            ExplicitLeft = 365
           end
           object ButtonOpenMap: TButton
             Left = 369
@@ -289,7 +280,6 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons16
             TabOrder = 3
             OnClick = ButtonOpenMapClick
-            ExplicitLeft = 365
           end
           object EditCodeCoverageExe: TEdit
             Left = 8
@@ -299,7 +289,6 @@ object FormMain: TFormMain
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 4
             OnChange = EditCodeCoverageExeChange
-            ExplicitWidth = 351
           end
           object ButtonOpenCodeCoverage: TButton
             Left = 369
@@ -313,7 +302,6 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons16
             TabOrder = 5
             OnClick = ButtonOpenCodeCoverageClick
-            ExplicitLeft = 365
           end
         end
         object crd_Source: TCard
@@ -649,7 +637,7 @@ object FormMain: TFormMain
             Top = 194
             Width = 95
             Height = 73
-            Hint = 'Open an existing project and run it'
+            Hint = 'Go back to main/start screen'
             Caption = '&Home'
             ImageAlignment = iaTop
             ImageIndex = 13
@@ -669,7 +657,6 @@ object FormMain: TFormMain
         Align = alLeft
         BevelEdges = [beRight]
         TabOrder = 1
-        ExplicitHeight = 399
         object ButtonGroup1: TButtonGroup
           Left = 1
           Top = 1
@@ -707,7 +694,6 @@ object FormMain: TFormMain
           TabOrder = 0
           TabStop = False
           OnButtonClicked = ButtonGroup1ButtonClicked
-          ExplicitHeight = 397
         end
       end
       object PanelHeader: TPanel
@@ -723,7 +709,6 @@ object FormMain: TFormMain
         ShowCaption = False
         TabOrder = 2
         StyleElements = [seFont, seBorder]
-        ExplicitWidth = 420
         object LabelTop: TLabel
           AlignWithMargins = True
           Left = 4
@@ -747,8 +732,6 @@ object FormMain: TFormMain
         Caption = 'PanelBottomNavigation'
         ShowCaption = False
         TabOrder = 3
-        ExplicitTop = 348
-        ExplicitWidth = 419
         object ButtonPrevious: TButton
           Left = 0
           Top = 5
@@ -831,6 +814,8 @@ object FormMain: TFormMain
       Caption = 'crd_Finished'
       CardIndex = 3
       TabOrder = 3
+      ExplicitWidth = 618
+      ExplicitHeight = 391
       DesignSize = (
         624
         400)
@@ -851,15 +836,17 @@ object FormMain: TFormMain
       object WebBrowser: TWebBrowser
         Left = 0
         Top = 48
-        Width = 624
-        Height = 352
+        Width = 774
+        Height = 431
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 1
         SelectedEngine = EdgeIfAvailable
+        ExplicitWidth = 768
+        ExplicitHeight = 422
         ControlData = {
-          4C0000007E400000612400000000000000000000000000000000000000000000
+          4C000000FF3F0000A32300000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
-          2B2E126200000000000000004C0000000114020000000000C000000000000046
+          2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
           00000000000000000100000000000000000000000000000000000000}
       end

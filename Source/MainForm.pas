@@ -268,7 +268,26 @@ type
     ///   Event which is being called when a coverage test run has been finished
     /// </summary>
     procedure OnTestRunFinished(Sender: TObject);
+    /// <summary>
+    ///   At least the version of TWebbrowser shipping out of the box with 11.2
+    ///   doesn't handle anchors right and bottom properly, so this sets the size
+    ///   of the WebBrowser control used to show HTML output of a coverage run
+    ///   based on card size it is on.
+    /// </summary>
     procedure AdjustWebBrowserSize;
+    /// <summary>
+    ///   Displays the paths used in the generated script in the memo
+    /// </summary>
+    procedure DisplayScriptOutputPaths;
+    /// <summary>
+    ///   Prepare display of all dynamic contents on the misc. settings page
+    /// </summary>
+    procedure PrepareScriptOutputPathDisplay;
+    /// <summary>
+    ///   Preinitializes the path to the code coverage command line tool with the
+    ///   one shipping with this wizard.
+    /// </summary>
+    procedure PreInitCodeCoverageExe;
   public
   end;
 
@@ -451,7 +470,7 @@ begin
     3 : begin
           cp_Wizard.ActiveCard := crd_MiscSettings;
           crd_MiscSettings.Tag := cImgCompletedPage;
-          LabelPath.Caption    := FProject.ScriptsOutputPath;
+          PrepareScriptOutputPathDisplay;
         end;
     4 : cp_Wizard.ActiveCard := crd_SaveAndRun;
     else
@@ -473,6 +492,7 @@ begin
   ButtonPrevious.Enabled    := false;
   ButtonNext.Enabled        := true;
   ButtonPrevious.Enabled    := true;
+  PreInitCodeCoverageExe;
 
   for var Item in ButtonGroup1.Items do
     (Item as TGrpButtonItem).ImageIndex := -1;
@@ -493,9 +513,33 @@ begin
     if (cp_Wizard.ActiveCardIndex = cp_Wizard.CardCount-1) then
       ButtonNext.Enabled := false;
 
+    if cp_Wizard.ActiveCard = crd_MiscSettings then
+      PrepareScriptOutputPathDisplay;
+
     SetMiscSettingsCheckIfActive;
     SetFocusToFirstProjectCardControl;
   end;
+end;
+
+procedure TFormMain.PreInitCodeCoverageExe;
+var
+  Path : string;
+begin
+  if (EditCodeCoverageExe.Text = '') then
+  begin
+    Path := TPath.GetDirectoryName(Application.ExeName);
+    // go up 2 directories
+    Path := Path.Remove(Path.LastIndexOf(TPath.DirectorySeparatorChar));
+    Path := Path.Remove(Path.LastIndexOf(TPath.DirectorySeparatorChar));
+    EditCodeCoverageExe.Text := TPath.Combine(Path, 'CodeCoverage.exe');
+  end;
+end;
+
+procedure TFormMain.PrepareScriptOutputPathDisplay;
+begin
+  LabelPath.Caption := FProject.ScriptsOutputPath;
+  MemoScriptPreview.Lines.Clear;
+  DisplayScriptOutputPaths;
 end;
 
 procedure TFormMain.SetMiscSettingsCheckIfActive;
@@ -853,6 +897,11 @@ begin
 
   MemoScriptPreview.Clear;
 
+  DisplayScriptOutputPaths;
+end;
+
+procedure TFormMain.DisplayScriptOutputPaths;
+begin
   if FProject.RelativeToScriptPath then
   begin
     MemoScriptPreview.Lines.Add('DelphiCoverage.exe: '  +
