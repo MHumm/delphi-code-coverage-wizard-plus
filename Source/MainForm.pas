@@ -288,6 +288,18 @@ type
     ///   one shipping with this wizard.
     /// </summary>
     procedure PreInitCodeCoverageExe;
+    /// <summary>
+    ///   Resets all wizard fields to initial or empty values
+    /// </summary>
+    procedure ClearWizardFields;
+    /// <summary>
+    ///   Sets the value of the source path edit without automatically updating
+    ///   the list of source files.
+    /// </summary>
+    /// <param name="ANewPath">
+    ///   New value for the source path edit
+    /// </param>
+    procedure SetSourcePathWithoutFileList(const ANewPath: string);
   public
   end;
 
@@ -487,6 +499,10 @@ end;
 
 procedure TFormMain.ButtonNewClick(Sender: TObject);
 begin
+  if FProject.IsAnyDataDefined then
+    if MessageDlg(rClearWizard, mtConfirmation, [mbYes, mbNo], -1) = mrYes then
+      ClearWizardFields;
+
   cp_Main.ActiveCard        := crd_EditSettings;
   cp_Wizard.ActiveCardIndex := 0;
   ButtonPrevious.Enabled    := false;
@@ -740,8 +756,6 @@ begin
 end;
 
 procedure TFormMain.EditSourcePathChange(Sender: TObject);
-var
-  OnChange : TNotifyEvent;
 begin
   if (FProject.ProgramSourceFiles.Count > 0) then
   begin
@@ -749,13 +763,7 @@ begin
                    [mbYes, mbNo], -1) = mrNo) then
     begin
       // restore old source path
-      OnChange := EditSourcePath.OnChange;
-      try
-        EditSourcePath.OnChange := nil;
-        EditSourcePath.Text := FProject.ProgramSourceBasePath;
-      finally
-        EditSourcePath.OnChange := OnChange;
-      end;
+      SetSourcePathWithoutFileList(FProject.ProgramSourceBasePath);
       exit;
     end;
   end;
@@ -766,6 +774,19 @@ begin
 
   DisplaySourceFiles;
   DisplaySourceFilesStatus;
+end;
+
+procedure TFormMain.SetSourcePathWithoutFileList(const ANewPath : string);
+var
+  OnChange : TNotifyEvent;
+begin
+  OnChange := EditSourcePath.OnChange;
+  try
+    EditSourcePath.OnChange := nil;
+    EditSourcePath.Text     := ANewPath;
+  finally
+    EditSourcePath.OnChange := OnChange;
+  end;
 end;
 
 procedure TFormMain.DisplaySourceFiles;
@@ -958,6 +979,24 @@ begin
     on e:exception do
       MessageDlg(Format(rSelectionError, [e.Message]), mtError, [mbOK], -1);
   end;
+end;
+
+procedure TFormMain.ClearWizardFields;
+begin
+  EditExeFile.Text              := '';
+  EditMapFile.Text              := '';
+  EditScriptOutputFolder.Text   := '';
+  EditReportOutputFolder.Text   := '';
+  CheckBoxEMMA.Checked          := false;
+  CheckBoxMeta.Checked          := false;
+  CheckBoxXML.Checked           := false;
+  CheckBoxHTML.Checked          := false;
+  CheckBoxRelativePaths.Checked := false;
+  CheckListBoxSource.Items.Clear;
+  MemoScriptPreview.Lines.Clear;
+  SetSourcePathWithoutFileList(EditSourcePath.Text);
+
+  PreInitCodeCoverageExe;
 end;
 
 procedure TFormMain.crd_MiscSettingsEnter(Sender: TObject);

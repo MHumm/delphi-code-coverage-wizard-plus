@@ -22,6 +22,12 @@ interface
 
 resourcestring
   /// <summary>
+  ///   Question asked when the "new" button on start screen is cleared and
+  ///   the wizard already contains data.
+  /// </summary>
+  rClearWizard   = 'The new project wizard still contains settings.' + sLineBreak +
+                   'Clear those now?';
+  /// <summary>
   ///   Confirmation message shown when changing source file path
   /// </summary>
   rClearFileList = 'List of files selected for code coverage analysis ' + sLineBreak +

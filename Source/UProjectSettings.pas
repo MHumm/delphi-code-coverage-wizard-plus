@@ -321,6 +321,14 @@ type
     function IsOutputSettingsDefined: Boolean;
 
     /// <summary>
+    ///   Checks whether any setting of the project is already set
+    /// </summary>
+    /// <returns>
+    ///   true if yes
+    /// </returns>
+    function IsAnyDataDefined: Boolean;
+
+    /// <summary>
     ///   Returns the path passed as parameter in relative to the script path form.
     /// </summary>
     /// <param name="APath">
@@ -475,6 +483,13 @@ end;
 function TProjectSettings.GetProgramToAnalyze: TFilename;
 begin
   Result := FExecutableToAnalyze;
+end;
+
+function TProjectSettings.IsAnyDataDefined: Boolean;
+begin
+  Result := IsExeAndMapDefined or IsSourcePathAndFilesDefined or
+            IsOutputSettingsDefined or FRelativeToScriptPath or
+            (FCodeCoverageExePath <> '');
 end;
 
 function TProjectSettings.IsExeAndMapDefined: Boolean;
