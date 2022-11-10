@@ -106,7 +106,9 @@ object FormAbout: TFormAbout
     Top = 141
     Width = 291
     Height = 19
-    Caption = 'https://sourceforge.net/projects/delphicodecoverage/'
+    Caption = 
+      '<a href="https://sourceforge.net/projects/delphicodecoverage/">h' +
+      'ttps://sourceforge.net/projects/delphicodecoverage/</a>'
     TabOrder = 1
     UseVisualStyle = True
   end
@@ -115,7 +117,9 @@ object FormAbout: TFormAbout
     Top = 187
     Width = 340
     Height = 19
-    Caption = 'https://github.com/DelphiCodeCoverage/DelphiCodeCoverage'
+    Caption = 
+      '<a href="https://github.com/DelphiCodeCoverage/DelphiCodeCoverag' +
+      'e">https://github.com/DelphiCodeCoverage/DelphiCodeCoverage</a>'
     TabOrder = 2
     UseVisualStyle = True
   end
@@ -124,7 +128,10 @@ object FormAbout: TFormAbout
     Top = 85
     Width = 348
     Height = 19
-    Caption = 'https://github.com/MHumm/delphi-code-coverage-wizard-plus'
+    Caption = 
+      '<a href="https://github.com/MHumm/delphi-code-coverage-wizard-pl' +
+      'us">https://github.com/MHumm/delphi-code-coverage-wizard-plus</a' +
+      '>'
     TabOrder = 3
     UseVisualStyle = True
   end
