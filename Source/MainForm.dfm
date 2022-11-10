@@ -2,10 +2,10 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Delphi Code Coverage Wizard'
-  ClientHeight = 400
+  ClientHeight = 388
   ClientWidth = 624
   Color = clBtnFace
-  Constraints.MinHeight = 438
+  Constraints.MinHeight = 426
   Constraints.MinWidth = 636
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -24,27 +24,29 @@ object FormMain: TFormMain
     Left = 0
     Top = 0
     Width = 624
-    Height = 400
+    Height = 388
     Align = alClient
     ActiveCard = crd_Start
     BevelEdges = []
     BevelOuter = bvNone
     Caption = 'cp_Main'
     TabOrder = 0
-    ExplicitWidth = 618
-    ExplicitHeight = 391
+    ExplicitWidth = 620
+    ExplicitHeight = 399
     object crd_Start: TCard
       Left = 0
       Top = 0
       Width = 624
-      Height = 400
+      Height = 388
       BevelEdges = []
       Caption = 'crd_Start'
       CardIndex = 0
       TabOrder = 0
+      ExplicitWidth = 620
+      ExplicitHeight = 399
       DesignSize = (
         624
-        400)
+        388)
       object Label1: TLabel
         Left = 128
         Top = 16
@@ -115,8 +117,8 @@ object FormMain: TFormMain
       object ListViewProjects: TListView
         Left = 128
         Top = 37
-        Width = 478
-        Height = 293
+        Width = 480
+        Height = 290
         Anchors = [akLeft, akTop, akRight, akBottom]
         Columns = <
           item
@@ -137,7 +139,7 @@ object FormMain: TFormMain
       end
       object ButtonOpenRecent: TButton
         Left = 128
-        Top = 336
+        Top = 335
         Width = 158
         Height = 42
         Hint = 'Open the selected project for editing'
@@ -152,7 +154,7 @@ object FormMain: TFormMain
       end
       object ButtonRunRecent: TButton
         Left = 289
-        Top = 336
+        Top = 335
         Width = 158
         Height = 42
         Hint = 'Open and directly run the selected project'
@@ -167,7 +169,7 @@ object FormMain: TFormMain
       end
       object ButtonDeleteSelected: TButton
         Left = 450
-        Top = 336
+        Top = 335
         Width = 158
         Height = 42
         Hint = 'Delete the selected project from list only'
@@ -185,37 +187,40 @@ object FormMain: TFormMain
       Left = 0
       Top = 0
       Width = 624
-      Height = 400
+      Height = 388
       BevelEdges = []
       Caption = 'crd_EditSettings'
       CardIndex = 1
       TabOrder = 1
+      ExplicitHeight = 400
       DesignSize = (
         624
-        400)
+        388)
       object cp_Wizard: TCardPanel
         Left = 200
         Top = 60
         Width = 424
-        Height = 289
+        Height = 277
         Anchors = [akLeft, akTop, akRight, akBottom]
         ActiveCard = crd_SaveAndRun
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
+        ExplicitHeight = 289
         object crd_UnitTestExecutable: TCard
           Left = 1
           Top = 1
           Width = 422
-          Height = 287
+          Height = 275
           BevelEdges = []
           Caption = 'crd_UnitTestExecutable'
           CardIndex = 0
           TabOrder = 0
           OnEnter = crd_UnitTestExecutableEnter
+          ExplicitHeight = 287
           DesignSize = (
             422
-            287)
+            275)
           object Label2: TLabel
             Left = 8
             Top = 24
@@ -308,15 +313,16 @@ object FormMain: TFormMain
           Left = 1
           Top = 1
           Width = 422
-          Height = 287
+          Height = 275
           BevelEdges = []
           Caption = 'crd_Source'
           CardIndex = 1
           TabOrder = 1
           OnEnter = crd_SourceEnter
+          ExplicitHeight = 287
           DesignSize = (
             422
-            287)
+            275)
           object Label4: TLabel
             Left = 8
             Top = 16
@@ -357,15 +363,16 @@ object FormMain: TFormMain
             Left = 8
             Top = 88
             Width = 404
-            Height = 146
+            Height = 134
             Anchors = [akLeft, akTop, akRight, akBottom]
             ItemHeight = 17
             TabOrder = 2
             OnClickCheck = CheckListBoxSourceClickCheck
+            ExplicitHeight = 146
           end
           object b_SelectAll: TButton
             Left = -1
-            Top = 238
+            Top = 226
             Width = 138
             Height = 42
             Hint = 'Select all source files'
@@ -377,10 +384,11 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 3
             OnClick = b_SelectAllClick
+            ExplicitTop = 238
           end
           object b_DeselectAll: TButton
             Left = 139
-            Top = 238
+            Top = 226
             Width = 138
             Height = 42
             Hint = 'deselect all source files'
@@ -392,10 +400,11 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 4
             OnClick = b_DeselectAllClick
+            ExplicitTop = 238
           end
           object b_RefreshSourceFiles: TButton
             Left = 280
-            Top = 238
+            Top = 226
             Width = 138
             Height = 42
             Hint = 'Refresh file list'
@@ -407,21 +416,23 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 5
             OnClick = b_RefreshSourceFilesClick
+            ExplicitTop = 238
           end
         end
         object crd_Output: TCard
           Left = 1
           Top = 1
           Width = 422
-          Height = 287
+          Height = 275
           BevelEdges = []
           Caption = 'crd_Output'
           CardIndex = 2
           TabOrder = 2
           OnEnter = crd_OutputEnter
+          ExplicitHeight = 287
           DesignSize = (
             422
-            287)
+            275)
           object Label5: TLabel
             Left = 8
             Top = 24
@@ -540,15 +551,16 @@ object FormMain: TFormMain
           Left = 1
           Top = 1
           Width = 422
-          Height = 287
+          Height = 275
           BevelEdges = []
           Caption = 'crd_MiscSettings'
           CardIndex = 3
           TabOrder = 3
           OnEnter = crd_MiscSettingsEnter
+          ExplicitHeight = 287
           DesignSize = (
             422
-            287)
+            275)
           object Label8: TLabel
             Left = 8
             Top = 16
@@ -586,22 +598,24 @@ object FormMain: TFormMain
             Left = 32
             Top = 125
             Width = 377
-            Height = 148
+            Height = 136
             Anchors = [akLeft, akTop, akRight, akBottom]
             Enabled = False
             TabOrder = 1
+            ExplicitHeight = 148
           end
         end
         object crd_SaveAndRun: TCard
           Left = 1
           Top = 1
           Width = 422
-          Height = 287
+          Height = 275
           BevelEdges = []
           Caption = 'crd_SaveAndRun'
           CardIndex = 4
           TabOrder = 4
           OnEnter = crd_SaveAndRunEnter
+          ExplicitHeight = 287
           object ButtonSave: TButton
             Left = 16
             Top = 16
@@ -653,15 +667,16 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 200
-        Height = 400
+        Height = 388
         Align = alLeft
         BevelEdges = [beRight]
         TabOrder = 1
+        ExplicitHeight = 400
         object ButtonGroup1: TButtonGroup
           Left = 1
           Top = 1
           Width = 198
-          Height = 398
+          Height = 386
           Align = alClient
           BevelInner = bvNone
           BevelOuter = bvNone
@@ -694,6 +709,7 @@ object FormMain: TFormMain
           TabOrder = 0
           TabStop = False
           OnButtonClicked = ButtonGroup1ButtonClicked
+          ExplicitHeight = 398
         end
       end
       object PanelHeader: TPanel
@@ -724,7 +740,7 @@ object FormMain: TFormMain
       end
       object PanelBottomNavigation: TPanel
         Left = 200
-        Top = 349
+        Top = 337
         Width = 423
         Height = 50
         Anchors = [akLeft, akRight, akBottom]
@@ -732,6 +748,7 @@ object FormMain: TFormMain
         Caption = 'PanelBottomNavigation'
         ShowCaption = False
         TabOrder = 3
+        ExplicitTop = 349
         object ButtonPrevious: TButton
           Left = 0
           Top = 5
@@ -780,13 +797,14 @@ object FormMain: TFormMain
       Left = 0
       Top = 0
       Width = 624
-      Height = 400
+      Height = 388
       Caption = 'crd_Run'
       CardIndex = 2
       TabOrder = 2
+      ExplicitHeight = 400
       DesignSize = (
         624
-        400)
+        388)
       object Label12: TLabel
         Left = 8
         Top = 8
@@ -810,15 +828,14 @@ object FormMain: TFormMain
       Left = 0
       Top = 0
       Width = 624
-      Height = 400
+      Height = 388
       Caption = 'crd_Finished'
       CardIndex = 3
       TabOrder = 3
-      ExplicitWidth = 618
-      ExplicitHeight = 391
+      ExplicitHeight = 400
       DesignSize = (
         624
-        400)
+        388)
       object ButtonHomeAfterRun: TButton
         Left = 0
         Top = 0
@@ -836,15 +853,14 @@ object FormMain: TFormMain
       object WebBrowser: TWebBrowser
         Left = 0
         Top = 48
-        Width = 774
-        Height = 431
+        Width = 619
+        Height = 333
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 1
         SelectedEngine = EdgeIfAvailable
-        ExplicitWidth = 768
-        ExplicitHeight = 422
+        ExplicitHeight = 345
         ControlData = {
-          4C000000FF3F0000A32300000000000000000000000000000000000000000000
+          4C000000FA3F00006B2200000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
           2B2E126208000000000000004C0000000114020000000000C000000000000046
           8000000000000000000000000000000000000000000000000000000000000000
@@ -952,6 +968,11 @@ object FormMain: TFormMain
         CollectionIndex = 13
         CollectionName = 'Actions-go-home-icon'
         Name = 'Actions-go-home-icon'
+      end
+      item
+        CollectionIndex = 14
+        CollectionName = 'Magic-icon'
+        Name = 'Magic-icon'
       end>
     ImageCollection = dm_Icons.ImageCollection
     Width = 32
@@ -1031,6 +1052,11 @@ object FormMain: TFormMain
         CollectionIndex = 13
         CollectionName = 'Actions-go-home-icon'
         Name = 'Actions-go-home-icon'
+      end
+      item
+        CollectionIndex = 14
+        CollectionName = 'Magic-icon'
+        Name = 'Magic-icon'
       end>
     ImageCollection = dm_Icons.ImageCollection
     Left = 362

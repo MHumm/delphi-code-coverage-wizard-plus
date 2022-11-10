@@ -315,7 +315,8 @@ uses
   UScriptRunner,
   UManageToolsMenu,
   UUtils,
-  MainFormTexts;
+  MainFormTexts,
+  AboutForm;
 
 {$R *.dfm}
 
@@ -428,11 +429,7 @@ end;
 
 procedure TFormMain.ButtonAboutClick(Sender: TObject);
 begin
-  MessageDlg('Delphi Code Coverage Wizard' + sLineBreak +
-             '© 2022 Markus Humm' + sLineBreak +
-             'based on the works of TridentT and ' + sLineBreak +
-             'https://sourceforge.net/projects/delphicodecoverage/',
-             mtInformation, [mbOK], -1);
+  FormAbout.ShowModal;
 end;
 
 procedure TFormMain.ButtonBrowserBackClick(Sender: TObject);
@@ -833,6 +830,10 @@ begin
   cp_Main.ActiveCard := crd_Start;
 
   DisplayAddToToolsMenu;
+
+{ TODO : Testen! }
+  if ParamStr(1).ToUpper.EndsWith('DCCP') then
+    LoadProjectFile(ParamStr(1));
 end;
 
 procedure TFormMain.SetFormPos;
