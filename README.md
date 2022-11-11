@@ -65,7 +65,7 @@ versions/profiles it finds on your computer.
    Now: enjoy!
    
 ## Some impressions ##
-![Start screen of the wizard](../blob/Screenshots/Wizard1.png)
+![Start screen of the wizard](../../tree/development/Screenshots/Wizard1.png)
 ![Some screen of the wizard](/Screenshots/Wizard2.png)
 ![Start screen of the generated HTML output](/Screenshots/Output1.png)
 ![View of a unit (blue lines are not covered yet)](/Screenshots/Output2.png)   
