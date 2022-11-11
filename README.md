@@ -63,3 +63,9 @@ versions/profiles it finds on your computer.
    but you can still open it in any browser outside this tool.
    
    Now: enjoy!
+   
+## Some impressions ##
+![Start screen of the wizard](/Screenshots/Wizard1.png)
+![Some screen of the wizard](/Screenshots/Wizard2.png)
+![Start screen of the generated HTML output](/Screenshots/Output1.png)
+![View of a unit (blue lines are not covered yet)](/Screenshots/Output2.png)   
