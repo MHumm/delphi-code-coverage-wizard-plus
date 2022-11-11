@@ -24,6 +24,15 @@ uses
   System.Classes,
   UProjectSettings;
 
+type
+  /// <summary>
+  ///   Event called when the calling of the command line tool finished
+  /// </summary>
+  /// <param name="ResultCode">
+  ///   Return value of the external program execution
+  /// </param>
+  TOnProgramRunFinished = reference to procedure(ResultCode: UInt32);
+
   /// <summary>
   ///   Asynchronously runs the batch file generated
   /// </summary>
@@ -34,7 +43,7 @@ uses
   ///   Event for reporting that the coverage run has finished
   /// </param>
   procedure RunBatchFile(AProjectSettings : TProjectSettings;
-                         AOnFinished      : TNotifyEvent);
+                         AOnFinished      : TOnProgramRunFinished);
 
 implementation
 
@@ -44,7 +53,7 @@ uses
   Winapi.ShellAPI,
   Winapi.Windows;
 
-function RunProcess(FileName: string; ShowCmd: DWORD; wait: Boolean; ProcID: PCardinal): Longword;
+function RunProcess(FileName: string; ShowCmd: DWORD; wait: Boolean; ProcID: PCardinal): UInt32;
 var
   StartupInfo: TStartupInfo;
   ProcessInfo: TProcessInformation;
@@ -85,10 +94,11 @@ begin
 end;
 
 procedure RunBatchFile(AProjectSettings : TProjectSettings;
-                       AOnFinished      : TNotifyEvent);
+                       AOnFinished      : TOnProgramRunFinished);
 var
-  aTask  : ITask;
-  ProcID : UInt32;
+  aTask      : ITask;
+  ProcID     : UInt32;
+  CallResult : UInt32;
 begin
   Assert(Assigned(AProjectSettings), 'Not created project contents object passed');
   Assert(Assigned(AOnFinished),      'No OnFinished event passed');
@@ -96,12 +106,13 @@ begin
   aTask := TTask.Create(
     procedure
     begin
-      RunProcess(AProjectSettings.BatchFileName, SW_NORMAL, true, @ProcID);
+      CallResult := RunProcess(AProjectSettings.BatchFileName,
+                               SW_NORMAL, true, @ProcID);
 
       TThread.Synchronize(TThread.Current,
         procedure
         begin
-          AOnFinished(nil);
+          AOnFinished(CallResult);
         end);
     end);
     aTask.Start;

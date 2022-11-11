@@ -40,11 +40,13 @@ type
     LabelVersion: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    LinkLabel1: TLinkLabel;
-    LinkLabel2: TLinkLabel;
-    LinkLabel3: TLinkLabel;
+    LinkLabelOldDCCWSourceforge: TLinkLabel;
+    LinkLabelDCCGithub: TLinkLabel;
+    LinkLabelDCCWPGithub: TLinkLabel;
     Label5: TLabel;
     procedure FormCreate(Sender: TObject);
+    procedure LinkLabelDCCWPGithubLinkClick(Sender: TObject; const Link: string;
+      LinkType: TSysLinkType);
   private
     /// <summary>
     ///   Retrieves the file version from the version ressources
@@ -63,6 +65,9 @@ var
   FormAbout: TFormAbout;
 
 implementation
+
+uses
+  Winapi.ShellAPI;
 
 {$R *.dfm}
 
@@ -99,6 +104,12 @@ begin
   finally
     FreeMem(PVerInfo, VerInfoSize);
   end;
+end;
+
+procedure TFormAbout.LinkLabelDCCWPGithubLinkClick(Sender: TObject; const Link: string;
+  LinkType: TSysLinkType);
+begin
+  ShellExecute(Handle, 'open', PWideChar(Link), nil, nil, SW_MAXIMIZE);
 end;
 
 end.

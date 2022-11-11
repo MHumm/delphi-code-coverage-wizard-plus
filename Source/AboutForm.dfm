@@ -101,7 +101,7 @@ object FormAbout: TFormAbout
       TabOrder = 0
     end
   end
-  object LinkLabel1: TLinkLabel
+  object LinkLabelOldDCCWSourceforge: TLinkLabel
     Left = 16
     Top = 141
     Width = 291
@@ -111,8 +111,9 @@ object FormAbout: TFormAbout
       'ttps://sourceforge.net/projects/delphicodecoverage/</a>'
     TabOrder = 1
     UseVisualStyle = True
+    OnLinkClick = LinkLabelDCCWPGithubLinkClick
   end
-  object LinkLabel2: TLinkLabel
+  object LinkLabelDCCGithub: TLinkLabel
     Left = 16
     Top = 187
     Width = 340
@@ -122,8 +123,9 @@ object FormAbout: TFormAbout
       'e">https://github.com/DelphiCodeCoverage/DelphiCodeCoverage</a>'
     TabOrder = 2
     UseVisualStyle = True
+    OnLinkClick = LinkLabelDCCWPGithubLinkClick
   end
-  object LinkLabel3: TLinkLabel
+  object LinkLabelDCCWPGithub: TLinkLabel
     Left = 96
     Top = 85
     Width = 348
@@ -134,6 +136,7 @@ object FormAbout: TFormAbout
       '>'
     TabOrder = 3
     UseVisualStyle = True
+    OnLinkClick = LinkLabelDCCWPGithubLinkClick
   end
   object VirtualImageList32: TVirtualImageList
     Images = <

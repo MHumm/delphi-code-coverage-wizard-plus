@@ -267,7 +267,10 @@ type
     /// <summary>
     ///   Event which is being called when a coverage test run has been finished
     /// </summary>
-    procedure OnTestRunFinished(Sender: TObject);
+    /// <param name="CallResult">
+    ///   Result code of the external program called 
+    /// </param>
+    procedure OnTestRunFinished(CallResult: UInt32);
     /// <summary>
     ///   At least the version of TWebbrowser shipping out of the box with 11.2
     ///   doesn't handle anchors right and bottom properly, so this sets the size
@@ -1065,16 +1068,21 @@ begin
   RunBatchFile(FProject, OnTestRunFinished);
 end;
 
-procedure TFormMain.OnTestRunFinished(Sender: TObject);
+procedure TFormMain.OnTestRunFinished(CallResult: UInt32);
 begin
-  if ofHTML in FProject.OutputFormats then
+  if (CallResult = 0) then
   begin
-    cp_Main.ActiveCard := crd_Finished;
-    AdjustWebBrowserSize;
-    WebBrowser.Navigate(FProject.GetReportOutputIndexURL);
+    if ofHTML in FProject.OutputFormats then
+    begin
+      cp_Main.ActiveCard := crd_Finished;
+      AdjustWebBrowserSize;
+      WebBrowser.Navigate(FProject.GetReportOutputIndexURL);
+    end
+    else
+      cp_Main.ActiveCard := crd_Start;
   end
   else
-    cp_Main.ActiveCard := crd_Start;
+    MessageDlg(Format(rRunScriptError, [CallResult]), mtError, [mbOK], -1);
 end;
 
 end.
