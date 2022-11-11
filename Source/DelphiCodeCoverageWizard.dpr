@@ -12,7 +12,8 @@ uses
   MainFormTexts in 'MainFormTexts.pas',
   UUtils in 'UUtils.pas',
   UScriptsGenerator in 'UScriptsGenerator.pas',
-  UScriptRunner in 'UScriptRunner.pas';
+  UScriptRunner in 'UScriptRunner.pas',
+  AboutForm in 'AboutForm.pas' {FormAbout};
 
 {$R *.res}
 
@@ -21,5 +22,6 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(Tdm_Icons, dm_Icons);
   Application.CreateForm(TFormMain, FormMain);
+  Application.CreateForm(TFormAbout, FormAbout);
   Application.Run;
 end.

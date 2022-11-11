@@ -88,6 +88,11 @@ resourcestring
                    'Failure: %0:s' + sLineBreak +
                    'File name: %1:s';
 
+  /// <summary>
+  ///   Failure message when running the script returned an error code
+  /// </summary>
+  rRunScriptError= 'Failure running the batch file.' + sLineBreak +
+                   'Failure code: %0:d';
 
 implementation
 

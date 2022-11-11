@@ -34,6 +34,13 @@ editing mode but other than that it looks fine.
 In the root folder of the project you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 
+## Where is the Code Coverage command line tool from?
+The command line tool used is some not yet up to date version of this one:
+https://github.com/DelphiCodeCoverage/DelphiCodeCoverage
+
+The plan is to look at it again and update it, if it is still compatible or adapt
+if there's anything to change. This should happen in the near future.
+
 ## How to install?
 Just open and run the project provided in the Source directory.
 When run for the first time or when you installed another version of the IDE it will 

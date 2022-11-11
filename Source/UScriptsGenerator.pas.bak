@@ -111,7 +111,7 @@ procedure TScriptsGenerator.GenerateDCovExecuteBatchFile;
 const
   // Application path to CodeCoverage.exe,  ExeToAnalyze,  MapFile,  ReportPath
   DCOV_EXECUTE_FORMAT = '"%0:s" -e "%1:s" -m "%2:s" -uf "%3:s_dcov_units.lst" ' +
-                        '-spf "%4:s_dcov_paths.lst" -od "%5:s" -lt "%6:s"';
+                        '-spf "%4:s_dcov_paths.lst" -od "%5:s" -lt ';
 var
   DCovExecuteText : TStringList;
 begin
@@ -126,9 +126,7 @@ begin
                                TPath.GetFileNameWithoutExtension(FProjectFileName))),
                        GetPath(TPath.Combine(FSettings.ScriptsOutputPath,
                                TPath.GetFileNameWithoutExtension(FProjectFileName))),
-                       GetPath(FSettings.ReportOutputPath),
-                       GetPath(TPath.Combine(FSettings.ReportOutputPath,
-                                             'Delphi-Code-Coverage-Debug.log'))]) +
+                       GetPath(FSettings.ReportOutputPath)]) +
                        GetOutputFormatSwitches());
   // Save
   DCovExecuteText.SaveToFile(FSettings.BatchFileName);
@@ -141,8 +139,6 @@ var
   DCovPathsText   : TStringList;
   CheckedUnitList : TStrings;
   UnitFilename    : string;
-  FileName        : string;
-  Path            : string;
 begin
   // Create 'dcov_execute.bat'
   DCovUnitsText := TStringList.Create;
@@ -163,15 +159,9 @@ begin
         for UnitFilename in CheckedUnitList do
         begin
           // Add Unit name
-          FileName := ChangeFileExt(ExtractFileName(UnitFilename), '').Trim;
-          if not FileName.IsEmpty then
-          begin
-            DCovUnitsText.Add(FileName);
-            // Add unit path
-            Path := ExtractFilePath(UnitFilename).Trim;
-            if not Path.IsEmpty then
-              DCovPathsText.Add(Path);
-          end;
+          DCovUnitsText.Add(ChangeFileExt(ExtractFileName(UnitFilename), ''));
+          // Add unit path
+          DCovPathsText.Add(ExtractFilePath(UnitFilename));
         end;
 
         // Save
@@ -179,7 +169,6 @@ begin
           TPath.Combine(FSettings.ScriptsOutputPath,
                         TPath.GetFileNameWithoutExtension(FProjectFileName) +
                         '_dcov_units.lst'));
-
         DCovPathsText.SaveToFile(
           TPath.Combine(FSettings.ScriptsOutputPath,
                         TPath.GetFileNameWithoutExtension(FProjectFileName) +
