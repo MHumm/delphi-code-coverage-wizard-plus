@@ -13,7 +13,8 @@ uses
   UUtils in 'UUtils.pas',
   UScriptsGenerator in 'UScriptsGenerator.pas',
   UScriptRunner in 'UScriptRunner.pas',
-  AboutForm in 'AboutForm.pas' {FormAbout};
+  AboutForm in 'AboutForm.pas' {FormAbout},
+  MainFormLogic in 'MainFormLogic.pas';
 
 {$R *.res}
 

@@ -94,6 +94,19 @@ resourcestring
   rRunScriptError= 'Failure running the batch file.' + sLineBreak +
                    'Failure code: %0:d';
 
+  /// <summary>
+  ///   Failure message shown when a file with a wrong extension was given as
+  ///   command line param
+  /// </summary>
+  rWrongExtension= 'Wrong extension for file %0:s.' + sLineBreak +
+                   'Expected extensions: DCCP, dpr, dproj';
+
+  /// <summary>
+  ///   Failure message shown, when a non existing file should be loaded/run
+  ///   via command line param
+  /// </summary>
+  rFileNotExists = 'File %0:s does not exist';
+
 implementation
 
 end.

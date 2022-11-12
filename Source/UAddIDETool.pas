@@ -81,11 +81,15 @@ type
     FBDSKeyName : string;
 
     /// <summary>
-    ///   Search if a certain tool path is already listed under tools and if yes
-    ///   returns the registry path of that registry entry
+    ///   Search if a certain tool path (along with the specified command
+    ///   line params) is already listed under tools and if yes returns the
+    ///   registry path of that registry entry
     /// </summary>
     /// <param name="Path">
     ///   Path to search for
+    /// </param>
+    /// <param name="Params">
+    ///   Command line params specified, the must match as well
     /// </param>
     /// <param name="RegPath">
     ///   Path to the registry key of the IDE version under which to search
@@ -95,7 +99,9 @@ type
     ///   exists for the path or empty string if the path is not yet added as
     ///   tools entry
     /// </returns>
-    function SearchForToolsPath(Path: string; const RegPath: string):string;
+    function SearchForToolsPath(Path    : string;
+                                Params  : string;
+                                const RegPath : string):string;
     /// <summary>
     ///   Adds a tool to the tools menu of selected Rad Studio IDEs
     /// </summary>
@@ -161,12 +167,16 @@ type
     /// <param name="Path">
     ///   Path and file name of the tool to remove, it will be referenced by that
     /// </param>
+    /// <param name="Params">
+    ///   Command line params passed to the tool to be called from tools menu.
+    ///   Must match as well to identify the right tool.
+    /// </param>
     /// <param name="ConfigKeys">
     ///   List of IDE versions the tool shall get deleted from. If the list contains
     ///   versions not installed they will be ignored. Best is to call
     ///   GetIDEVersionsList and pass that one.
     /// </param>
-    procedure DeleteTool(const Path: string; ConfigKeys: TIDEVersionList);
+    procedure DeleteTool(const Path, Params: string; ConfigKeys: TIDEVersionList);
 
     /// <summary>
     ///   Checks whether a certain application is listed in the tools menu of
@@ -175,6 +185,10 @@ type
     /// <param name="Path">
     ///   Path and file name of the tool to look for
     /// </param>
+    /// <param name="Params">
+    ///   Command line params passed to the tool to be called from tools menu.
+    ///   Must match as well to identify the right tool.
+    /// </param>
     /// <param name="ConfigKey">
     ///   Complete registry key for a configuration and version combination
     /// </param>
@@ -182,7 +196,7 @@ type
     ///   true if a tool with that path is listed under Tools menu for the
     ///   given IDE version/configuration
     /// </returns>
-    function IsInMenu(const Path, ConfigKey: string):Boolean;
+    function IsInMenu(const Path, Params, ConfigKey: string):Boolean;
 
     /// <summary>
     ///   Name of the key under the Embarcadero key under which all Rad Studio
@@ -241,7 +255,7 @@ begin
       begin
         FRegistry.CloseKey;
         // Check if that path is already listed
-        ExistingRegPath := SearchForToolsPath(Path, RegPath);
+        ExistingRegPath := SearchForToolsPath(Path, Params, RegPath);
 
         if (ExistingRegPath = '') then
         begin
@@ -264,7 +278,7 @@ begin
   FBDSKeyName       := DefaultBDSName;
 end;
 
-procedure TAddIDETool.DeleteTool(const Path: string; ConfigKeys: TIDEVersionList);
+procedure TAddIDETool.DeleteTool(const Path, Params: string; ConfigKeys: TIDEVersionList);
 var
   IDEVersion      : TIDEVersionRec;
   ExistingRegPath : string;
@@ -284,7 +298,7 @@ begin
       begin
         FRegistry.CloseKey;
         // Check if that path is already listed
-        ExistingRegPath := SearchForToolsPath(Path, RegPath);
+        ExistingRegPath := SearchForToolsPath(Path, Params, RegPath);
 
         if (ExistingRegPath <> '') then
           FRegistry.DeleteKey(ExistingRegPath);
@@ -392,24 +406,27 @@ begin
   end;
 end;
 
-function TAddIDETool.IsInMenu(const Path, ConfigKey: string): Boolean;
+function TAddIDETool.IsInMenu(const Path, Params, ConfigKey: string): Boolean;
 begin
-  Result := SearchForToolsPath(Path, ConfigKey+'\'+ToolsKey) <> '';
+  Result := SearchForToolsPath(Path, Params, ConfigKey+'\'+ToolsKey) <> '';
 end;
 
-function TAddIDETool.SearchForToolsPath(Path: string;
+function TAddIDETool.SearchForToolsPath(Path   : string;
+                                        Params : string;
                                         const RegPath: string): string;
 var
-  ToolsKeys : TStringList;
-  Registry  : TRegistry;
-  Tool      : string;
-  ReadPath  : string;
+  ToolsKeys  : TStringList;
+  Registry   : TRegistry;
+  Tool       : string;
+  ReadPath   : string;
+  ReadParams : string;
 begin
   Assert(Path <> '', 'Empty path specified');
   Assert(RegPath <> '', 'Empty registry path specified');
 
   Result := '';
   Path   := UpperCase(Path);
+  Params := UpperCase(Params);
 
   ToolsKeys := TStringList.Create;
   Registry  := TRegistry.Create;
@@ -424,9 +441,10 @@ begin
       begin
         if Registry.OpenKey(RegPath + '\' + Tool, false) then
         begin
-          ReadPath := UpperCase(Registry.ReadString('Path'));
+          ReadPath   := UpperCase(Registry.ReadString('Path'));
+          ReadParams := UpperCase(Registry.ReadString('Params'));
           Registry.CloseKey;
-          if (ReadPath = Path) then
+          if (ReadPath = Path) and (ReadParams = Params) then
           begin
             Result := RegPath + '\' + Tool;
             Break;

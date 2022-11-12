@@ -26,7 +26,8 @@ uses
   Vcl.VirtualImageList, Vcl.StdCtrls, Vcl.WinXPanels, Vcl.ExtCtrls,
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.ComCtrls, Vcl.ButtonGroup,
   Vcl.CheckLst, USettings, UDataModuleIcons, UProjectSettings, Vcl.WinXCtrls,
-  Winapi.WebView2, Winapi.ActiveX, Vcl.Edge, Vcl.OleCtrls, SHDocVw;
+  Winapi.WebView2, Winapi.ActiveX, Vcl.Edge, Vcl.OleCtrls, SHDocVw,
+  MainFormLogic;
 
 type
   /// <summary>
@@ -162,6 +163,7 @@ type
     procedure ButtonBrowserBackClick(Sender: TObject);
     procedure ButtonBrowserNextClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -172,6 +174,11 @@ type
     ///   Manages project settings and loading/saving these from/to a file
     /// </summary>
     FProject  : TProjectSettings;
+
+    /// <summary>
+    ///   Buisiness logic for the main form
+    /// </summary>
+    FLogic    : TMainFormLogic;
 
     /// <summary>
     ///   Checks whether both file names have been filled in and depending on the
@@ -303,6 +310,10 @@ type
     ///   New value for the source path edit
     /// </param>
     procedure SetSourcePathWithoutFileList(const ANewPath: string);
+    /// <summary>
+    ///   Processes the command line params
+    /// </summary>
+    procedure ProcessCmdLineParams;
   public
   end;
 
@@ -817,6 +828,7 @@ end;
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
   FSettings := TSettings.Create;
+  FLogic    := TMainFormLogic.Create;
 
   if Is64BitWindows then
     FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe')
@@ -833,10 +845,30 @@ begin
   cp_Main.ActiveCard := crd_Start;
 
   DisplayAddToToolsMenu;
+end;
 
-{ TODO : Testen! }
-  if ParamStr(1).ToUpper.EndsWith('DCCP') then
-    LoadProjectFile(ParamStr(1));
+procedure TFormMain.ProcessCmdLineParams;
+begin
+  FLogic.ProcessCmdLineParams(
+    procedure(Action: TParamAction;
+              const FileName: string)
+    begin
+      case Action of
+        paOpen : LoadProjectFile(FileName);
+        paRun  : begin
+                   LoadProjectFile(FileName);
+                   RunScript;
+                 end;
+        paHelp : ButtonAbout.Click;
+        else
+{ TODO : Umsetzen! }
+          MessageDlg('', mtError, [mbOK], -1);
+      end;
+    end,
+    procedure(const FailureMessage: string)
+    begin
+      MessageDlg(FailureMessage, mtError, [mbOK], -1);
+    end);
 end;
 
 procedure TFormMain.SetFormPos;
@@ -844,12 +876,12 @@ begin
   Position     := poDesigned;
 
   if (FSettings.XPos + FSettings.Width - 10) > 0 then
-    Left         := FSettings.XPos
+    Left := FSettings.XPos
   else
     Left := 0;
 
   if (FSettings.YPos + FSettings.Height - 10) > 0 then
-   Top          := FSettings.YPos
+    Top := FSettings.YPos
   else
     Top := 0;
 
@@ -888,11 +920,17 @@ procedure TFormMain.FormDestroy(Sender: TObject);
 begin
   FSettings.Free;
   FProject.Free;
+  FLogic.Free;
 end;
 
 procedure TFormMain.FormResize(Sender: TObject);
 begin
   AdjustWebBrowserSize;
+end;
+
+procedure TFormMain.FormShow(Sender: TObject);
+begin
+  ProcessCmdLineParams;
 end;
 
 procedure TFormMain.AdjustWebBrowserSize;
