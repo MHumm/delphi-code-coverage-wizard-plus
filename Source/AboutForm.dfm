@@ -2,7 +2,7 @@ object FormAbout: TFormAbout
   Left = 0
   Top = 0
   Caption = 'About'
-  ClientHeight = 270
+  ClientHeight = 392
   ClientWidth = 479
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,6 +12,9 @@ object FormAbout: TFormAbout
   Font.Style = []
   Position = poOwnerFormCenter
   OnCreate = FormCreate
+  DesignSize = (
+    479
+    392)
   TextHeight = 15
   object VirtualImage1: TVirtualImage
     Left = 16
@@ -74,9 +77,26 @@ object FormAbout: TFormAbout
     Height = 15
     Caption = 'and an older version of Delphi Code Coverage from'
   end
+  object LabelCmdLineParams: TLabel
+    Left = 16
+    Top = 212
+    Width = 444
+    Height = 109
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
+    Caption = 
+      'Available command line parameter:'#13'-? : shows this screen'#13'-O <Fil' +
+      'eName> : opens the specified project file, either a DCCP file or' +
+      ' if a dpr/dproj '#13'  is specified a corresponding DCCP file, if on' +
+      'e is found in the same directory'#13'- R <FileName> : opens and dire' +
+      'ctly runs the specified project file, either a DCCP '#13'   file or ' +
+      'if a dpr/dproj is specified a corresponding DCCP file, if one is' +
+      ' found in the '#13'   same directory'
+    WordWrap = True
+  end
   object PanelBottom: TPanel
     Left = 0
-    Top = 213
+    Top = 335
     Width = 479
     Height = 57
     Align = alBottom
@@ -84,8 +104,8 @@ object FormAbout: TFormAbout
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 384
-    ExplicitWidth = 624
+    ExplicitTop = 212
+    ExplicitWidth = 475
     object ButtonOK: TButton
       Left = 16
       Top = 8

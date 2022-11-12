@@ -50,13 +50,21 @@ type
     /// </summary>
     FEntryPath       : string;
     /// <summary>
-    ///   Display name of the entry for the tools menu
+    ///   Display name of the 1st entry for the tools menu
     /// </summary>
-    FEntryName       : string;
+    FEntryName1       : string;
     /// <summary>
-    ///   Command line params used when calling the entry
+    ///   Command line params used when calling the 1st entry
     /// </summary>
-    FEntryParams     : string;
+    FEntryParams1     : string;
+    /// <summary>
+    ///   Display name of the 2nd entry for the tools menu
+    /// </summary>
+    FEntryName2       : string;
+    /// <summary>
+    ///   Command line params used when calling the 2nd entry
+    /// </summary>
+    FEntryParams2     : string;
     /// <summary>
     ///   Working dir used when calling the entry
     /// </summary>
@@ -68,23 +76,32 @@ type
     /// <param name="AOwner">
     ///   Owner responsible for managing lifetime
     /// </param>
-    /// <param name="EntryName">
-    ///   Display name of the entry for the tools menu as to be shown in
+    /// <param name="EntryName1">
+    ///   Display name of the 1st entry for the tools menu as to be shown in
     ///   description text
+    /// </param>
+    /// <param name="EntryParams1">
+    ///   Command line params used when calling the 1st entry
+    /// </param>
+    /// <param name="EntryName2">
+    ///   Display name of the 2nd entry for the tools menu as to be shown in
+    ///   description text
+    /// </param>
+    /// <param name="EntryParams2">
+    ///   Command line params used when calling the 2nd entry
     /// </param>
     /// <param name="EntryPath">
     ///   Complete path and file name of the entry to add
-    /// </param>
-    /// <param name="EntryParams">
-    ///   Command line params used when calling the entry
     /// </param>
     /// <param name="EntryWorkingDir">
     ///   Working dir used when calling the entry
     /// </param>
     constructor Create(AOwner          : TComponent;
-                       EntryName,
+                       EntryName1,
+                       EntryParams1,
+                       EntryName2,
+                       EntryParams2,
                        EntryPath,
-                       EntryParams,
                        EntryWorkingDir : string); reintroduce;
   end;
 
@@ -112,9 +129,10 @@ begin
   // Delete all entries
   AddList := FIDEToolMgr.GetIDEVersionsList;
   // This would add it to all IDE configurations but...
-  FIDEToolMgr.DeleteTool(FEntryPath, AddList);
+  FIDEToolMgr.DeleteTool(FEntryPath, FEntryParams1, AddList);
+  FIDEToolMgr.DeleteTool(FEntryPath, FEntryParams2, AddList);
 
-  // here we remove those not selected from the list
+  // ...here we remove those not selected from the list
   for i := ListViewConfigurations.Items.Count - 1 downTo 0 do
   begin
     Item := ListViewConfigurations.Items[i];
@@ -122,9 +140,15 @@ begin
       AddList.Delete(Item.Index);
   end;
 
-  FIDEToolMgr.AddTool(FEntryParams,
+  FIDEToolMgr.AddTool(FEntryParams1,
                       FEntryPath,
-                      FEntryName,
+                      FEntryName1,
+                      FEntryWorkingDir,
+                      AddList);
+
+  FIDEToolMgr.AddTool(FEntryParams2,
+                      FEntryPath,
+                      FEntryName2,
                       FEntryWorkingDir,
                       AddList);
 end;
@@ -138,9 +162,11 @@ begin
 end;
 
 constructor TConfigSelectionForm.Create(AOwner         : TComponent;
-                                        EntryName,
+                                        EntryName1,
+                                        EntryParams1,
+                                        EntryName2,
+                                        EntryParams2,
                                         EntryPath,
-                                        EntryParams,
                                         EntryWorkingDir: string);
 var
   IDEConfigList : TIDEVersionList;
@@ -149,11 +175,13 @@ var
 begin
   inherited Create(AOwner);
 
-  LabelDescription.Caption := Format(LabelDescription.Caption, [EntryName]);
+  LabelDescription.Caption := Format(LabelDescription.Caption, [EntryName1]);
 
-  FEntryName       := EntryName;
+  FEntryName1      := EntryName1;
+  FEntryParams1    := EntryParams1;
+  FEntryName2      := EntryName2;
+  FEntryParams2    := EntryParams2;
   FEntryPath       := EntryPath;
-  FEntryParams     := EntryParams;
   FEntryWorkingDir := EntryWorkingDir;
 
   FIDEToolMgr   := TAddIDETool.Create;
@@ -166,7 +194,9 @@ begin
     if (IDEConfig.ConfigRootKey <> 'BDS') then
       Item.SubItems.Add(IDEConfig.ConfigRootKey);
 
-    Item.Checked := FIDEToolMgr.IsInMenu(EntryPath, IDECOnfig.GetConfigKey);
+    Item.Checked := FIDEToolMgr.IsInMenu(EntryPath,
+                                         FEntryParams1,
+                                         IDEConfig.GetConfigKey);
   end;
 end;
 

@@ -141,9 +141,11 @@ begin
                          mtConfirmation, [mbYes, mbNo], -1, mbYes) = mrYes) then
           begin
             ConfigSelectionForm := TConfigSelectionForm.Create(AOwner,
-                                                               'Code coverage wizard',
+                                                               'Open in Code Coverage Wizard',
+                                                               '-O $PROJECT',
+                                                               'Run with Code Coverage Wizard',
+                                                               '-R $PROJECT',
                                                                ParamStr(0),
-                                                               '',
                                                                System.SysUtils.ExtractFilePath(ParamStr(0)));
 
             try

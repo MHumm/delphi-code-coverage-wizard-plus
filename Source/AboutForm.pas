@@ -44,6 +44,7 @@ type
     LinkLabelDCCGithub: TLinkLabel;
     LinkLabelDCCWPGithub: TLinkLabel;
     Label5: TLabel;
+    LabelCmdLineParams: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure LinkLabelDCCWPGithubLinkClick(Sender: TObject; const Link: string;
       LinkType: TSysLinkType);
