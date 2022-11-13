@@ -118,7 +118,7 @@
         <VerInfo_MinorVer>1</VerInfo_MinorVer>
         <VerInfo_Build>2</VerInfo_Build>
         <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=1.1.0.2;InternalName=;LegalCopyright=© 2022-2022 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.1.0.0;Comments=</VerInfo_Keys>
-        <Debugger_RunParams>-R d:\Test\EKON26.dccp</Debugger_RunParams>
+        <Debugger_RunParams>-R &quot;d:\Test 2022\EKON26.dccp&quot;</Debugger_RunParams>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>

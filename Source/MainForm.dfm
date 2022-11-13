@@ -27,7 +27,7 @@ object FormMain: TFormMain
     Width = 624
     Height = 388
     Align = alClient
-    ActiveCard = crd_Run
+    ActiveCard = crd_EditSettings
     BevelEdges = []
     BevelOuter = bvNone
     Caption = 'cp_Main'
@@ -46,7 +46,7 @@ object FormMain: TFormMain
       DesignSize = (
         624
         388)
-      object Label1: TLabel
+      object LabelRecentProjectsCaption: TLabel
         Left = 128
         Top = 16
         Width = 84
@@ -135,8 +135,6 @@ object FormMain: TFormMain
         TabOrder = 4
         ViewStyle = vsReport
         OnDblClick = ListViewProjectsDblClick
-        ExplicitWidth = 476
-        ExplicitHeight = 289
       end
       object ButtonOpenRecent: TButton
         Left = 128
@@ -202,7 +200,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 277
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_SaveAndRun
+        ActiveCard = crd_MiscSettings
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
@@ -219,21 +217,21 @@ object FormMain: TFormMain
           DesignSize = (
             422
             275)
-          object Label2: TLabel
+          object LabelUnitTestExe: TLabel
             Left = 8
             Top = 24
             Width = 212
             Height = 15
             Caption = 'Executable file of the unit test to analyze'
           end
-          object Label3: TLabel
+          object LabelUnitTestMap: TLabel
             Left = 8
             Top = 104
             Width = 179
             Height = 15
             Caption = 'Map file of the unit test to analyze'
           end
-          object Label11: TLabel
+          object LabelCodeCoveragePath: TLabel
             Left = 8
             Top = 176
             Width = 140
@@ -320,14 +318,14 @@ object FormMain: TFormMain
           DesignSize = (
             422
             275)
-          object Label4: TLabel
+          object LabelSourceFilesPath: TLabel
             Left = 8
             Top = 16
             Width = 286
             Height = 15
             Caption = 'Directory with the source files of the project to analyze'
           end
-          object Label10: TLabel
+          object LabelSourceFilesCaption: TLabel
             Left = 8
             Top = 67
             Width = 116
@@ -380,7 +378,6 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 3
             OnClick = b_SelectAllClick
-            ExplicitTop = 238
           end
           object b_DeselectAll: TButton
             Left = 139
@@ -396,7 +393,6 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 4
             OnClick = b_DeselectAllClick
-            ExplicitTop = 238
           end
           object b_RefreshSourceFiles: TButton
             Left = 280
@@ -412,7 +408,6 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 5
             OnClick = b_RefreshSourceFilesClick
-            ExplicitTop = 238
           end
         end
         object crd_Output: TCard
@@ -428,7 +423,7 @@ object FormMain: TFormMain
           DesignSize = (
             422
             275)
-          object Label5: TLabel
+          object LabelScriptOutputPath: TLabel
             Left = 8
             Top = 24
             Width = 350
@@ -437,14 +432,14 @@ object FormMain: TFormMain
               'Script output folder (files needed to execute DelphiCodeCoverage' +
               ')'
           end
-          object Label6: TLabel
+          object LabelReportOutputPath: TLabel
             Left = 8
             Top = 88
             Width = 162
             Height = 15
             Caption = 'Generated report output folder'
           end
-          object Label7: TLabel
+          object LabelOutputFormatsCaption: TLabel
             Left = 8
             Top = 144
             Width = 82
@@ -555,7 +550,7 @@ object FormMain: TFormMain
           DesignSize = (
             422
             275)
-          object Label8: TLabel
+          object LabelMiscSettingsNote: TLabel
             Left = 8
             Top = 16
             Width = 396
@@ -572,12 +567,12 @@ object FormMain: TFormMain
             Anchors = [akLeft, akTop, akRight]
             Caption = 'LabelPath'
           end
-          object Label9: TLabel
+          object LabelScriptPreviewCaption: TLabel
             Left = 32
             Top = 104
-            Width = 77
+            Width = 109
             Height = 15
-            Caption = 'Script preview:'
+            Caption = 'Script paths preview:'
           end
           object CheckBoxRelativePaths: TCheckBox
             Left = 8
@@ -596,7 +591,6 @@ object FormMain: TFormMain
             Anchors = [akLeft, akTop, akRight, akBottom]
             Enabled = False
             TabOrder = 1
-            ExplicitHeight = 148
           end
         end
         object crd_SaveAndRun: TCard
@@ -609,7 +603,6 @@ object FormMain: TFormMain
           CardIndex = 4
           TabOrder = 4
           OnEnter = crd_SaveAndRunEnter
-          ExplicitHeight = 287
           object ButtonSave: TButton
             Left = 16
             Top = 16
@@ -665,7 +658,6 @@ object FormMain: TFormMain
         Align = alLeft
         BevelEdges = [beRight]
         TabOrder = 1
-        ExplicitHeight = 400
         object ButtonGroup1: TButtonGroup
           Left = 1
           Top = 1
@@ -703,7 +695,6 @@ object FormMain: TFormMain
           TabOrder = 0
           TabStop = False
           OnButtonClicked = ButtonGroup1ButtonClicked
-          ExplicitHeight = 398
         end
       end
       object PanelHeader: TPanel
@@ -723,11 +714,13 @@ object FormMain: TFormMain
           AlignWithMargins = True
           Left = 4
           Top = 4
-          Width = 47
-          Height = 15
+          Width = 416
+          Height = 52
           Align = alClient
           Caption = 'LabelTop'
           WordWrap = True
+          ExplicitWidth = 47
+          ExplicitHeight = 15
         end
       end
       object PanelBottomNavigation: TPanel
@@ -740,7 +733,6 @@ object FormMain: TFormMain
         Caption = 'PanelBottomNavigation'
         ShowCaption = False
         TabOrder = 3
-        ExplicitTop = 349
         object ButtonPrevious: TButton
           Left = 0
           Top = 5
@@ -798,7 +790,7 @@ object FormMain: TFormMain
       DesignSize = (
         624
         388)
-      object Label12: TLabel
+      object LabelRunDescription: TLabel
         Left = 24
         Top = 8
         Width = 573
@@ -848,12 +840,11 @@ object FormMain: TFormMain
       object WebBrowser: TWebBrowser
         Left = 0
         Top = 48
-        Width = 619
-        Height = 333
+        Width = 615
+        Height = 332
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 1
         SelectedEngine = EdgeIfAvailable
-        ExplicitHeight = 345
         ControlData = {
           4C000000903F0000502200000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800

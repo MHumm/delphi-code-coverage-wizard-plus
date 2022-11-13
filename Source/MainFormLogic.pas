@@ -139,6 +139,7 @@ begin
       ActionDetails := GetCommandLineAction;
 
       FileName := ParamStr(ActionDetails.FileParamIndex);
+
       FN       := FileName.ToUpper;
       if not FN.EndsWith('DCCP') then
       begin
