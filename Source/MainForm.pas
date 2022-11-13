@@ -119,6 +119,13 @@ type
     PMOpenSelected: TMenuItem;
     PMRunselected: TMenuItem;
     PMRemoveselected: TMenuItem;
+    ScrollBoxOutputSettings: TScrollBox;
+    CheckBoxEMMA21: TCheckBox;
+    CheckBoxOpenEMMAFileExtern: TCheckBox;
+    CheckBoxOpenXMLFileExtern: TCheckBox;
+    CheckBoxOpenHTMLFileExtern: TCheckBox;
+    CheckBoxXMLLines: TCheckBox;
+    CheckBoxXMLCombineMultiple: TCheckBox;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -170,6 +177,10 @@ type
     procedure EdgeBrowserCreateWebViewCompleted(Sender: TCustomEdgeBrowser;
       AResult: HRESULT);
     procedure EdgeBrowserHistoryChanged(Sender: TCustomEdgeBrowser);
+    procedure CheckBoxOpenXMLFileExternClick(Sender: TObject);
+    procedure CheckBoxOpenHTMLFileExternClick(Sender: TObject);
+    procedure CheckBoxOpenEMMAFileExternClick(Sender: TObject);
+    procedure CheckBoxEMMA21Click(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -329,6 +340,7 @@ implementation
 uses
   System.UITypes,
   System.IOUtils,
+  System.TypInfo,
   UScriptsGenerator,
   UScriptRunner,
   UManageToolsMenu,
@@ -620,14 +632,21 @@ begin
       EditSourcePath.OnChange := OnChangeBackup;
     end;
 
-    EditScriptOutputFolder.Text := FProject.ScriptsOutputPath;
-    EditReportOutputFolder.Text := FProject.ReportOutputPath;
-    EditCodeCoverageExe.Text    := FProject.CodeCoverageExePath;
+    EditScriptOutputFolder.Text        := FProject.ScriptsOutputPath;
+    EditReportOutputFolder.Text        := FProject.ReportOutputPath;
+    EditCodeCoverageExe.Text           := FProject.CodeCoverageExePath;
 
-    CheckBoxEMMA.Checked          := ofEMMA in FProject.OutputFormats;
-    CheckBoxMeta.Checked          := ofMeta in FProject.OutputFormats;
-    CheckBoxXML.Checked           := ofXML  in FProject.OutputFormats;
-    CheckBoxHTML.Checked          := ofHTML in FProject.OutputFormats;
+    CheckBoxEMMA.Checked               := ofEMMA   in FProject.OutputFormats;
+    CheckBoxMeta.Checked               := ofMeta   in FProject.OutputFormats;
+    CheckBoxEMMA21.Checked             := ofEMMA21 in FProject.OutputFormats;
+    CheckBoxXML.Checked                := ofXML    in FProject.OutputFormats;
+    CheckBoxHTML.Checked               := ofHTML   in FProject.OutputFormats;
+    CheckBoxOpenEMMAFileExtern.Checked := FProject.DisplayEMMAFileExt;
+    CheckBoxOpenXMLFileExtern.Checked  := FProject.DisplayXMLFileExt;
+    CheckBoxOpenHTMLFileExtern.Checked := FProject.DisplayHTMLFileExt;
+//    CheckBoxXMLLines.Checked           := false;
+//    CheckBoxXMLCombineMultiple.Checked := false;
+
     CheckBoxRelativePaths.Checked := FProject.RelativeToScriptPath;
 
     // Misc settings is always declared as completed
@@ -885,8 +904,9 @@ begin
                  end;
         paHelp : ButtonAbout.Click;
         else
-{ TODO : Umsetzen! }
-          MessageDlg('', mtError, [mbOK], -1);
+          MessageDlg(System.TypInfo.GetEnumName(
+                       TypeInfo(TParamAction), Integer(Action)),
+                     mtError, [mbOK], -1);
       end;
     end,
     procedure(const FailureMessage: string)
@@ -952,6 +972,11 @@ begin
   ProcessCmdLineParams;
 end;
 
+procedure TFormMain.CheckBoxEMMA21Click(Sender: TObject);
+begin
+  OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA21);
+end;
+
 procedure TFormMain.CheckBoxEMMAClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA);
@@ -965,6 +990,21 @@ end;
 procedure TFormMain.CheckBoxMetaClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofMETA);
+end;
+
+procedure TFormMain.CheckBoxOpenEMMAFileExternClick(Sender: TObject);
+begin
+  FProject.DisplayEMMAFileExt := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxOpenHTMLFileExternClick(Sender: TObject);
+begin
+  FProject.DisplayHTMLFileExt := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxOpenXMLFileExternClick(Sender: TObject);
+begin
+  FProject.DisplayXMLFileExt := (Sender as TCheckBox).Checked;
 end;
 
 procedure TFormMain.CheckBoxRelativePathsClick(Sender: TObject);
@@ -1038,14 +1078,21 @@ end;
 
 procedure TFormMain.ClearWizardFields;
 begin
-  EditExeFile.Text              := '';
-  EditMapFile.Text              := '';
-  EditScriptOutputFolder.Text   := '';
-  EditReportOutputFolder.Text   := '';
-  CheckBoxEMMA.Checked          := false;
-  CheckBoxMeta.Checked          := false;
-  CheckBoxXML.Checked           := false;
-  CheckBoxHTML.Checked          := false;
+  EditExeFile.Text                   := '';
+  EditMapFile.Text                   := '';
+  EditScriptOutputFolder.Text        := '';
+  EditReportOutputFolder.Text        := '';
+  CheckBoxEMMA.Checked               := false;
+  CheckBoxMeta.Checked               := false;
+  CheckBoxXML.Checked                := false;
+  CheckBoxHTML.Checked               := false;
+  CheckBoxEMMA21.Checked             := false;
+  CheckBoxOpenEMMAFileExtern.Checked := false;
+  CheckBoxOpenXMLFileExtern.Checked  := false;
+  CheckBoxOpenHTMLFileExtern.Checked := false;
+  CheckBoxXMLLines.Checked           := false;
+  CheckBoxXMLCombineMultiple.Checked := false;
+
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;
   MemoScriptPreview.Lines.Clear;

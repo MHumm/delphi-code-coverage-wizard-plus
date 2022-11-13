@@ -30,9 +30,10 @@ uses
 
 type
   /// <summary>
-  ///   Possible output formats for the report
+  ///   Possible output formats for the report, where Meta can only be used in
+  ///   conjunction with ofEMMA
   /// </summary>
-  TOutputFormat = (ofEMMA, ofMETA, ofXML, ofHTML);
+  TOutputFormat = (ofEMMA, ofEMMA21, ofMETA, ofXML, ofHTML);
 
   /// <summary>
   ///   One entry in the lsit of source files to analyze
@@ -249,6 +250,21 @@ type
     /// </summary>
     FOutputFormats        : TOutputFormatSet;
     /// <summary>
+    ///   Displays the newly generated EMMA-file in the associated viewer
+    ///   via ShellExecute
+    /// </summary>
+    FDisplayEMMAFileExt   : Boolean;
+    /// <summary>
+    ///   Displays the newly generated XML-file in the associated viewer
+    ///   via ShellExecute
+    /// </summary>
+    FDisplayXMLFileExt    : Boolean;
+    /// <summary>
+    ///   Displays the newly generated XML-file in the associated viewer
+    ///   via ShellExecute
+    /// </summary>
+    FDisplayHTMLFileExt   : Boolean;
+    /// <summary>
     ///   When true, paths are relative to the script path where the batch file
     ///   is stored.
     /// </summary>
@@ -425,6 +441,28 @@ type
     /// </summary>
     property FileName : string
       read   FFileName;
+
+    /// <summary>
+    ///   Displays the newly generated XML-file in the associated viewer
+    ///   via ShellExecute
+    /// </summary>
+    property DisplayEMMAFileExt : Boolean
+      read   FDisplayEMMAFileExt
+      write  FDisplayEMMAFileExt;
+    /// <summary>
+    ///   Displays the newly generated XML-file in the associated viewer
+    ///   via ShellExecute
+    /// </summary>
+    property DisplayXMLFileExt : Boolean
+      read   FDisplayXMLFileExt
+      write  FDisplayXMLFileExt;
+    /// <summary>
+    ///   Displays the newly generated XML-file in the associated viewer
+    ///   via ShellExecute
+    /// </summary>
+    property  DisplayHTMLFileExt : Boolean
+      read    FDisplayHTMLFileExt
+      write   FDisplayHTMLFileExt;
   published
     // Necessary to be able to use RTTI for this one
 
@@ -487,9 +525,9 @@ end;
 
 function TProjectSettings.IsAnyDataDefined: Boolean;
 begin
-  Result := IsExeAndMapDefined or IsSourcePathAndFilesDefined or
-            IsOutputSettingsDefined or FRelativeToScriptPath or
-            (FCodeCoverageExePath <> '');
+  Result := IsExeAndMapDefined or //IsSourcePathAndFilesDefined or
+            IsOutputSettingsDefined or FRelativeToScriptPath; // or
+            //(FCodeCoverageExePath <> '');
 end;
 
 function TProjectSettings.IsExeAndMapDefined: Boolean;
@@ -584,6 +622,18 @@ begin
     LNode := LOutput.ChildNodes.FindNode('ReportOutputFormats');
     if Assigned(LNode) then
       System.TypInfo.SetSetProp(self, 'OutputFormats', LNode.Text);
+
+    LNode := LOutput.ChildNodes.FindNode('DisplayEMMAExternally');
+    if Assigned(LNode) then
+      FDisplayEMMAFileExt := StrToBool(LNode.Text);
+
+    LNode := LOutput.ChildNodes.FindNode('DisplayXMLExternally');
+    if Assigned(LNode) then
+      FDisplayXMLFileExt := StrToBool(LNode.Text);
+
+    LNode := LOutput.ChildNodes.FindNode('DisplayHTMLExternally');
+    if Assigned(LNode) then
+      FDisplayHTMLFileExt := StrToBool(LNode.Text);
   end;
 
   // Misc. Settings
@@ -678,6 +728,15 @@ begin
 
   LNodeElement      := LOutput.AddChild('ReportOutputFormats', -1);
   LNodeElement.Text := System.TypInfo.GetSetProp(self, 'OutputFormats', false);
+
+  LNodeElement      := LOutput.AddChild('DisplayEMMAExternally', -1);
+  LNodeElement.Text := BoolToStr(FDisplayEMMAFileExt, true);
+
+  LNodeElement      := LOutput.AddChild('DisplayXMLExternally', -1);
+  LNodeElement.Text := BoolToStr(FDisplayXMLFileExt, true);
+
+  LNodeElement      := LOutput.AddChild('DisplayHTMLExternally', -1);
+  LNodeElement.Text := BoolToStr(FDisplayHTMLFileExt, true);
 
   // Miscelleanous settings
   LMisc             := LDocument.DocumentElement.AddChild('MiscSettings', -1);

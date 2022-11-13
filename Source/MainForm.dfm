@@ -2,7 +2,7 @@ object FormMain: TFormMain
   Left = 0
   Top = 0
   Caption = 'Delphi Code Coverage Wizard'
-  ClientHeight = 388
+  ClientHeight = 614
   ClientWidth = 624
   Color = clBtnFace
   Constraints.MinHeight = 426
@@ -24,27 +24,27 @@ object FormMain: TFormMain
     Left = 0
     Top = 0
     Width = 624
-    Height = 388
+    Height = 614
     Align = alClient
-    ActiveCard = crd_Start
+    ActiveCard = crd_EditSettings
     BevelEdges = []
     BevelOuter = bvNone
     Caption = 'cp_Main'
     TabOrder = 0
-    ExplicitWidth = 620
-    ExplicitHeight = 387
+    ExplicitHeight = 388
     object crd_Start: TCard
       Left = 0
       Top = 0
       Width = 624
-      Height = 388
+      Height = 614
       BevelEdges = []
       Caption = 'crd_Start'
       CardIndex = 0
       TabOrder = 0
+      ExplicitHeight = 388
       DesignSize = (
         624
-        388)
+        614)
       object LabelRecentProjectsCaption: TLabel
         Left = 128
         Top = 16
@@ -116,7 +116,7 @@ object FormMain: TFormMain
         Left = 128
         Top = 37
         Width = 480
-        Height = 290
+        Height = 516
         Anchors = [akLeft, akTop, akRight, akBottom]
         Columns = <
           item
@@ -135,10 +135,12 @@ object FormMain: TFormMain
         TabOrder = 4
         ViewStyle = vsReport
         OnDblClick = ListViewProjectsDblClick
+        ExplicitWidth = 476
+        ExplicitHeight = 289
       end
       object ButtonOpenRecent: TButton
         Left = 128
-        Top = 335
+        Top = 561
         Width = 158
         Height = 42
         Hint = 'Open the selected project for editing'
@@ -150,10 +152,11 @@ object FormMain: TFormMain
         Images = VirtualImageListButtons32
         TabOrder = 5
         OnClick = ButtonOpenRecentClick
+        ExplicitTop = 334
       end
       object ButtonRunRecent: TButton
         Left = 289
-        Top = 335
+        Top = 561
         Width = 158
         Height = 42
         Hint = 'Open and directly run the selected project'
@@ -165,10 +168,11 @@ object FormMain: TFormMain
         Images = VirtualImageListButtons32
         TabOrder = 6
         OnClick = ButtonRunRecentClick
+        ExplicitTop = 334
       end
       object ButtonDeleteSelected: TButton
         Left = 450
-        Top = 335
+        Top = 561
         Width = 158
         Height = 42
         Hint = 'Delete the selected project from list only'
@@ -180,43 +184,47 @@ object FormMain: TFormMain
         Images = VirtualImageListButtons32
         TabOrder = 7
         OnClick = ButtonDeleteSelectedClick
+        ExplicitTop = 334
       end
     end
     object crd_EditSettings: TCard
       Left = 0
       Top = 0
       Width = 624
-      Height = 388
+      Height = 614
       BevelEdges = []
       Caption = 'crd_EditSettings'
       CardIndex = 1
       TabOrder = 1
+      ExplicitHeight = 388
       DesignSize = (
         624
-        388)
+        614)
       object cp_Wizard: TCardPanel
         Left = 200
         Top = 60
         Width = 424
-        Height = 277
+        Height = 503
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_SaveAndRun
+        ActiveCard = crd_Output
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
+        ExplicitHeight = 277
         object crd_UnitTestExecutable: TCard
           Left = 1
           Top = 1
           Width = 422
-          Height = 275
+          Height = 501
           BevelEdges = []
           Caption = 'crd_UnitTestExecutable'
           CardIndex = 0
           TabOrder = 0
           OnEnter = crd_UnitTestExecutableEnter
+          ExplicitHeight = 275
           DesignSize = (
             422
-            275)
+            501)
           object LabelUnitTestExe: TLabel
             Left = 8
             Top = 24
@@ -309,15 +317,16 @@ object FormMain: TFormMain
           Left = 1
           Top = 1
           Width = 422
-          Height = 275
+          Height = 501
           BevelEdges = []
           Caption = 'crd_Source'
           CardIndex = 1
           TabOrder = 1
           OnEnter = crd_SourceEnter
+          ExplicitHeight = 275
           DesignSize = (
             422
-            275)
+            501)
           object LabelSourceFilesPath: TLabel
             Left = 8
             Top = 16
@@ -358,15 +367,16 @@ object FormMain: TFormMain
             Left = 8
             Top = 88
             Width = 404
-            Height = 134
+            Height = 360
             Anchors = [akLeft, akTop, akRight, akBottom]
             ItemHeight = 17
             TabOrder = 2
             OnClickCheck = CheckListBoxSourceClickCheck
+            ExplicitHeight = 134
           end
           object b_SelectAll: TButton
             Left = -1
-            Top = 226
+            Top = 452
             Width = 138
             Height = 42
             Hint = 'Select all source files'
@@ -378,10 +388,11 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 3
             OnClick = b_SelectAllClick
+            ExplicitTop = 226
           end
           object b_DeselectAll: TButton
             Left = 139
-            Top = 226
+            Top = 452
             Width = 138
             Height = 42
             Hint = 'deselect all source files'
@@ -393,10 +404,11 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 4
             OnClick = b_DeselectAllClick
+            ExplicitTop = 226
           end
           object b_RefreshSourceFiles: TButton
             Left = 280
-            Top = 226
+            Top = 452
             Width = 138
             Height = 42
             Hint = 'Refresh file list'
@@ -408,132 +420,214 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons32
             TabOrder = 5
             OnClick = b_RefreshSourceFilesClick
+            ExplicitTop = 226
           end
         end
         object crd_Output: TCard
           Left = 1
           Top = 1
           Width = 422
-          Height = 275
+          Height = 501
           BevelEdges = []
           Caption = 'crd_Output'
           CardIndex = 2
           TabOrder = 2
           OnEnter = crd_OutputEnter
-          DesignSize = (
-            422
-            275)
-          object LabelScriptOutputPath: TLabel
-            Left = 8
-            Top = 24
-            Width = 350
-            Height = 15
-            Caption = 
-              'Script output folder (files needed to execute DelphiCodeCoverage' +
-              ')'
-          end
-          object LabelReportOutputPath: TLabel
-            Left = 8
-            Top = 88
-            Width = 162
-            Height = 15
-            Caption = 'Generated report output folder'
-          end
-          object LabelOutputFormatsCaption: TLabel
-            Left = 8
-            Top = 144
-            Width = 82
-            Height = 15
-            Caption = 'Output formats'
-          end
-          object Bevel1: TBevel
-            Left = 96
-            Top = 152
-            Width = 321
-            Height = 1
-          end
-          object EditScriptOutputFolder: TEdit
-            Left = 8
-            Top = 45
-            Width = 355
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
+          ExplicitHeight = 275
+          object ScrollBoxOutputSettings: TScrollBox
+            Left = 0
+            Top = 0
+            Width = 422
+            Height = 501
+            HorzScrollBar.Visible = False
+            Align = alClient
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            BorderStyle = bsNone
             TabOrder = 0
-            OnChange = EditScriptOutputFolderExit
-            OnExit = EditScriptOutputFolderExit
-          end
-          object ButtonScriptOutputFolder: TButton
-            Left = 369
-            Top = 44
-            Width = 50
-            Height = 25
-            Anchors = [akTop, akRight]
-            ImageAlignment = iaCenter
-            ImageIndex = 2
-            ImageName = 'Actions-document-open-folder-icon'
-            Images = VirtualImageListButtons16
-            TabOrder = 1
-            OnClick = ButtonScriptOutputFolderClick
-            OnExit = ButtonScriptOutputFolderExit
-          end
-          object EditReportOutputFolder: TEdit
-            Left = 8
-            Top = 109
-            Width = 355
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 2
-            OnChange = EditReportOutputFolderExit
-          end
-          object ButtonReportOutputFolder: TButton
-            Left = 369
-            Top = 108
-            Width = 50
-            Height = 25
-            Anchors = [akTop, akRight]
-            ImageAlignment = iaCenter
-            ImageIndex = 2
-            ImageName = 'Actions-document-open-folder-icon'
-            Images = VirtualImageListButtons16
-            TabOrder = 3
-            OnClick = ButtonReportOutputFolderClick
-          end
-          object CheckBoxEMMA: TCheckBox
-            Left = 8
-            Top = 168
-            Width = 297
-            Height = 17
-            Caption = 'EMMA coverage output as '#39'coverage.es'#39'  (-emma)'
-            TabOrder = 4
-            OnClick = CheckBoxEMMAClick
-          end
-          object CheckBoxMeta: TCheckBox
-            Left = 32
-            Top = 200
-            Width = 249
-            Height = 17
-            Caption = 'META data and coverage data (-meta)'
-            Enabled = False
-            TabOrder = 5
-            OnClick = CheckBoxMetaClick
-          end
-          object CheckBoxXML: TCheckBox
-            Left = 8
-            Top = 232
-            Width = 377
-            Height = 17
-            Caption = 'XML coverage output as '#39'CodeCoverage_Summary.xml'#39' (-xml)'
-            TabOrder = 6
-            OnClick = CheckBoxXMLClick
-          end
-          object CheckBoxHTML: TCheckBox
-            Left = 8
-            Top = 264
-            Width = 385
-            Height = 17
-            Caption = 'HTML coverage output as '#39'CodeCoverage_Summary.html'#39' (-html)'
-            TabOrder = 7
-            OnClick = CheckBoxHTMLClick
+            ExplicitHeight = 313
+            DesignSize = (
+              422
+              501)
+            object Bevel1: TBevel
+              Left = 93
+              Top = 133
+              Width = 321
+              Height = 1
+            end
+            object LabelOutputFormatsCaption: TLabel
+              Left = 5
+              Top = 125
+              Width = 82
+              Height = 15
+              Caption = 'Output formats'
+            end
+            object LabelReportOutputPath: TLabel
+              Left = 5
+              Top = 69
+              Width = 162
+              Height = 15
+              Caption = 'Generated report output folder'
+            end
+            object LabelScriptOutputPath: TLabel
+              Left = 5
+              Top = 5
+              Width = 350
+              Height = 15
+              Caption = 
+                'Script output folder (files needed to execute DelphiCodeCoverage' +
+                ')'
+            end
+            object ButtonReportOutputFolder: TButton
+              Left = 350
+              Top = 89
+              Width = 50
+              Height = 25
+              Anchors = [akTop, akRight]
+              ImageAlignment = iaCenter
+              ImageIndex = 2
+              ImageName = 'Actions-document-open-folder-icon'
+              Images = VirtualImageListButtons16
+              TabOrder = 0
+              OnClick = ButtonReportOutputFolderClick
+              ExplicitLeft = 333
+            end
+            object ButtonScriptOutputFolder: TButton
+              Left = 350
+              Top = 25
+              Width = 50
+              Height = 25
+              Anchors = [akTop, akRight]
+              ImageAlignment = iaCenter
+              ImageIndex = 2
+              ImageName = 'Actions-document-open-folder-icon'
+              Images = VirtualImageListButtons16
+              TabOrder = 1
+              OnClick = ButtonScriptOutputFolderClick
+              OnExit = ButtonScriptOutputFolderExit
+              ExplicitLeft = 333
+            end
+            object CheckBoxEMMA: TCheckBox
+              Left = 8
+              Top = 148
+              Width = 297
+              Height = 17
+              Caption = 'EMMA coverage output as '#39'coverage.es'#39'  (-emma)'
+              TabOrder = 2
+              OnClick = CheckBoxEMMAClick
+            end
+            object CheckBoxHTML: TCheckBox
+              Left = 8
+              Top = 404
+              Width = 385
+              Height = 17
+              Caption = 'HTML coverage output as '#39'CodeCoverage_Summary.html'#39' (-html)'
+              TabOrder = 3
+              OnClick = CheckBoxHTMLClick
+            end
+            object CheckBoxMeta: TCheckBox
+              Left = 29
+              Top = 180
+              Width = 249
+              Height = 17
+              Caption = 'META data and coverage data (-meta)'
+              Enabled = False
+              TabOrder = 4
+              OnClick = CheckBoxMetaClick
+            end
+            object CheckBoxXML: TCheckBox
+              Left = 8
+              Top = 276
+              Width = 377
+              Height = 17
+              Caption = 'XML coverage output as '#39'CodeCoverage_Summary.xml'#39' (-xml)'
+              TabOrder = 5
+              OnClick = CheckBoxXMLClick
+            end
+            object EditReportOutputFolder: TEdit
+              Left = 5
+              Top = 90
+              Width = 339
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 6
+              OnChange = EditReportOutputFolderExit
+              ExplicitWidth = 322
+            end
+            object EditScriptOutputFolder: TEdit
+              Left = 5
+              Top = 26
+              Width = 339
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 7
+              OnChange = EditScriptOutputFolderExit
+              OnExit = EditScriptOutputFolderExit
+              ExplicitWidth = 322
+            end
+            object CheckBoxEMMA21: TCheckBox
+              Left = 8
+              Top = 212
+              Width = 393
+              Height = 17
+              Caption = 'EMMA 2.1 coverage output as '#39'coverage.es'#39'  (-emma21)'
+              Enabled = False
+              TabOrder = 8
+              OnClick = CheckBoxEMMA21Click
+            end
+            object CheckBoxOpenEMMAFileExtern: TCheckBox
+              Left = 8
+              Top = 244
+              Width = 385
+              Height = 17
+              Caption = 
+                'Open generated EMMA file with assiciated application (ShellExecu' +
+                'te)'
+              TabOrder = 9
+              OnClick = CheckBoxOpenEMMAFileExternClick
+            end
+            object CheckBoxOpenXMLFileExtern: TCheckBox
+              Left = 8
+              Top = 308
+              Width = 385
+              Height = 17
+              Caption = 
+                'Open generated XML file with assiciated application (ShellExecut' +
+                'e)'
+              TabOrder = 10
+              OnClick = CheckBoxOpenXMLFileExternClick
+            end
+            object CheckBoxOpenHTMLFileExtern: TCheckBox
+              Left = 8
+              Top = 436
+              Width = 385
+              Height = 17
+              Caption = 
+                'Open generated HTML file with assiciated application (ShellExecu' +
+                'te)'
+              TabOrder = 11
+              OnClick = CheckBoxOpenHTMLFileExternClick
+            end
+            object CheckBoxXMLLines: TCheckBox
+              Left = 8
+              Top = 340
+              Width = 385
+              Height = 17
+              Caption = 'Add source code line information to generated XML file'
+              Enabled = False
+              TabOrder = 12
+            end
+            object CheckBoxXMLCombineMultiple: TCheckBox
+              Left = 8
+              Top = 372
+              Width = 393
+              Height = 17
+              Caption = 
+                'XML: combine multiple occurances of the same file (esp. for gene' +
+                'rics)'
+              Enabled = False
+              TabOrder = 13
+            end
           end
         end
         object crd_MiscSettings: TCard
@@ -541,15 +635,16 @@ object FormMain: TFormMain
           Left = 1
           Top = 1
           Width = 422
-          Height = 275
+          Height = 501
           BevelEdges = []
           Caption = 'crd_MiscSettings'
           CardIndex = 3
           TabOrder = 3
           OnEnter = crd_MiscSettingsEnter
+          ExplicitHeight = 275
           DesignSize = (
             422
-            275)
+            501)
           object LabelMiscSettingsNote: TLabel
             Left = 8
             Top = 16
@@ -587,22 +682,24 @@ object FormMain: TFormMain
             Left = 32
             Top = 125
             Width = 377
-            Height = 136
+            Height = 362
             Anchors = [akLeft, akTop, akRight, akBottom]
             Enabled = False
             TabOrder = 1
+            ExplicitHeight = 136
           end
         end
         object crd_SaveAndRun: TCard
           Left = 1
           Top = 1
           Width = 422
-          Height = 275
+          Height = 501
           BevelEdges = []
           Caption = 'crd_SaveAndRun'
           CardIndex = 4
           TabOrder = 4
           OnEnter = crd_SaveAndRunEnter
+          ExplicitHeight = 275
           object ButtonSave: TButton
             Left = 16
             Top = 16
@@ -654,15 +751,16 @@ object FormMain: TFormMain
         Left = 0
         Top = 0
         Width = 200
-        Height = 388
+        Height = 614
         Align = alLeft
         BevelEdges = [beRight]
         TabOrder = 1
+        ExplicitHeight = 388
         object ButtonGroup1: TButtonGroup
           Left = 1
           Top = 1
           Width = 198
-          Height = 386
+          Height = 612
           Align = alClient
           BevelInner = bvNone
           BevelOuter = bvNone
@@ -695,6 +793,7 @@ object FormMain: TFormMain
           TabOrder = 0
           TabStop = False
           OnButtonClicked = ButtonGroup1ButtonClicked
+          ExplicitHeight = 386
         end
       end
       object PanelHeader: TPanel
@@ -725,7 +824,7 @@ object FormMain: TFormMain
       end
       object PanelBottomNavigation: TPanel
         Left = 200
-        Top = 337
+        Top = 563
         Width = 423
         Height = 50
         Anchors = [akLeft, akRight, akBottom]
@@ -733,6 +832,7 @@ object FormMain: TFormMain
         Caption = 'PanelBottomNavigation'
         ShowCaption = False
         TabOrder = 3
+        ExplicitTop = 337
         object ButtonPrevious: TButton
           Left = 0
           Top = 5
@@ -781,15 +881,14 @@ object FormMain: TFormMain
       Left = 0
       Top = 0
       Width = 624
-      Height = 388
+      Height = 614
       Caption = 'crd_Run'
       CardIndex = 2
       TabOrder = 2
-      ExplicitWidth = 620
-      ExplicitHeight = 387
+      ExplicitHeight = 388
       DesignSize = (
         624
-        388)
+        614)
       object LabelRunDescription: TLabel
         Left = 24
         Top = 8
@@ -816,13 +915,14 @@ object FormMain: TFormMain
       Left = 0
       Top = 0
       Width = 624
-      Height = 388
+      Height = 614
       Caption = 'crd_Finished'
       CardIndex = 3
       TabOrder = 3
+      ExplicitHeight = 388
       DesignSize = (
         624
-        388)
+        614)
       object ButtonHomeAfterRun: TButton
         Left = 0
         Top = 0
@@ -869,12 +969,13 @@ object FormMain: TFormMain
         Left = 0
         Top = 48
         Width = 617
-        Height = 340
+        Height = 566
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 3
         UserDataFolder = '%LOCALAPPDATA%\bds.exe.WebView2'
         OnCreateWebViewCompleted = EdgeBrowserCreateWebViewCompleted
         OnHistoryChanged = EdgeBrowserHistoryChanged
+        ExplicitHeight = 340
       end
     end
   end
