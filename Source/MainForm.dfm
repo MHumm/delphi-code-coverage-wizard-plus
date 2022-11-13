@@ -18,7 +18,6 @@ object FormMain: TFormMain
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  OnResize = FormResize
   OnShow = FormShow
   TextHeight = 15
   object cp_Main: TCardPanel
@@ -27,7 +26,7 @@ object FormMain: TFormMain
     Width = 624
     Height = 388
     Align = alClient
-    ActiveCard = crd_EditSettings
+    ActiveCard = crd_Start
     BevelEdges = []
     BevelOuter = bvNone
     Caption = 'cp_Main'
@@ -132,6 +131,7 @@ object FormMain: TFormMain
         MultiSelect = True
         ReadOnly = True
         RowSelect = True
+        PopupMenu = PopupMenuRecentProjects
         TabOrder = 4
         ViewStyle = vsReport
         OnDblClick = ListViewProjectsDblClick
@@ -200,7 +200,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 277
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_MiscSettings
+        ActiveCard = crd_SaveAndRun
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
@@ -828,7 +828,7 @@ object FormMain: TFormMain
         Top = 0
         Width = 158
         Height = 42
-        Hint = 'Go back to start screen'
+        Hint = 'Go back to start screen of the application'
         Caption = '&Home'
         ImageIndex = 13
         ImageName = 'Actions-go-home-icon'
@@ -836,21 +836,6 @@ object FormMain: TFormMain
         Images = VirtualImageListButtons32
         TabOrder = 0
         OnClick = ButtonHomeClick
-      end
-      object WebBrowser: TWebBrowser
-        Left = 0
-        Top = 48
-        Width = 615
-        Height = 332
-        Anchors = [akLeft, akTop, akRight, akBottom]
-        TabOrder = 1
-        SelectedEngine = EdgeIfAvailable
-        ControlData = {
-          4C000000903F0000502200000000000000000000000000000000000000000000
-          000000004C000000000000000000000001000000E0D057007335CF11AE690800
-          2B2E126208000000000000004C0000000114020000000000C000000000000046
-          8000000000000000000000000000000000000000000000000000000000000000
-          00000000000000000100000000000000000000000000000000000000}
       end
       object ButtonBrowserBack: TButton
         Left = 160
@@ -863,7 +848,7 @@ object FormMain: TFormMain
         ImageName = 'Actions-go-previous-view-icon'
         ImageMargins.Left = 5
         Images = VirtualImageListButtons32
-        TabOrder = 2
+        TabOrder = 1
         OnClick = ButtonBrowserBackClick
       end
       object ButtonBrowserNext: TButton
@@ -877,8 +862,19 @@ object FormMain: TFormMain
         ImageName = 'Actions-go-next-view-icon'
         ImageMargins.Left = 5
         Images = VirtualImageListButtons32
-        TabOrder = 3
+        TabOrder = 2
         OnClick = ButtonBrowserNextClick
+      end
+      object EdgeBrowser: TEdgeBrowser
+        Left = 0
+        Top = 48
+        Width = 617
+        Height = 340
+        Anchors = [akLeft, akTop, akRight, akBottom]
+        TabOrder = 3
+        UserDataFolder = '%LOCALAPPDATA%\bds.exe.WebView2'
+        OnCreateWebViewCompleted = EdgeBrowserCreateWebViewCompleted
+        OnHistoryChanged = EdgeBrowserHistoryChanged
       end
     end
   end
@@ -1164,5 +1160,28 @@ object FormMain: TFormMain
     Title = 'Select source code folder'
     Left = 82
     Top = 238
+  end
+  object PopupMenuRecentProjects: TPopupMenu
+    Images = VirtualImageListButtons16
+    Left = 184
+    Top = 104
+    object PMOpenSelected: TMenuItem
+      Caption = 'Open selected'
+      ImageIndex = 2
+      ImageName = 'Actions-document-open-folder-icon'
+      OnClick = ButtonOpenRecentClick
+    end
+    object PMRunselected: TMenuItem
+      Caption = 'Run selected'
+      ImageIndex = 0
+      ImageName = 'Actions-arrow-right-icon'
+      OnClick = ButtonRunRecentClick
+    end
+    object PMRemoveselected: TMenuItem
+      Caption = 'Remove selected'
+      ImageIndex = 5
+      ImageName = 'Actions-trash-empty-icon'
+      OnClick = ButtonDeleteSelectedClick
+    end
   end
 end

@@ -27,7 +27,7 @@ uses
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.ComCtrls, Vcl.ButtonGroup,
   Vcl.CheckLst, USettings, UDataModuleIcons, UProjectSettings, Vcl.WinXCtrls,
   Winapi.WebView2, Winapi.ActiveX, Vcl.Edge, Vcl.OleCtrls, SHDocVw,
-  MainFormLogic;
+  MainFormLogic, Vcl.Menus;
 
 type
   /// <summary>
@@ -112,9 +112,13 @@ type
     ActivityIndicator: TActivityIndicator;
     crd_Finished: TCard;
     ButtonHomeAfterRun: TButton;
-    WebBrowser: TWebBrowser;
     ButtonBrowserBack: TButton;
     ButtonBrowserNext: TButton;
+    EdgeBrowser: TEdgeBrowser;
+    PopupMenuRecentProjects: TPopupMenu;
+    PMOpenSelected: TMenuItem;
+    PMRunselected: TMenuItem;
+    PMRemoveselected: TMenuItem;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -162,8 +166,10 @@ type
     procedure ButtonRunRecentClick(Sender: TObject);
     procedure ButtonBrowserBackClick(Sender: TObject);
     procedure ButtonBrowserNextClick(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure EdgeBrowserCreateWebViewCompleted(Sender: TCustomEdgeBrowser;
+      AResult: HRESULT);
+    procedure EdgeBrowserHistoryChanged(Sender: TCustomEdgeBrowser);
   private
     /// <summary>
     ///   Manages application settings
@@ -279,13 +285,6 @@ type
     /// </param>
     procedure OnTestRunFinished(CallResult: UInt32);
     /// <summary>
-    ///   At least the version of TWebbrowser shipping out of the box with 11.2
-    ///   doesn't handle anchors right and bottom properly, so this sets the size
-    ///   of the WebBrowser control used to show HTML output of a coverage run
-    ///   based on card size it is on.
-    /// </summary>
-    procedure AdjustWebBrowserSize;
-    /// <summary>
     ///   Displays the paths used in the generated script in the memo
     /// </summary>
     procedure DisplayScriptOutputPaths;
@@ -314,6 +313,11 @@ type
     ///   Processes the command line params
     /// </summary>
     procedure ProcessCmdLineParams;
+    /// <summary>
+    ///   Updates enabled state of the forward/back buttons for the integrated
+    //    HTML view
+    /// </summary>
+    procedure UpdateBrowserNavigationButtons;
   public
   end;
 
@@ -449,7 +453,8 @@ end;
 procedure TFormMain.ButtonBrowserBackClick(Sender: TObject);
 begin
   try
-    WebBrowser.GoBack;
+    EdgeBrowser.GoBack;
+    UpdateBrowserNavigationButtons;
   except
     // going back from the first page cannot be done, but there seems no way
     // to find out if we are on the first page
@@ -459,11 +464,18 @@ end;
 procedure TFormMain.ButtonBrowserNextClick(Sender: TObject);
 begin
   try
-    WebBrowser.GoForward;
+    EdgeBrowser.GoForward;
+    UpdateBrowserNavigationButtons;
   except
     // going back from the first page cannot be done, but there seems no way
     // to find out if we are on the first page
   end;
+end;
+
+procedure TFormMain.UpdateBrowserNavigationButtons;
+begin
+  ButtonBrowserNext.Enabled := EdgeBrowser.CanGoForward;
+  ButtonBrowserBack.Enabled := EdgeBrowser.CanGoBack;
 end;
 
 procedure TFormMain.ButtonCancelClick(Sender: TObject);
@@ -734,6 +746,18 @@ begin
   RunScript;
 end;
 
+procedure TFormMain.EdgeBrowserCreateWebViewCompleted(
+  Sender: TCustomEdgeBrowser; AResult: HRESULT);
+begin
+  if (AResult <> 0) then
+    MessageDlg(Format(rHTMLDisplayErr, [UInt32(AResult)]), mtError, [mbOK], -1);
+end;
+
+procedure TFormMain.EdgeBrowserHistoryChanged(Sender: TCustomEdgeBrowser);
+begin
+  UpdateBrowserNavigationButtons;
+end;
+
 procedure TFormMain.EditCodeCoverageExeChange(Sender: TObject);
 begin
   FProject.CodeCoverageExePath := (Sender As TEdit).Text;
@@ -923,20 +947,9 @@ begin
   FLogic.Free;
 end;
 
-procedure TFormMain.FormResize(Sender: TObject);
-begin
-  AdjustWebBrowserSize;
-end;
-
 procedure TFormMain.FormShow(Sender: TObject);
 begin
   ProcessCmdLineParams;
-end;
-
-procedure TFormMain.AdjustWebBrowserSize;
-begin
-  WebBrowser.Width := crd_Finished.Width-10;
-  WebBrowser.Height := crd_Finished.Height-10-ButtonHomeAfterRun.Height;
 end;
 
 procedure TFormMain.CheckBoxEMMAClick(Sender: TObject);
@@ -1113,8 +1126,8 @@ begin
     if ofHTML in FProject.OutputFormats then
     begin
       cp_Main.ActiveCard := crd_Finished;
-      AdjustWebBrowserSize;
-      WebBrowser.Navigate(FProject.GetReportOutputIndexURL);
+      EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
+      UpdateBrowserNavigationButtons;
     end
     else
       cp_Main.ActiveCard := crd_Start;

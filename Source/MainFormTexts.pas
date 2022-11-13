@@ -107,6 +107,13 @@ resourcestring
   /// </summary>
   rFileNotExists = 'File %0:s does not exist';
 
+  /// <summary>
+  ///   Failure message shown when the initialization of the in place HTML
+  ///   display of the generated output file failed.
+  /// </summary>
+  rHTMLDisplayErr= 'Failure displaying generated HTML output.' + sLineBreak +
+                   'Failure code: %0:d';
+
 implementation
 
 end.
