@@ -26,7 +26,8 @@ interface
 uses
   System.SysUtils,
   System.Classes,
-  Generics.Collections;
+  Generics.Collections,
+  UProjectSettingsInterface;
 
 type
   /// <summary>
@@ -212,7 +213,7 @@ type
   /// <summary>
   ///   Manages all settings of the project
   /// </summary>
-  TProjectSettings = class(TObject)
+  TProjectSettings = class(TInterfacedObject, IProjectOutputSettings)
   public
     /// <summary>
     ///   Set of possible output formats
@@ -273,6 +274,11 @@ type
     ///   Name of the saved or loaded project file
     /// </summary>
     FFileName             : string;
+    /// <summary>
+    ///   Version of this application, which will be written into the saved
+    ///   project file
+    /// </summary>
+    FProgramVersion       : string;
 
     /// <summary>
     ///   Returns the path to the executable to analyze. Absolutely encoded.
@@ -300,13 +306,52 @@ type
     ///   Returns the name of the generated batch file
     /// </summary>
     function GetBatchFileName: TFileName;
+    /// <summary>
+    ///   Sets the map file path and name
+    /// </summary>
+    procedure SetMapFile(const Value: TFilename);
+    /// <summary>
+    ///   Returns the defined path where the generated reports will be saved to
+    /// </summary>
+    function GetReportOutputPath: TFilename;
+    /// <summary>
+    ///   Defines the path where the generated reports will be saved to
+    /// </summary>
+    procedure SetReportOutputPath(const Value: TFilename);
+    /// <summary>
+    ///   When true the generated EMMA file shall be displayed in an associated
+    ///   external viewer
+    /// </summary>
+    function GetDisplayEMMAFileExt: Boolean;
+    /// <summary>
+    ///   When true the generated XML file shall be displayed in an associated
+    ///   external viewer
+    /// </summary>
+    function GetDisplayXMLFileExt: Boolean;
+    /// <summary>
+    ///   When true the generated HTML file shall be displayed in an associated
+    ///   external viewer
+    /// </summary>
+    function GetDisplayHTMLFileExt: Boolean;
+    /// <summary>
+    ///   Returns the name of the loaded or saved project file
+    /// </summary>
+    function GetFileName: string;
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
     ///   path to the code coverage exe file so that even if no existing project
     ///   is loaded this path is predefined with the one supplied here.
     /// </summary>
-    constructor Create(const CodeCoverageExe : TFileName);
+    /// <param name="CodeCoverageExe">
+    ///   Path and file name of the code coverage command line tool to use.
+    ///   By default the one supplied with this project will be suggested.
+    /// </param>
+    /// <param name="Version">
+    ///   Version information of the wizard's exe
+    /// </param>
+    constructor Create(const CodeCoverageExe : TFileName;
+                       const Version         : string);
     /// <summary>
     ///   Frees internally created objects.
     /// </summary>
@@ -389,7 +434,7 @@ type
     /// </summary>
     property MapFile : TFilename
       read   GetMapFile
-      write  FMapFile;
+      write  SetMapFile;
     /// <summary>
     ///   Base path for the source files of the program to analyze.
     /// </summary>
@@ -414,8 +459,8 @@ type
     ///   Path where the report(s) will be output to.
     /// </summary>
     property ReportOutputPath : TFilename
-      read   FReportOutputPath
-      write  FReportOutputPath;
+      read   GetReportOutputPath
+      write  SetReportOutputPath;
     /// <summary>
     ///   Path to the application to analyze.
     /// </summary>
@@ -440,28 +485,28 @@ type
     ///   has been loaded or saved yet.
     /// </summary>
     property FileName : string
-      read   FFileName;
+      read   GetFileName;
 
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
     property DisplayEMMAFileExt : Boolean
-      read   FDisplayEMMAFileExt
+      read   GetDisplayEMMAFileExt
       write  FDisplayEMMAFileExt;
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
     property DisplayXMLFileExt : Boolean
-      read   FDisplayXMLFileExt
+      read   GetDisplayXMLFileExt
       write  FDisplayXMLFileExt;
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
     property  DisplayHTMLFileExt : Boolean
-      read    FDisplayHTMLFileExt
+      read    GetDisplayHTMLFileExt
       write   FDisplayHTMLFileExt;
   published
     // Necessary to be able to use RTTI for this one
@@ -483,16 +528,19 @@ uses
   System.Generics.Defaults,
   System.Win.ComObj,
   Xml.XMLIntf,
-  Xml.XMLDoc;
+  Xml.XMLDoc,
+  UConsts;
 
 { TProjectSettings }
 
-constructor TProjectSettings.Create(const CodeCoverageExe : TFileName);
+constructor TProjectSettings.Create(const CodeCoverageExe : TFileName;
+                                    const Version         : string);
 begin
   inherited Create;
 
   FProgramSourceFiles  := TProgramSourceFiles.Create;
   FCodeCoverageExePath := CodeCoverageExe;
+  FProgramVersion      := Version;
 end;
 
 destructor TProjectSettings.Destroy;
@@ -505,7 +553,27 @@ function TProjectSettings.GetBatchFileName: TFileName;
 begin
   Result := TPath.Combine(FScriptsOutputPath,
               TPath.GetFileNameWithoutExtension((FFileName)) +
-              '_dcov_execute.bat');
+              cBatchFileSuffix);
+end;
+
+function TProjectSettings.GetDisplayEMMAFileExt: Boolean;
+begin
+  Result := FDisplayEMMAFileExt;
+end;
+
+function TProjectSettings.GetDisplayHTMLFileExt: Boolean;
+begin
+  Result := FDisplayHTMLFileExt;
+end;
+
+function TProjectSettings.GetDisplayXMLFileExt: Boolean;
+begin
+  Result := FDisplayXMLFileExt;
+end;
+
+function TProjectSettings.GetFileName: string;
+begin
+  Result := FFileName;
 end;
 
 function TProjectSettings.GetMapFile: TFilename;
@@ -646,6 +714,11 @@ begin
   end;
 end;
 
+procedure TProjectSettings.SetMapFile(const Value: TFilename);
+begin
+  FMapFIle := Value;
+end;
+
 procedure TProjectSettings.SetProgramSourceBasePath(const Value: TFilename);
 begin
   if (FProgramSourceFiles.BasePath <> Value) then
@@ -660,10 +733,15 @@ begin
   // test EXE file exists
   if (FileExists(Value)) then
   begin
-    PossibleMappingFilename := ChangeFileExt(Value, '.map');
+    PossibleMappingFilename := ChangeFileExt(Value, cMapFileExt);
     if (FileExists(PossibleMappingFilename)) then
       FMapFile := PossibleMappingFilename;
   end;
+end;
+
+procedure TProjectSettings.SetReportOutputPath(const Value: TFilename);
+begin
+  FReportOutputPath := Value;
 end;
 
 function TProjectSettings.GetRelativePath(const APath: string): string;
@@ -674,15 +752,20 @@ end;
 
 function TProjectSettings.GetReportOutputIndexURL: string;
 begin
-  Result := Format('file:///%:0s/CodeCoverage_summary.html',
+  Result := Format('file:///%:0s/' + cHTMLOutputBaseFileName,
              [string(FReportOutputPath).Replace('\', '/', [rfReplaceAll]).
               Replace(' ', '%20', [rfReplaceAll])])
+end;
+
+function TProjectSettings.GetReportOutputPath: TFilename;
+begin
+  Result := FReportOutputPath;
 end;
 
 procedure TProjectSettings.SaveToXML(const FileName: TFileName);
 var
   LDocument: IXMLDocument;
-  LUnitTestFiles, LSourceFiles, LOutput, LMisc, LNodeElement: IXMLNode;
+  LVersion, LUnitTestFiles, LSourceFiles, LOutput, LMisc, LNodeElement: IXMLNode;
 begin
   Assert(FileName <> '', 'No file name for the XML file specified');
 
@@ -694,6 +777,11 @@ begin
 
   LDocument.DocumentElement := LDocument.CreateNode('DCCProject', ntElement, '');
   LDocument.DocumentElement.Attributes['xmlns'] := '';
+
+  // Store application version
+  LVersion          := LDocument.DocumentElement.AddChild('Application', -1);
+  LNodeElement      := LVersion.AddChild('Version', -1);
+  LNodeElement.Text := FProgramVersion;
 
   // unit test exe to run and map file for that
   LUnitTestFiles    := LDocument.DocumentElement.AddChild('UnitTestFiles', -1);
@@ -840,7 +928,9 @@ begin
 
   if (FBasePath <> System.SysUtils.PathDelim) then
   begin
-    FileList := TDirectory.GetFiles(FBasePath, '*.pas', TSearchOption.soAllDirectories);
+    FileList := TDirectory.GetFiles(FBasePath,
+                                    cSourceExt,
+                                    TSearchOption.soAllDirectories);
 
     for var FileName in FileList do
     begin
@@ -884,7 +974,9 @@ begin
   if (FBasePath = System.SysUtils.PathDelim) then
     exit;
 
-  FileList := TDirectory.GetFiles(FBasePath, '*.pas', TSearchOption.soAllDirectories);
+  FileList := TDirectory.GetFiles(FBasePath,
+                                  cSourceExt,
+                                  TSearchOption.soAllDirectories);
 
   // remove all files no longer on disk
   n := 0;

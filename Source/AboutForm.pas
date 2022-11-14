@@ -45,72 +45,52 @@ type
     LinkLabelDCCWPGithub: TLinkLabel;
     Label5: TLabel;
     LabelCmdLineParams: TLabel;
-    procedure FormCreate(Sender: TObject);
     procedure LinkLabelDCCWPGithubLinkClick(Sender: TObject; const Link: string;
       LinkType: TSysLinkType);
   private
-    /// <summary>
-    ///   Retrieves the file version from the version ressources
-    /// </summary>
-    /// <param name="FileName">
-    ///   Name of the exe/dll to retrieve the version from
-    /// </param>
-    /// <returns>
-    ///   Version information in the form of V<Major>.<Minor>.<Release> build <Build>
-    /// </returns>
-    function GetFileVersion(const FileName: TFileName): string;
   public
+    /// <summary>
+    ///   Creates the form and initializes the application version label
+    /// </summary>
+    /// <param name="AOwner">
+    ///   Owner of the form, also determining its position
+    /// </param>
+    /// <param name="Version">
+    ///   Program version
+    /// </param>
+    constructor Create(AOwner: TComponent;
+                       const Version : string); reintroduce;
   end;
-
-var
-  FormAbout: TFormAbout;
 
 implementation
 
 uses
-  Winapi.ShellAPI;
+  System.UITypes,
+  WinApi.ShellAPI;
 
 {$R *.dfm}
 
-procedure TFormAbout.FormCreate(Sender: TObject);
-begin
-  try
-    LabelVersion.Caption := GetFileVersion(Application.ExeName);
-  except
-    on e:Exception do
-      LabelVersion.Caption := 'Failure: ' + e.Message;
-  end;
-end;
+resourcestring
+  /// <summary>
+  ///   Failure message shown when shellexecuting a link failed
+  /// </summary>
+  rLinkFailure = 'Failure opening the link. Code: %0:d';
 
-function TFormAbout.GetFileVersion(const FileName: TFileName): string;
-var
-  VerInfoSize: Cardinal;
-  VerValueSize: Cardinal;
-  Dummy: Cardinal;
-  PVerInfo: Pointer;
-  PVerValue: PVSFixedFileInfo;
+constructor TFormAbout.Create(AOwner: TComponent; const Version: string);
 begin
-  Result := '';
-  VerInfoSize := GetFileVersionInfoSize(PChar(FileName), Dummy);
-  GetMem(PVerInfo, VerInfoSize);
-  try
-    if GetFileVersionInfo(PChar(FileName), 0, VerInfoSize, PVerInfo) then
-      if VerQueryValue(PVerInfo, '\', Pointer(PVerValue), VerValueSize) then
-        with PVerValue^ do
-          Result := Format('V%d.%d.%d build %d', [
-            HiWord(dwFileVersionMS), //Major
-            LoWord(dwFileVersionMS), //Minor
-            HiWord(dwFileVersionLS), //Release
-            LoWord(dwFileVersionLS)]); //Build
-  finally
-    FreeMem(PVerInfo, VerInfoSize);
-  end;
+  inherited Create(AOwner);
+
+  LabelVersion.Caption := Version;
 end;
 
 procedure TFormAbout.LinkLabelDCCWPGithubLinkClick(Sender: TObject; const Link: string;
   LinkType: TSysLinkType);
+var
+  FailureCode : NativeInt;
 begin
-  ShellExecute(Handle, 'open', PWideChar(Link), nil, nil, SW_MAXIMIZE);
+  FailureCode := ShellExecute(Handle, 'open', PWideChar(Link), nil, nil, SW_MAXIMIZE);
+  if FailureCode < 33 then
+    MessageDlg(Format(rLinkFailure, [FailureCode]), mtError, [mbOK], -1);
 end;
 
 end.

@@ -20,6 +20,11 @@ unit MainFormLogic;
 
 interface
 
+uses
+  System.SysUtils,
+  Winapi.Windows,
+  UProjectSettingsInterface;
+
 type
   /// <summary>
   ///   Possible action which can be started from the command line
@@ -88,13 +93,62 @@ type
     /// </param>
     procedure ProcessCmdLineParams(OnAction : TComandLineActionEvent;
                                    OnError  : TCommandLineError = nil);
+
+    /// <summary>
+    ///   Retrieves the file version from the version ressources
+    /// </summary>
+    /// <param name="FileName">
+    ///   Name of the exe/dll to retrieve the version from
+    /// </param>
+    /// <returns>
+    ///   Version information in the form of V<Major>.<Minor>.<Release> build <Build>
+    /// </returns>
+    function GetFileVersion(const FileName: TFileName): string;
+
+    /// <summary>
+    ///   Calls an external application via ShellExecute
+    /// </summary>
+    /// <param name="Handle">
+    ///   Handle of the calling window
+    /// </param>
+    /// <param name="Operation">
+    ///   Operation to carry out, e.g. 'open' or 'print'
+    /// </param>
+    /// <param name="Param">
+    ///   Parameters to pass to the external application, e.g. file name to open
+    /// </param>
+    /// <param name="ShowCmd">
+    ///   How to display the external application's window?
+    ///   See SW_XXX constants from Winapi.Windows unit.
+    /// </param>
+    /// <returns>
+    ///   Empty string on success, otherwise failure message for the failure code
+    ///   returned from ShellExecute.
+    /// </returns>
+    function CallShellExecute(Handle          : HWND;
+                              const Operation : string;
+                              const Param     : string;
+                              ShowCmd         : Integer):string;
+
+    /// <summary>
+    ///   Checks if the project is configured to open any of the generated
+    ///   files in an external viewer and performs that action.
+    /// </summary>
+    /// <param name="ProjectOutputSettings">
+    ///   Interface to the relevant output settings of the loaded project
+    /// </param>
+    /// <returns>
+    ///   Empty string if successfull, otherwise failure message of failed
+    ///   ShellExecute calls.
+    /// </returns>
+    function CallExternalViewers(ProjectOutputSettings : IProjectOutputSettings):string;
   end;
 
 implementation
 
 uses
-  System.SysUtils,
   System.IOUtils,
+  WinApi.ShellAPI,
   MainFormTexts;
 
 function TMainFormLogic.GetCommandLineAction: TActionParamRec;
@@ -161,5 +215,80 @@ begin
   end;
 end;
 
+function TMainFormLogic.CallExternalViewers(
+  ProjectOutputSettings: IProjectOutputSettings): string;
+begin
+
+end;
+
+function TMainFormLogic.CallShellExecute(Handle: HWND;
+                                         const Operation, Param: string;
+                                         ShowCmd: Integer): string;
+var
+  FailureCode : NativeInt;
+begin
+  Result := '';
+
+  FailureCode := ShellExecute(Handle, PWideChar(Operation), PWideChar(Param),
+                              nil, nil, ShowCmd);
+  if FailureCode < 33 then
+    case FailureCode of
+       0 : Result := rShellExecErr0;
+       2 : Result := rShellExecErr2;
+       3 : Result := rShellExecErr3;
+       5 : Result := rShellExecErr5;
+       8 : Result := rShellExecErr8;
+      10 : Result := rShellExecErr10;
+      11 : Result := rShellExecErr11;
+      12 : Result := rShellExecErr12;
+      13 : Result := rShellExecErr13;
+      15 : Result := rShellExecErr15;
+      16 : Result := rShellExecErr16;
+      19 : Result := rShellExecErr19;
+      20 : Result := rShellExecErr20;
+      26 : Result := rShellExecErr26;
+      27 : Result := rShellExecErr27;
+      28 : Result := rShellExecErr28;
+      29 : Result := rShellExecErr29;
+      30 : Result := rShellExecErr30;
+      31 : Result := rShellExecErr31;
+      32 : Result := rShellExecErr32;
+      else
+        Result := Format(rShellExecErr, [FailureCode]);
+    end;
+end;
+
+function TMainFormLogic.GetFileVersion(const FileName: TFileName): string;
+var
+  VerInfoSize: Cardinal;
+  VerValueSize: Cardinal;
+  Dummy: Cardinal;
+  PVerInfo: Pointer;
+  PVerValue: PVSFixedFileInfo;
+begin
+  Result   := '';
+  PVerInfo := nil;
+
+  VerInfoSize := GetFileVersionInfoSize(PChar(FileName), Dummy);
+  try
+    GetMem(PVerInfo, VerInfoSize);
+    try
+      if GetFileVersionInfo(PChar(FileName), 0, VerInfoSize, PVerInfo) then
+        if VerQueryValue(PVerInfo, '\', Pointer(PVerValue), VerValueSize) then
+          with PVerValue^ do
+            Result := Format('V%d.%d.%d build %d', [
+              HiWord(dwFileVersionMS), //Major
+              LoWord(dwFileVersionMS), //Minor
+              HiWord(dwFileVersionLS), //Release
+              LoWord(dwFileVersionLS)]); //Build
+    except
+     on e:Exception do
+      Result := 'Failure: ' + e.Message;
+    end;
+  finally
+    if Assigned(PVerInfo) then
+      FreeMem(PVerInfo, VerInfoSize);
+  end;
+end;
 
 end.

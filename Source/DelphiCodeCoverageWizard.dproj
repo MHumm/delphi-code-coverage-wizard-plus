@@ -187,6 +187,8 @@ $(PostBuildEvent)]]></PostBuildEvent>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="MainFormLogic.pas"/>
+        <DCCReference Include="UProjectSettingsInterface.pas"/>
+        <DCCReference Include="UConsts.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

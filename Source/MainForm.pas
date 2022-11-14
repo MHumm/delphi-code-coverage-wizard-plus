@@ -329,6 +329,21 @@ type
     //    HTML view
     /// </summary>
     procedure UpdateBrowserNavigationButtons;
+    /// <summary>
+    ///   Changes enabled state of the EMMA specific checkboxes (meta data and
+    ///   display in external viewer) based on whether the format is enabled or not
+    /// </summary>
+    procedure UpdateEMMACheckBoxEnableStates;
+    /// <summary>
+    ///   Changes enabled state of the XML specific checkboxes (lines, display in
+    ///   external viewer and combine) based on whether the format is enabled or not
+    /// </summary>
+    procedure UpdateXMLCheckBoxEnableStates;
+    /// <summary>
+    ///   Changes enabled state of the HTML specific checkboxes (display in
+    ///   external viewer) based on whether the format is enabled or not
+    /// </summary>
+    procedure UpdateHTMLCheckBoxEnableStates;
   public
   end;
 
@@ -458,8 +473,15 @@ begin
 end;
 
 procedure TFormMain.ButtonAboutClick(Sender: TObject);
+var
+  FormAbout : TFormAbout;
 begin
-  FormAbout.ShowModal;
+  FormAbout := TFormAbout.Create(self, FLogic.GetFileVersion(Application.ExeName));
+  try
+    FormAbout.ShowModal;
+  finally
+    FormAbout.Free;
+  end;
 end;
 
 procedure TFormMain.ButtonBrowserBackClick(Sender: TObject);
@@ -648,6 +670,10 @@ begin
 //    CheckBoxXMLCombineMultiple.Checked := false;
 
     CheckBoxRelativePaths.Checked := FProject.RelativeToScriptPath;
+
+    UpdateEMMACheckBoxEnableStates;
+    UpdateXMLCheckBoxEnableStates;
+    UpdateHTMLCheckBoxEnableStates;
 
     // Misc settings is always declared as completed
     crd_MiscSettings.Tag := cImgCompletedPage;
@@ -874,9 +900,11 @@ begin
   FLogic    := TMainFormLogic.Create;
 
   if Is64BitWindows then
-    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe')
+    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe',
+                                         FLogic.GetFileVersion(Application.ExeName))
   else
-    FProject  := TProjectSettings.Create('..\..\Coverage.exe');
+    FProject  := TProjectSettings.Create('..\..\Coverage.exe',
+                                         FLogic.GetFileVersion(Application.ExeName));
 
   SetFormPos;
   DisplayRecentProjects;
@@ -980,11 +1008,34 @@ end;
 procedure TFormMain.CheckBoxEMMAClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA);
+  UpdateEMMACheckBoxEnableStates;
+end;
+
+procedure TFormMain.UpdateEMMACheckBoxEnableStates;
+begin
+  CheckBoxMeta.Enabled               := CheckBoxEMMA.Checked;
+  CheckBoxOpenEMMAFileExtern.Enabled := CheckBoxEMMA.Checked or
+                                        CheckBoxEMMA21.Checked;
+end;
+
+procedure TFormMain.UpdateXMLCheckBoxEnableStates;
+begin
+  CheckBoxOpenXMLFileExtern.Enabled := CheckBoxXML.Checked;
+{ TODO : Uncomment as soon as this feature got implemented }
+//  CheckBoxXMLLines.Enabled          := CheckBoxXML.Checked;
+{ TODO : Uncomment as soon as this feature got implemented }
+//  CheckBoxXMLCombineMultiple        := CheckBoxXML.Checked;
+end;
+
+procedure TFormMain.UpdateHTMLCheckBoxEnableStates;
+begin
+  CheckBoxOpenHTMLFileExtern.Enabled := CheckBoxHTML.Checked;
 end;
 
 procedure TFormMain.CheckBoxHTMLClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofHTML);
+  UpdateHTMLCheckBoxEnableStates;
 end;
 
 procedure TFormMain.CheckBoxMetaClick(Sender: TObject);
@@ -1049,6 +1100,7 @@ end;
 procedure TFormMain.CheckBoxXMLClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofXML);
+  UpdateXMLCheckBoxEnableStates;
 end;
 
 procedure TFormMain.OutputFormatCheckStatusChanged(Checked      : Boolean;
@@ -1099,6 +1151,7 @@ begin
   SetSourcePathWithoutFileList(EditSourcePath.Text);
 
   PreInitCodeCoverageExe;
+  UpdateEMMACheckBoxEnableStates;
 end;
 
 procedure TFormMain.crd_MiscSettingsEnter(Sender: TObject);
