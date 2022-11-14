@@ -138,6 +138,13 @@ resourcestring
   rShellExecErr31= 'There is no application associated with the given extension.';
   rShellExecErr32= 'Windows 95 only: The specified dynamic-link library was not found.';
 
+  /// <summary>
+  ///   Failure message shown when ShellExecute failed
+  /// </summary>
+  rExtCallFailed = 'Failure calling external application for file' + sLineBreak +
+                   '%0:s' + sLineBreak +
+                   'Reason: %1:s';
+
 implementation
 
 end.

@@ -356,6 +356,7 @@ uses
   System.UITypes,
   System.IOUtils,
   System.TypInfo,
+  System.Threading,
   UScriptsGenerator,
   UScriptRunner,
   UManageToolsMenu,
@@ -991,7 +992,10 @@ end;
 procedure TFormMain.FormDestroy(Sender: TObject);
 begin
   FSettings.Free;
-  FProject.Free;
+{ TODO : Remove after conversion to an interface }
+// Do not free, as it is used via its interfaces in some places, but it is not
+// fully and interface yet.
+//  FProject.Free;
   FLogic.Free;
 end;
 
@@ -1220,6 +1224,8 @@ begin
 end;
 
 procedure TFormMain.OnTestRunFinished(CallResult: UInt32);
+var
+  ErrorMessage : string;
 begin
   if (CallResult = 0) then
   begin
@@ -1228,6 +1234,10 @@ begin
       cp_Main.ActiveCard := crd_Finished;
       EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
       UpdateBrowserNavigationButtons;
+      ErrorMessage := FLogic.CallExternalViewers(Handle, FProject);
+
+      if not ErrorMessage.IsEmpty then
+        MessageDlg(ErrorMessage, mtError, [mbOK], -1);
     end
     else
       cp_Main.ActiveCard := crd_Start;

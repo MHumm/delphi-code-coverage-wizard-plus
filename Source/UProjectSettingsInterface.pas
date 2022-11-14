@@ -20,6 +20,9 @@ unit UProjectSettingsInterface;
 
 interface
 
+uses
+  System.SysUtils;
+
 type
   /// <summary>
   ///   Interface to some output settings of a project file
@@ -44,6 +47,10 @@ type
     ///   Returns the name of the loaded or saved project file
     /// </summary>
     function GetFileName: string;
+    /// <summary>
+    ///   Returns the defined path where the generated reports will be saved to
+    /// </summary>
+    function GetReportOutputPath: TFilename;
 
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
@@ -69,6 +76,12 @@ type
     /// </summary>
     property FileName : string
       read   GetFileName;
+
+    /// <summary>
+    ///   Path where the report(s) will be output to.
+    /// </summary>
+    property ReportOutputPath : TFilename
+      read   GetReportOutputPath;
   end;
 
 implementation

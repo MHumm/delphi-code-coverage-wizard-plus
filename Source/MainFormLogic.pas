@@ -134,6 +134,9 @@ type
     ///   Checks if the project is configured to open any of the generated
     ///   files in an external viewer and performs that action.
     /// </summary>
+    /// <param name="Handle">
+    ///   Handle of the window calling the external application
+    /// </param>
     /// <param name="ProjectOutputSettings">
     ///   Interface to the relevant output settings of the loaded project
     /// </param>
@@ -141,7 +144,8 @@ type
     ///   Empty string if successfull, otherwise failure message of failed
     ///   ShellExecute calls.
     /// </returns>
-    function CallExternalViewers(ProjectOutputSettings : IProjectOutputSettings):string;
+    function CallExternalViewers(Handle: HWND;
+                                 ProjectOutputSettings : IProjectOutputSettings):string;
   end;
 
 implementation
@@ -149,7 +153,8 @@ implementation
 uses
   System.IOUtils,
   WinApi.ShellAPI,
-  MainFormTexts;
+  MainFormTexts,
+  UCOnsts;
 
 function TMainFormLogic.GetCommandLineAction: TActionParamRec;
 begin
@@ -215,10 +220,55 @@ begin
   end;
 end;
 
-function TMainFormLogic.CallExternalViewers(
+function TMainFormLogic.CallExternalViewers(Handle: HWND;
   ProjectOutputSettings: IProjectOutputSettings): string;
+var
+  FileName : string;
+  ErrorMsg : string;
 begin
+  Result := '';
 
+  if ProjectOutputSettings.DisplayHTMLFileExt then
+  begin
+    FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
+                              cHTMLOutputBaseFileName);
+    Result := CallShellExecute(Handle, 'open', FileName, SW_SHOW);
+
+    if not Result.IsEmpty then
+      Result := Format(rExtCallFailed, [FileName, Result]);
+  end;
+
+  if ProjectOutputSettings.DisplayXMLFileExt then
+  begin
+    FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
+                              cXMLOutputBaseFileName);
+    ErrorMsg := CallShellExecute(Handle, 'open', FileName, SW_SHOW);
+
+    if not ErrorMsg.IsEmpty then
+    begin
+      if not Result.IsEmpty then
+        Result := Result + sLineBreak;
+
+      Result := Result + sLineBreak + Format(rExtCallFailed, [FileName, ErrorMsg]);
+    end;
+  end;
+
+  if ProjectOutputSettings.DisplayEMMAFileExt then
+  begin
+    FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
+                              cEMMAOutputBaseFileName);
+    ErrorMsg := CallShellExecute(Handle, 'open', FileName, SW_SHOW);
+
+    if not ErrorMsg.IsEmpty then
+    begin
+      if not Result.IsEmpty then
+        Result := Result + sLineBreak;
+
+      Result := Result + sLineBreak + Format(rExtCallFailed, [FileName, ErrorMsg]);
+    end;
+  end;
+
+  Result := Result.TrimLeft([#10, #13]);
 end;
 
 function TMainFormLogic.CallShellExecute(Handle: HWND;

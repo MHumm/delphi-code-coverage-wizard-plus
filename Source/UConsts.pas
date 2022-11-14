@@ -25,6 +25,14 @@ const
   ///   This is the file name for the overview HTML page of generated HTML output
   /// </summary>
   cHTMLOutputBaseFileName = 'CodeCoverage_summary.html';
+  /// <summary>
+  ///   This is the file name for the XML file of generated XML output
+  /// </summary>
+  cXMLOutputBaseFileName  = 'CodeCoverage_summary.xml';
+  /// <summary>
+  ///   This is the file name for the EMMA file of generated EMMA output
+  /// </summary>
+  cEMMAOutputBaseFileName = 'coverage.es';
 
   /// <summary>
   ///   File extension for map files

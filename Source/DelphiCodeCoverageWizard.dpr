@@ -21,6 +21,7 @@ uses
 {$R *.res}
 
 begin
+  ReportMemoryLeaksOnShutdown := true;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(Tdm_Icons, dm_Icons);

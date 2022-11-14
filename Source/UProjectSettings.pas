@@ -421,7 +421,7 @@ type
     /// <param name="FileName">
     ///   Path and name of the XML/DCCP file to load
     /// </param>
-    procedure LoadFromXML(const FileName: TFileName);
+    procedure LoadFromXML(const FileName: string);
 
     /// <summary>
     ///   Path to the executable to analyze. Absolutely encoded.
@@ -615,7 +615,7 @@ begin
             (FProgramSourceFiles.SelectedCount > 0);
 end;
 
-procedure TProjectSettings.LoadFromXML(const FileName: TFileName);
+procedure TProjectSettings.LoadFromXML(const FileName: string);
 var
   LDocument: IXMLDocument;
   LUnitTestFiles, LSourceFiles, LOutput, LMisc, LNode: IXMLNode;
@@ -626,11 +626,9 @@ begin
 
   FFileName         := FileName;
 
-  LDocument         := TXMLDocument.Create(nil);
-  LDocument.Active  := true;
+  LDocument         := TXMLDocument.Create(FFileName);
   LDocument.Options := [doNodeAutoIndent];
-
-  LDocument.LoadFromFile(FFileName);
+  LDocument.Active  := true;
 
   // unit test exe to run and map file for that
   LUnitTestFiles := LDocument.DocumentElement.ChildNodes['UnitTestFiles'];
@@ -712,6 +710,8 @@ begin
     if Assigned(LNode) then
       FRelativeToScriptPath := StrToBool(LNode.Text);
   end;
+
+  LDocument.Active := false;
 end;
 
 procedure TProjectSettings.SetMapFile(const Value: TFilename);
