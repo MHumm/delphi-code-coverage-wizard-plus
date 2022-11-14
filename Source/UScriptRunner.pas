@@ -40,7 +40,8 @@ type
   ///   Settings of the loaded/created project
   /// </param>
   /// <param name="AOnFinished">
-  ///   Event for reporting that the coverage run has finished
+  ///   Event for reporting that the coverage run has finished. The event is
+  ///   called synchronized so performing GUI updates in it is safe
   /// </param>
   procedure RunBatchFile(AProjectSettings : TProjectSettings;
                          AOnFinished      : TOnProgramRunFinished);

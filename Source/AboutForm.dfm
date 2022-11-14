@@ -11,7 +11,6 @@ object FormAbout: TFormAbout
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poOwnerFormCenter
-  OnCreate = FormCreate
   DesignSize = (
     479
     392)

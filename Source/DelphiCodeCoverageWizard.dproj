@@ -76,28 +76,34 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=1.1.0.1;InternalName=;LegalCopyright=© 2022-2022 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.1.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.0.0.3;InternalName=;LegalCopyright=© 2022-2022 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <DCC_DcuOutput>..\Binaries\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>..\Binaries\$(Platform)\$(Config)</DCC_ExeOutput>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
-        <VerInfo_Build>1</VerInfo_Build>
-        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_Build>3</VerInfo_Build>
+        <PostBuildEvent><![CDATA[copy /Y "C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win32\WebView2Loader.dll" $(OUTPUTDIR)
+$(PostBuildEvent)]]></PostBuildEvent>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>FireDACIBDriver;RaizeComponentsVcl;vclwinx;fmx;vclie;DbxCommonDriver;bindengine;IndyIPCommon;VCLRESTComponents;FireDACCommonODBC;FireDACCommonDriver;appanalytics;IndyProtocols;vclx;IndyIPClient;dbxcds;vcledge;bindcompvclwinx;FmxTeeUI;bindcompfmx;inetdb;FireDACSqliteDriver;DbxClientDriver;Tee;soapmidas;vclactnband;TeeUI;fmxFireDAC;dbexpress;DBXMySQLDriver;VclSmp;inet;vcltouch;fmxase;dbrtl;fmxdae;TeeDB;FireDACMSAccDriver;CustomIPTransport;vcldsnap;DBXInterBaseDriver;IndySystem;vcldb;vclFireDAC;bindcomp;FireDACCommon;IndyCore;RESTBackendComponents;bindcompdbx;rtl;FireDACMySQLDriver;FireDACADSDriver;RaizeComponentsVclDb;RESTComponents;DBXSqliteDriver;vcl;IndyIPServer;dsnapxml;dsnapcon;adortl;VirtualTreesDR;vclimg;FireDACPgDriver;FireDAC;inetdbxpress;xmlrtl;tethering;bindcompvcl;dsnap;CloudService;fmxobj;bindcompvclsmp;FMXTee;soaprtl;soapserver;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=1.1.0.1;InternalName=;LegalCopyright=© 2022-2022 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.1.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.0.0.3;InternalName=;LegalCopyright=© 2022-2022 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
-        <VerInfo_Build>1</VerInfo_Build>
-        <VerInfo_MinorVer>1</VerInfo_MinorVer>
+        <VerInfo_Build>3</VerInfo_Build>
+        <PostBuildEvent><![CDATA[copy /Y "C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win64\WebView2Loader.dll" $(OUTPUTDIR)
+$(PostBuildEvent)]]></PostBuildEvent>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -115,12 +121,18 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_DcuOutput>..\Binaries\$(Platform)\$(Config)</DCC_DcuOutput>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
-        <VerInfo_MinorVer>1</VerInfo_MinorVer>
         <VerInfo_Build>3</VerInfo_Build>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=1.1.0.3;InternalName=;LegalCopyright=© 2022-2022 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.1.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Build>3</VerInfo_Build>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -131,9 +143,19 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Build>3</VerInfo_Build>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
+        <VerInfo_Build>3</VerInfo_Build>
+        <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
     </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
@@ -165,6 +187,8 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="MainFormLogic.pas"/>
+        <DCCReference Include="UProjectSettingsInterface.pas"/>
+        <DCCReference Include="UConsts.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -1030,4 +1054,36 @@
     <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
     <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
     <Import Project="$(MSBuildProjectName).deployproj" Condition="Exists('$(MSBuildProjectName).deployproj')"/>
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win32'">
+        <PreBuildEvent/>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy /Y &quot;C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win32\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
+        <PreBuildEvent/>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy /Y &quot;C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win64\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win32'">
+        <PreBuildEvent/>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy /Y &quot;C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win32\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">
+        <PreBuildEvent/>
+        <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
+        <PreLinkEvent/>
+        <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
+        <PostBuildEvent>copy /Y &quot;C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win64\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
+        <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
+    </PropertyGroup>
 </Project>

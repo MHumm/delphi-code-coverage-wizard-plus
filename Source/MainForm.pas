@@ -27,7 +27,7 @@ uses
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.ComCtrls, Vcl.ButtonGroup,
   Vcl.CheckLst, USettings, UDataModuleIcons, UProjectSettings, Vcl.WinXCtrls,
   Winapi.WebView2, Winapi.ActiveX, Vcl.Edge, Vcl.OleCtrls, SHDocVw,
-  MainFormLogic;
+  MainFormLogic, Vcl.Menus;
 
 type
   /// <summary>
@@ -112,9 +112,20 @@ type
     ActivityIndicator: TActivityIndicator;
     crd_Finished: TCard;
     ButtonHomeAfterRun: TButton;
-    WebBrowser: TWebBrowser;
     ButtonBrowserBack: TButton;
     ButtonBrowserNext: TButton;
+    EdgeBrowser: TEdgeBrowser;
+    PopupMenuRecentProjects: TPopupMenu;
+    PMOpenSelected: TMenuItem;
+    PMRunselected: TMenuItem;
+    PMRemoveselected: TMenuItem;
+    ScrollBoxOutputSettings: TScrollBox;
+    CheckBoxEMMA21: TCheckBox;
+    CheckBoxOpenEMMAFileExtern: TCheckBox;
+    CheckBoxOpenXMLFileExtern: TCheckBox;
+    CheckBoxOpenHTMLFileExtern: TCheckBox;
+    CheckBoxXMLLines: TCheckBox;
+    CheckBoxXMLCombineMultiple: TCheckBox;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -162,8 +173,14 @@ type
     procedure ButtonRunRecentClick(Sender: TObject);
     procedure ButtonBrowserBackClick(Sender: TObject);
     procedure ButtonBrowserNextClick(Sender: TObject);
-    procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure EdgeBrowserCreateWebViewCompleted(Sender: TCustomEdgeBrowser;
+      AResult: HRESULT);
+    procedure EdgeBrowserHistoryChanged(Sender: TCustomEdgeBrowser);
+    procedure CheckBoxOpenXMLFileExternClick(Sender: TObject);
+    procedure CheckBoxOpenHTMLFileExternClick(Sender: TObject);
+    procedure CheckBoxOpenEMMAFileExternClick(Sender: TObject);
+    procedure CheckBoxEMMA21Click(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -279,13 +296,6 @@ type
     /// </param>
     procedure OnTestRunFinished(CallResult: UInt32);
     /// <summary>
-    ///   At least the version of TWebbrowser shipping out of the box with 11.2
-    ///   doesn't handle anchors right and bottom properly, so this sets the size
-    ///   of the WebBrowser control used to show HTML output of a coverage run
-    ///   based on card size it is on.
-    /// </summary>
-    procedure AdjustWebBrowserSize;
-    /// <summary>
     ///   Displays the paths used in the generated script in the memo
     /// </summary>
     procedure DisplayScriptOutputPaths;
@@ -314,6 +324,26 @@ type
     ///   Processes the command line params
     /// </summary>
     procedure ProcessCmdLineParams;
+    /// <summary>
+    ///   Updates enabled state of the forward/back buttons for the integrated
+    //    HTML view
+    /// </summary>
+    procedure UpdateBrowserNavigationButtons;
+    /// <summary>
+    ///   Changes enabled state of the EMMA specific checkboxes (meta data and
+    ///   display in external viewer) based on whether the format is enabled or not
+    /// </summary>
+    procedure UpdateEMMACheckBoxEnableStates;
+    /// <summary>
+    ///   Changes enabled state of the XML specific checkboxes (lines, display in
+    ///   external viewer and combine) based on whether the format is enabled or not
+    /// </summary>
+    procedure UpdateXMLCheckBoxEnableStates;
+    /// <summary>
+    ///   Changes enabled state of the HTML specific checkboxes (display in
+    ///   external viewer) based on whether the format is enabled or not
+    /// </summary>
+    procedure UpdateHTMLCheckBoxEnableStates;
   public
   end;
 
@@ -325,6 +355,8 @@ implementation
 uses
   System.UITypes,
   System.IOUtils,
+  System.TypInfo,
+  System.Threading,
   UScriptsGenerator,
   UScriptRunner,
   UManageToolsMenu,
@@ -442,14 +474,22 @@ begin
 end;
 
 procedure TFormMain.ButtonAboutClick(Sender: TObject);
+var
+  FormAbout : TFormAbout;
 begin
-  FormAbout.ShowModal;
+  FormAbout := TFormAbout.Create(self, FLogic.GetFileVersion(Application.ExeName));
+  try
+    FormAbout.ShowModal;
+  finally
+    FormAbout.Free;
+  end;
 end;
 
 procedure TFormMain.ButtonBrowserBackClick(Sender: TObject);
 begin
   try
-    WebBrowser.GoBack;
+    EdgeBrowser.GoBack;
+    UpdateBrowserNavigationButtons;
   except
     // going back from the first page cannot be done, but there seems no way
     // to find out if we are on the first page
@@ -459,11 +499,18 @@ end;
 procedure TFormMain.ButtonBrowserNextClick(Sender: TObject);
 begin
   try
-    WebBrowser.GoForward;
+    EdgeBrowser.GoForward;
+    UpdateBrowserNavigationButtons;
   except
     // going back from the first page cannot be done, but there seems no way
     // to find out if we are on the first page
   end;
+end;
+
+procedure TFormMain.UpdateBrowserNavigationButtons;
+begin
+  ButtonBrowserNext.Enabled := EdgeBrowser.CanGoForward;
+  ButtonBrowserBack.Enabled := EdgeBrowser.CanGoBack;
 end;
 
 procedure TFormMain.ButtonCancelClick(Sender: TObject);
@@ -608,15 +655,26 @@ begin
       EditSourcePath.OnChange := OnChangeBackup;
     end;
 
-    EditScriptOutputFolder.Text := FProject.ScriptsOutputPath;
-    EditReportOutputFolder.Text := FProject.ReportOutputPath;
-    EditCodeCoverageExe.Text    := FProject.CodeCoverageExePath;
+    EditScriptOutputFolder.Text        := FProject.ScriptsOutputPath;
+    EditReportOutputFolder.Text        := FProject.ReportOutputPath;
+    EditCodeCoverageExe.Text           := FProject.CodeCoverageExePath;
 
-    CheckBoxEMMA.Checked          := ofEMMA in FProject.OutputFormats;
-    CheckBoxMeta.Checked          := ofMeta in FProject.OutputFormats;
-    CheckBoxXML.Checked           := ofXML  in FProject.OutputFormats;
-    CheckBoxHTML.Checked          := ofHTML in FProject.OutputFormats;
+    CheckBoxEMMA.Checked               := ofEMMA   in FProject.OutputFormats;
+    CheckBoxMeta.Checked               := ofMeta   in FProject.OutputFormats;
+    CheckBoxEMMA21.Checked             := ofEMMA21 in FProject.OutputFormats;
+    CheckBoxXML.Checked                := ofXML    in FProject.OutputFormats;
+    CheckBoxHTML.Checked               := ofHTML   in FProject.OutputFormats;
+    CheckBoxOpenEMMAFileExtern.Checked := FProject.DisplayEMMAFileExt;
+    CheckBoxOpenXMLFileExtern.Checked  := FProject.DisplayXMLFileExt;
+    CheckBoxOpenHTMLFileExtern.Checked := FProject.DisplayHTMLFileExt;
+//    CheckBoxXMLLines.Checked           := false;
+//    CheckBoxXMLCombineMultiple.Checked := false;
+
     CheckBoxRelativePaths.Checked := FProject.RelativeToScriptPath;
+
+    UpdateEMMACheckBoxEnableStates;
+    UpdateXMLCheckBoxEnableStates;
+    UpdateHTMLCheckBoxEnableStates;
 
     // Misc settings is always declared as completed
     crd_MiscSettings.Tag := cImgCompletedPage;
@@ -734,6 +792,18 @@ begin
   RunScript;
 end;
 
+procedure TFormMain.EdgeBrowserCreateWebViewCompleted(
+  Sender: TCustomEdgeBrowser; AResult: HRESULT);
+begin
+  if (AResult <> 0) then
+    MessageDlg(Format(rHTMLDisplayErr, [UInt32(AResult)]), mtError, [mbOK], -1);
+end;
+
+procedure TFormMain.EdgeBrowserHistoryChanged(Sender: TCustomEdgeBrowser);
+begin
+  UpdateBrowserNavigationButtons;
+end;
+
 procedure TFormMain.EditCodeCoverageExeChange(Sender: TObject);
 begin
   FProject.CodeCoverageExePath := (Sender As TEdit).Text;
@@ -831,9 +901,11 @@ begin
   FLogic    := TMainFormLogic.Create;
 
   if Is64BitWindows then
-    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe')
+    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe',
+                                         FLogic.GetFileVersion(Application.ExeName))
   else
-    FProject  := TProjectSettings.Create('..\..\Coverage.exe');
+    FProject  := TProjectSettings.Create('..\..\Coverage.exe',
+                                         FLogic.GetFileVersion(Application.ExeName));
 
   SetFormPos;
   DisplayRecentProjects;
@@ -861,8 +933,9 @@ begin
                  end;
         paHelp : ButtonAbout.Click;
         else
-{ TODO : Umsetzen! }
-          MessageDlg('', mtError, [mbOK], -1);
+          MessageDlg(System.TypInfo.GetEnumName(
+                       TypeInfo(TParamAction), Integer(Action)),
+                     mtError, [mbOK], -1);
       end;
     end,
     procedure(const FailureMessage: string)
@@ -919,13 +992,11 @@ end;
 procedure TFormMain.FormDestroy(Sender: TObject);
 begin
   FSettings.Free;
-  FProject.Free;
+{ TODO : Remove after conversion to an interface }
+// Do not free, as it is used via its interfaces in some places, but it is not
+// fully and interface yet.
+//  FProject.Free;
   FLogic.Free;
-end;
-
-procedure TFormMain.FormResize(Sender: TObject);
-begin
-  AdjustWebBrowserSize;
 end;
 
 procedure TFormMain.FormShow(Sender: TObject);
@@ -933,25 +1004,62 @@ begin
   ProcessCmdLineParams;
 end;
 
-procedure TFormMain.AdjustWebBrowserSize;
+procedure TFormMain.CheckBoxEMMA21Click(Sender: TObject);
 begin
-  WebBrowser.Width := crd_Finished.Width-10;
-  WebBrowser.Height := crd_Finished.Height-10-ButtonHomeAfterRun.Height;
+  OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA21);
 end;
 
 procedure TFormMain.CheckBoxEMMAClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA);
+  UpdateEMMACheckBoxEnableStates;
+end;
+
+procedure TFormMain.UpdateEMMACheckBoxEnableStates;
+begin
+  CheckBoxMeta.Enabled               := CheckBoxEMMA.Checked;
+  CheckBoxOpenEMMAFileExtern.Enabled := CheckBoxEMMA.Checked or
+                                        CheckBoxEMMA21.Checked;
+end;
+
+procedure TFormMain.UpdateXMLCheckBoxEnableStates;
+begin
+  CheckBoxOpenXMLFileExtern.Enabled := CheckBoxXML.Checked;
+{ TODO : Uncomment as soon as this feature got implemented }
+//  CheckBoxXMLLines.Enabled          := CheckBoxXML.Checked;
+{ TODO : Uncomment as soon as this feature got implemented }
+//  CheckBoxXMLCombineMultiple        := CheckBoxXML.Checked;
+end;
+
+procedure TFormMain.UpdateHTMLCheckBoxEnableStates;
+begin
+  CheckBoxOpenHTMLFileExtern.Enabled := CheckBoxHTML.Checked;
 end;
 
 procedure TFormMain.CheckBoxHTMLClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofHTML);
+  UpdateHTMLCheckBoxEnableStates;
 end;
 
 procedure TFormMain.CheckBoxMetaClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofMETA);
+end;
+
+procedure TFormMain.CheckBoxOpenEMMAFileExternClick(Sender: TObject);
+begin
+  FProject.DisplayEMMAFileExt := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxOpenHTMLFileExternClick(Sender: TObject);
+begin
+  FProject.DisplayHTMLFileExt := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxOpenXMLFileExternClick(Sender: TObject);
+begin
+  FProject.DisplayXMLFileExt := (Sender as TCheckBox).Checked;
 end;
 
 procedure TFormMain.CheckBoxRelativePathsClick(Sender: TObject);
@@ -996,6 +1104,7 @@ end;
 procedure TFormMain.CheckBoxXMLClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofXML);
+  UpdateXMLCheckBoxEnableStates;
 end;
 
 procedure TFormMain.OutputFormatCheckStatusChanged(Checked      : Boolean;
@@ -1025,20 +1134,28 @@ end;
 
 procedure TFormMain.ClearWizardFields;
 begin
-  EditExeFile.Text              := '';
-  EditMapFile.Text              := '';
-  EditScriptOutputFolder.Text   := '';
-  EditReportOutputFolder.Text   := '';
-  CheckBoxEMMA.Checked          := false;
-  CheckBoxMeta.Checked          := false;
-  CheckBoxXML.Checked           := false;
-  CheckBoxHTML.Checked          := false;
+  EditExeFile.Text                   := '';
+  EditMapFile.Text                   := '';
+  EditScriptOutputFolder.Text        := '';
+  EditReportOutputFolder.Text        := '';
+  CheckBoxEMMA.Checked               := false;
+  CheckBoxMeta.Checked               := false;
+  CheckBoxXML.Checked                := false;
+  CheckBoxHTML.Checked               := false;
+  CheckBoxEMMA21.Checked             := false;
+  CheckBoxOpenEMMAFileExtern.Checked := false;
+  CheckBoxOpenXMLFileExtern.Checked  := false;
+  CheckBoxOpenHTMLFileExtern.Checked := false;
+  CheckBoxXMLLines.Checked           := false;
+  CheckBoxXMLCombineMultiple.Checked := false;
+
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;
   MemoScriptPreview.Lines.Clear;
   SetSourcePathWithoutFileList(EditSourcePath.Text);
 
   PreInitCodeCoverageExe;
+  UpdateEMMACheckBoxEnableStates;
 end;
 
 procedure TFormMain.crd_MiscSettingsEnter(Sender: TObject);
@@ -1107,14 +1224,20 @@ begin
 end;
 
 procedure TFormMain.OnTestRunFinished(CallResult: UInt32);
+var
+  ErrorMessage : string;
 begin
   if (CallResult = 0) then
   begin
     if ofHTML in FProject.OutputFormats then
     begin
       cp_Main.ActiveCard := crd_Finished;
-      AdjustWebBrowserSize;
-      WebBrowser.Navigate(FProject.GetReportOutputIndexURL);
+      EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
+      UpdateBrowserNavigationButtons;
+      ErrorMessage := FLogic.CallExternalViewers(Handle, FProject);
+
+      if not ErrorMessage.IsEmpty then
+        MessageDlg(ErrorMessage, mtError, [mbOK], -1);
     end
     else
       cp_Main.ActiveCard := crd_Start;
