@@ -145,7 +145,7 @@ type
     ///   ShellExecute calls.
     /// </returns>
     function CallExternalViewers(Handle: HWND;
-                                 ProjectOutputSettings : IProjectOutputSettings):string;
+                                 ProjectOutputSettings : IProjectOutputSettingsReadOnly):string;
   end;
 
 implementation
@@ -221,14 +221,15 @@ begin
 end;
 
 function TMainFormLogic.CallExternalViewers(Handle: HWND;
-  ProjectOutputSettings: IProjectOutputSettings): string;
+  ProjectOutputSettings: IProjectOutputSettingsReadOnly): string;
 var
   FileName : string;
   ErrorMsg : string;
 begin
   Result := '';
 
-  if ProjectOutputSettings.DisplayHTMLFileExt then
+  if (ofHTML in ProjectOutputSettings.OutputFormats) and
+     ProjectOutputSettings.DisplayHTMLFileExt then
   begin
     FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
                               cHTMLOutputBaseFileName);
@@ -238,7 +239,8 @@ begin
       Result := Format(rExtCallFailed, [FileName, Result]);
   end;
 
-  if ProjectOutputSettings.DisplayXMLFileExt then
+  if (ofXML in ProjectOutputSettings.OutputFormats) and
+     ProjectOutputSettings.DisplayXMLFileExt then
   begin
     FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
                               cXMLOutputBaseFileName);
@@ -253,7 +255,8 @@ begin
     end;
   end;
 
-  if ProjectOutputSettings.DisplayEMMAFileExt then
+  if (ofEMMA in ProjectOutputSettings.OutputFormats) and
+     ProjectOutputSettings.DisplayEMMAFileExt then
   begin
     FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
                               cEMMAOutputBaseFileName);

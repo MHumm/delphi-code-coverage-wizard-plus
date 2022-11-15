@@ -23,7 +23,7 @@ unit UScriptsGenerator;
 interface
 
 uses
-  UProjectSettings;
+  UProjectSettingsInterface;
 
 type
   /// <summary>
@@ -35,7 +35,7 @@ type
     /// <summary>
     ///   Contents of the project
     /// </summary>
-    FSettings        : TProjectSettings;
+    FSettings        : IProjectSettings;
     /// <summary>
     ///   File name of the saved project
     /// </summary>
@@ -75,7 +75,7 @@ type
     /// <param name="AProjectFileName">
     ///   Name of the saved project file
     /// </param>
-    constructor Create(const ASettings        : TProjectSettings;
+    constructor Create(const ASettings        : IProjectSettings;
                        const AProjectFileName : string); virtual;
     /// <summary>
     ///   Generates the output files
@@ -90,7 +90,7 @@ uses
   System.SysUtils,
   System.IOUtils;
 
-constructor TScriptsGenerator.Create(const ASettings        : TProjectSettings;
+constructor TScriptsGenerator.Create(const ASettings        : IProjectSettings;
                                      const AProjectFileName : string);
 begin
   Assert(Assigned(ASettings), 'Not created project contents object passed');
@@ -111,7 +111,7 @@ procedure TScriptsGenerator.GenerateDCovExecuteBatchFile;
 const
   // Application path to CodeCoverage.exe,  ExeToAnalyze,  MapFile,  ReportPath
   DCOV_EXECUTE_FORMAT = '"%0:s" -e "%1:s" -m "%2:s" -uf "%3:s_dcov_units.lst" ' +
-                        '-spf "%4:s_dcov_paths.lst" -od "%5:s" -lt "%6:s"';
+                        '-spf "%4:s_dcov_paths.lst" -od "%5:s" -lt "%6:s" %7:s';
 var
   DCovExecuteText : TStringList;
 begin
@@ -128,7 +128,8 @@ begin
                                TPath.GetFileNameWithoutExtension(FProjectFileName))),
                        GetPath(FSettings.ReportOutputPath),
                        GetPath(TPath.Combine(FSettings.ReportOutputPath,
-                                             'Delphi-Code-Coverage-Debug.log'))]) +
+                                             'Delphi-Code-Coverage-Debug.log')),
+                       FSettings.AdditionalParameter]) +
                        GetOutputFormatSwitches());
   // Save
   DCovExecuteText.SaveToFile(FSettings.BatchFileName);

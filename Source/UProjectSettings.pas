@@ -31,15 +31,9 @@ uses
 
 type
   /// <summary>
-  ///   Possible output formats for the report, where Meta can only be used in
-  ///   conjunction with ofEMMA
-  /// </summary>
-  TOutputFormat = (ofEMMA, ofEMMA21, ofMETA, ofXML, ofHTML);
-
-  /// <summary>
   ///   One entry in the lsit of source files to analyze
   /// </summary>
-  TProgramSourceFileItem = class(TObject)
+  TProgramSourceFileItem = class(TInterfacedObject, IProgramSourceFileItem)
   strict private
     /// <summary>
     ///   Name of a file from the soruce directory specified
@@ -49,6 +43,23 @@ type
     ///   If true the file is selected for analysis. Otherwise it is not analyzed.
     /// </summary>
     FSelected : Boolean;
+
+    /// <summary>
+    ///   Returns the file name
+    /// </summary>
+    function GetFilename: string;
+    /// <summary>
+    ///   Returns whether the file is selected for analysis (true) or not
+    /// </summary>
+    function GetSelected: Boolean;
+    /// <summary>
+    ///   Sets the file name
+    /// </summary>
+    procedure SetFilename(const Value: string);
+    /// <summary>
+    ///   Sets whether the file is selected for analysis (true) or not
+    /// </summary>
+    procedure SetSelected(const Value: Boolean);
   public
     /// <summary>
     ///   Creates the instance and initializes its fields
@@ -60,19 +71,28 @@ type
     /// <summary>
     ///   Name of a file from the soruce directory specified
     /// </summary>
-    property Filename : string read FFilename write FFilename;
+    property Filename : string
+      read   GetFilename
+      write  SetFilename;
     /// <summary>
     ///   If true the file is selected for analysis. Otherwise it is not
     ///   analyzed. Directly after construction the entry is considered to
     ///   be selected.
     /// </summary>
-    property Selected : Boolean read FSelected write FSelected;
+    property Selected : Boolean
+      read   GetSelected
+      write  SetSelected;
   end;
+
+  /// <summary>
+  ///   List of all source files and their properties
+  /// </summary>
+  TProgramSourceFileItemList = TList<IProgramSourceFileItem>;
 
   /// <summary>
   ///   List of source files, relatively based on a specified base path
   /// </summary>
-  TProgramSourceFiles = class(TObject)
+  TProgramSourceFiles = class(TInterfacedObject, IProgramSourceFiles)
   private
     /// <summary>
     ///   Base path to which all files names are relatively encoded
@@ -82,7 +102,7 @@ type
     ///   List of all source files, selected and unselected ones. Paths are
     ///   stored in relatively encoded to FBasePath
     /// </summary>
-    FItemList : TObjectList<TProgramSourceFileItem>;
+    FItemList : TProgramSourceFileItemList;
 
     /// <summary>
     ///   Returns the number of files contained in the list
@@ -92,6 +112,10 @@ type
     ///   Returns the number of selected files contained in the list
     /// </summary>
     function GetSelectedCount: Integer;
+    /// <summary>
+    ///   Returns the root path for the files
+    /// </summary>
+    function GetBasePath: TFilename;
     /// <summary>
     ///   Updates the base path setting and if the value is really changed
     ///   updates the list of source files under that path.
@@ -122,9 +146,9 @@ type
     /// </param>
     constructor Create(const BasePath: TFileName = '');
     /// <summary>
-    ///   frees internal data
+    ///   Frees the internal list
     /// </summary>
-    destructor Destroy; override;
+    destructor  Destroy; override;
     /// <summary>
     ///   Adds a file to the list
     /// </summary>
@@ -147,13 +171,13 @@ type
     /// </param>
     procedure GetCheckedItemsList(const ACheckedList : TStrings);
     /// <summary>
-    ///   Returns a list of all selected source files.
+    ///   Returns a list of all source files.
     /// </summary>
-    /// <param name="ACheckedList">
+    /// <param name="AList">
     ///   List object to which all source files are added.
     ///   The list is initially cleared.
     /// </param>
-    procedure GetItemsList(const ACheckedList : TStrings);
+    procedure GetItemsList(const AList : TStrings);
     /// <summary>
     ///   Replaces the list contents with the source files found under the
     ///   newly specified path. Exception: if the path only contains the
@@ -190,11 +214,28 @@ type
     ///   true if that file is checked, false if not
     /// </returns>
     function IsSelected(Index: Integer): Boolean;
+
+    /// <summary>
+    ///   Returns a single list entry. No exceptions are caught!
+    /// </summary>
+    /// <param name="Index">
+    ///   Index of the entry to return
+    /// </param>
+    /// <returns>
+    ///   The item.
+    /// </returns>
+    function GetItem(Index: Integer): IProgramSourceFileItem;
+
+    /// <summary>
+    ///   Returns an enumerator for iterating over the list elements
+    /// </summary>
+    function  GetEnumerator: TProgramSourceFilesEnumerator;
+
     /// <summary>
     ///   Specifies the base path to which all file names are stored relatively
     /// </summary>
     property BasePath : TFilename
-      read   FBasePath
+      read   GetBasePath
       write  SetBasePath;
 
     /// <summary>
@@ -213,12 +254,8 @@ type
   /// <summary>
   ///   Manages all settings of the project
   /// </summary>
-  TProjectSettings = class(TInterfacedObject, IProjectOutputSettings)
-  public
-    /// <summary>
-    ///   Set of possible output formats
-    /// </summary>
-    type TOutputFormatSet = set of TOutputFormat;
+  TProjectSettings = class(TInterfacedObject,
+                           IProjectOutputSettingsReadOnly, IProjectSettings)
   private
     /// <summary>
     ///   Path to the executable to analyze. Absolutely encoded.
@@ -232,7 +269,7 @@ type
     ///   List of all source files for the program including the information
     ///   which ones are actually selected to be included in the analysis.
     /// </summary>
-    FProgramSourceFiles   : TProgramSourceFiles;
+    FProgramSourceFiles   : IProgramSourceFiles;
     /// <summary>
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
@@ -270,6 +307,10 @@ type
     ///   is stored.
     /// </summary>
     FRelativeToScriptPath : Boolean;
+    /// <summary>
+    ///   Any "free form" parameters specified
+    /// </summary>
+    FAdditionalParameter  : string;
     /// <summary>
     ///   Name of the saved or loaded project file
     /// </summary>
@@ -334,9 +375,72 @@ type
     /// </summary>
     function GetDisplayHTMLFileExt: Boolean;
     /// <summary>
+    ///   Defines whether EMMA files shall be displayed via ShellExecute
+    /// </summary>
+    procedure SetDisplayEMMAFileExt(const Value: Boolean);
+    /// <summary>
+    ///   Defines whether HTML files shall be displayed via ShellExecute
+    /// </summary>
+    procedure SetDisplayHTMLFileExt(const Value: Boolean);
+    /// <summary>
+    ///   Defines whether XML files shall be displayed via ShellExecute
+    /// </summary>
+    procedure SetDisplayXMLFileExt(const Value: Boolean);
+    /// <summary>
     ///   Returns the name of the loaded or saved project file
     /// </summary>
     function GetFileName: string;
+    /// <summary>
+    ///   Returns the list of defined source code files for analisys
+    /// </summary>
+    function GetProgramSourceFiles: IProgramSourceFiles;
+    /// <summary>
+    ///   Sets the list of defined source code files for analysis
+    /// </summary>
+    procedure SetProgramSourceFiles(const Value: IProgramSourceFiles);
+    /// <summary>
+    ///   Returns the path to which the batch file and the other files to be
+    ///   generated will be written to
+    /// </summary>
+    function GetScriptsOutputPath: TFilename;
+    /// <summary>
+    ///   Sets the path to which the batch file and the other files to be
+    ///   generated will be written to
+    /// </summary>
+    procedure SetScriptsOutputPath(const Value: TFilename);
+    /// <summary>
+    ///   Returns the path to the CodeCoverage.exe to run
+    /// </summary>
+    function GetCodeCoverageExePath: TFilename;
+    /// <summary>
+    ///   Sets the path to the CodeCoverage.exe to run
+    /// </summary>
+    procedure SeCodeCoverageExePath(const Value: TFilename);
+    /// <summary>
+    ///   When true all paths to files are relative
+    /// </summary>
+    function GetRelativeToScriptPath: Boolean;
+    /// <summary>
+    ///   Defines whether all paths to files are relative (true) or
+    ///   absolute (false)
+    /// </summary>
+    procedure SetRelativeToScriptPath(const Value: Boolean);
+    /// <summary>
+    ///   Returns any additional parameters set
+    /// </summary>
+    function GetAdditionalParameter: string;
+    /// <summary>
+    ///   Defines any additional params to set
+    /// </summary>
+    procedure SetAdditionalParameter(const Value: string);
+    /// <summary>
+    ///   Returns the selected output formats to create
+    /// </summary>
+    function GetOutputFormats: TOutputFormatSet;
+    /// <summary>
+    ///   Sets the selected output formats to create
+    /// </summary>
+    procedure SetOutputFormats(const Value: TOutputFormatSet);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -352,10 +456,6 @@ type
     /// </param>
     constructor Create(const CodeCoverageExe : TFileName;
                        const Version         : string);
-    /// <summary>
-    ///   Frees internally created objects.
-    /// </summary>
-    destructor Destroy; override;
     /// <summary>
     ///   Checks whether both exe-file name and map-file name are defined.
     /// </summary>
@@ -445,16 +545,16 @@ type
     ///   List of source files of the program to analyze including the
     ///   information which of those are actually selected for analysis.
     /// </summary>
-    property ProgramSourceFiles : TProgramSourceFiles
-      read   FProgramSourceFiles
-      write  FProgramSourceFiles;
+    property ProgramSourceFiles : IProgramSourceFiles
+      read   GetProgramSourceFiles
+      write  SetProgramSourceFiles;
     /// <summary>
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
     /// </summary>
     property ScriptsOutputPath : TFilename
-      read   FScriptsOutputPath
-      write  FScriptsOutputPath;
+      read   GetScriptsOutputPath
+      write  SetScriptsOutputPath;
     /// <summary>
     ///   Path where the report(s) will be output to.
     /// </summary>
@@ -465,15 +565,22 @@ type
     ///   Path to the application to analyze.
     /// </summary>
     property CodeCoverageExePath : TFilename
-      read   FCodeCoverageExePath
-      write  FCodeCoverageExePath;
+      read   GetCodeCoverageExePath
+      write  SeCodeCoverageExePath;
     /// <summary>
     ///   When true, paths are relative to the script path where the batch file
     ///   is stored. Otherwise paths are absolute.
     /// </summary>
     property RelativeToScriptPath : Boolean
-      read   FRelativeToScriptPath
-      write  FRelativeToScriptPath;
+      read   GetRelativeToScriptPath
+      write  SetRelativeToScriptPath;
+    /// <summary>
+    ///   Any "free form" parameters specified to be able to use params this
+    ///   version doesn't implement (yet)
+    /// </summary>
+    property AdditionalParameter : string
+      read   GetAdditionalParameter
+      write  SetAdditionalParameter;
 
     /// <summary>
     ///   Returns the name of the generated batch file
@@ -493,21 +600,21 @@ type
     /// </summary>
     property DisplayEMMAFileExt : Boolean
       read   GetDisplayEMMAFileExt
-      write  FDisplayEMMAFileExt;
+      write  SetDisplayEMMAFileExt;
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
     property DisplayXMLFileExt : Boolean
       read   GetDisplayXMLFileExt
-      write  FDisplayXMLFileExt;
+      write  SetDisplayXMLFileExt;
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
     property  DisplayHTMLFileExt : Boolean
       read    GetDisplayHTMLFileExt
-      write   FDisplayHTMLFileExt;
+      write   SetDisplayHTMLFileExt;
   published
     // Necessary to be able to use RTTI for this one
 
@@ -515,8 +622,8 @@ type
     ///   Selected formats for the report output.
     /// </summary>
     property OutputFormats : TOutputFormatSet
-      read   FOutputFormats
-      write  FOutputFormats;
+      read   GetOutputFormats
+      write  SetOutputFormats;
   end;
 
 implementation
@@ -543,10 +650,9 @@ begin
   FProgramVersion      := Version;
 end;
 
-destructor TProjectSettings.Destroy;
+function TProjectSettings.GetAdditionalParameter: string;
 begin
-  FreeAndNil(FProgramSourceFiles);
-  inherited;
+  Result := FAdditionalParameter;
 end;
 
 function TProjectSettings.GetBatchFileName: TFileName;
@@ -554,6 +660,11 @@ begin
   Result := TPath.Combine(FScriptsOutputPath,
               TPath.GetFileNameWithoutExtension((FFileName)) +
               cBatchFileSuffix);
+end;
+
+function TProjectSettings.GetCodeCoverageExePath: TFilename;
+begin
+  Result := FCodeCoverageExePath;
 end;
 
 function TProjectSettings.GetDisplayEMMAFileExt: Boolean;
@@ -581,9 +692,19 @@ begin
   Result := FMapFile;
 end;
 
+function TProjectSettings.GetOutputFormats: TOutputFormatSet;
+begin
+  Result := FOutputFormats;
+end;
+
+function TProjectSettings.GetProgramSourceFiles: IProgramSourceFiles;
+begin
+  Result := FProgramSourceFiles;
+end;
+
 function TProjectSettings.GetProgramSourcePath: TFilename;
 begin
-  Result := FProgramSourceFiles.FBasePath;
+  Result := FProgramSourceFiles.BasePath;
 end;
 
 function TProjectSettings.GetProgramToAnalyze: TFilename;
@@ -627,91 +748,128 @@ begin
   FFileName         := FileName;
 
   LDocument         := TXMLDocument.Create(FFileName);
-  LDocument.Options := [doNodeAutoIndent];
-  LDocument.Active  := true;
+  try
+    LDocument.Options := [doNodeAutoIndent];
+    LDocument.Active  := true;
 
-  // unit test exe to run and map file for that
-  LUnitTestFiles := LDocument.DocumentElement.ChildNodes['UnitTestFiles'];
-  if Assigned(LUnitTestFiles) then
-  begin
-    LNode := LUnitTestFiles.ChildNodes.FindNode('ExecutableToAnalyze');
-    if Assigned(LNode) then
-      FExecutableToAnalyze := LNode.Text;
-
-    LNode := LUnitTestFiles.ChildNodes.FindNode('MapFile');
-    if Assigned(LNode) then
-      FMapFile             := LNode.Text;
-
-    LNode := LUnitTestFiles.ChildNodes.FindNode('CodeCoverageExe');
-    if Assigned(LNode) then
-      FCodeCoverageExePath := LNode.Text;
-  end;
-
-  // Source code files
-  LSourceFiles := LDocument.DocumentElement.ChildNodes['SourceCodeFiles'];
-  if Assigned(LSourceFiles) then
-  begin
-    LNode := LSourceFiles.ChildNodes.FindNode('SourceBasePath');
-    if Assigned(LNode) then
+    // unit test exe to run and map file for that
+    LUnitTestFiles := LDocument.DocumentElement.ChildNodes['UnitTestFiles'];
+    if Assigned(LUnitTestFiles) then
     begin
-      FProgramSourceFiles.Free;
-      FProgramSourceFiles := TProgramSourceFiles.Create(LNode.Text);
+      LNode := LUnitTestFiles.ChildNodes.FindNode('ExecutableToAnalyze');
+      if Assigned(LNode) then
+        FExecutableToAnalyze := LNode.Text;
+
+      LNode := LUnitTestFiles.ChildNodes.FindNode('MapFile');
+      if Assigned(LNode) then
+        FMapFile             := LNode.Text;
+
+      LNode := LUnitTestFiles.ChildNodes.FindNode('CodeCoverageExe');
+      if Assigned(LNode) then
+        FCodeCoverageExePath := LNode.Text;
     end;
 
-    LNode := LSourceFiles.ChildNodes.FindNode('SourceFile');
-    while Assigned(LNode) do
+    // Source code files
+    LSourceFiles := LDocument.DocumentElement.ChildNodes['SourceCodeFiles'];
+    if Assigned(LSourceFiles) then
     begin
-      SourceFileName := LNode.Text;
-      if LNode.HasAttribute('Selected') then
-        IsSelected := StrToBool(LNode.Attributes['Selected'])
-      else
-        IsSelected := false;
+      LNode := LSourceFiles.ChildNodes.FindNode('SourceBasePath');
+      if Assigned(LNode) then
+      begin
+        FProgramSourceFiles := nil;
+        FProgramSourceFiles := TProgramSourceFiles.Create(LNode.Text);
+      end;
 
-      FProgramSourceFiles.AddFile(SourceFileName, IsSelected);
+      LNode := LSourceFiles.ChildNodes.FindNode('SourceFile');
+      while Assigned(LNode) do
+      begin
+        SourceFileName := LNode.Text;
+        if LNode.HasAttribute('Selected') then
+          IsSelected := StrToBool(LNode.Attributes['Selected'])
+        else
+          IsSelected := false;
 
-      LNode := LNode.NextSibling;
+        FProgramSourceFiles.AddFile(SourceFileName, IsSelected);
+
+        LNode := LNode.NextSibling;
+      end;
     end;
+
+    // OutputSettings
+    LOutput := LDocument.DocumentElement.ChildNodes['OutputSettings'];
+    if Assigned(LOutput) then
+    begin
+      LNode := LOutput.ChildNodes.FindNode('ScriptOutputPath');
+      if Assigned(LNode) then
+        FScriptsOutputPath := LNode.Text;
+
+      LNode := LOutput.ChildNodes.FindNode('ReportOutputPath');
+      if Assigned(LNode) then
+        FReportOutputPath := LNode.Text;
+
+      LNode := LOutput.ChildNodes.FindNode('ReportOutputFormats');
+      if Assigned(LNode) then
+        System.TypInfo.SetSetProp(self, 'OutputFormats', LNode.Text);
+
+      LNode := LOutput.ChildNodes.FindNode('DisplayEMMAExternally');
+      if Assigned(LNode) then
+        FDisplayEMMAFileExt := StrToBool(LNode.Text);
+
+      LNode := LOutput.ChildNodes.FindNode('DisplayXMLExternally');
+      if Assigned(LNode) then
+        FDisplayXMLFileExt := StrToBool(LNode.Text);
+
+      LNode := LOutput.ChildNodes.FindNode('DisplayHTMLExternally');
+      if Assigned(LNode) then
+        FDisplayHTMLFileExt := StrToBool(LNode.Text);
+    end;
+
+    // Misc. Settings
+    LMisc := LDocument.DocumentElement.ChildNodes['MiscSettings'];
+    if Assigned(LMisc) then
+    begin
+      LNode := LMisc.ChildNodes.FindNode('AdditionalParams');
+      if Assigned(LNode) then
+        FAdditionalParameter := LNode.Text;
+
+      LNode := LMisc.ChildNodes.FindNode('UseRelativePaths');
+      if Assigned(LNode) then
+        FRelativeToScriptPath := StrToBool(LNode.Text);
+    end;
+
+//    LDocument.Active := false;
+  finally
+    LUnitTestFiles := nil;
+    LSourceFiles   := nil;
+    LOutput        := nil;
+    LMisc          := nil;
+    LNode          := nil;
   end;
+end;
 
-  // OutputSettings
-  LOutput := LDocument.DocumentElement.ChildNodes['OutputSettings'];
-  if Assigned(LOutput) then
-  begin
-    LNode := LOutput.ChildNodes.FindNode('ScriptOutputPath');
-    if Assigned(LNode) then
-      FScriptsOutputPath := LNode.Text;
+procedure TProjectSettings.SeCodeCoverageExePath(const Value: TFilename);
+begin
+  FCodeCoverageExePath := Value;
+end;
 
-    LNode := LOutput.ChildNodes.FindNode('ReportOutputPath');
-    if Assigned(LNode) then
-      FReportOutputPath := LNode.Text;
+procedure TProjectSettings.SetAdditionalParameter(const Value: string);
+begin
+  FAdditionalParameter := Value;
+end;
 
-    LNode := LOutput.ChildNodes.FindNode('ReportOutputFormats');
-    if Assigned(LNode) then
-      System.TypInfo.SetSetProp(self, 'OutputFormats', LNode.Text);
+procedure TProjectSettings.SetDisplayEMMAFileExt(const Value: Boolean);
+begin
+  FDisplayEMMAFileExt := Value;
+end;
 
-    LNode := LOutput.ChildNodes.FindNode('DisplayEMMAExternally');
-    if Assigned(LNode) then
-      FDisplayEMMAFileExt := StrToBool(LNode.Text);
+procedure TProjectSettings.SetDisplayHTMLFileExt(const Value: Boolean);
+begin
+  FDisplayHTMLFileExt := Value;
+end;
 
-    LNode := LOutput.ChildNodes.FindNode('DisplayXMLExternally');
-    if Assigned(LNode) then
-      FDisplayXMLFileExt := StrToBool(LNode.Text);
-
-    LNode := LOutput.ChildNodes.FindNode('DisplayHTMLExternally');
-    if Assigned(LNode) then
-      FDisplayHTMLFileExt := StrToBool(LNode.Text);
-  end;
-
-  // Misc. Settings
-  LMisc := LDocument.DocumentElement.ChildNodes['MiscSettings'];
-  if Assigned(LMisc) then
-  begin
-    LNode := LMisc.ChildNodes.FindNode('UseRelativePaths');
-    if Assigned(LNode) then
-      FRelativeToScriptPath := StrToBool(LNode.Text);
-  end;
-
-  LDocument.Active := false;
+procedure TProjectSettings.SetDisplayXMLFileExt(const Value: Boolean);
+begin
+  FDisplayXMLFileExt := Value;
 end;
 
 procedure TProjectSettings.SetMapFile(const Value: TFilename);
@@ -719,10 +877,20 @@ begin
   FMapFIle := Value;
 end;
 
+procedure TProjectSettings.SetOutputFormats(const Value: TOutputFormatSet);
+begin
+  FOutputFormats := Value;
+end;
+
 procedure TProjectSettings.SetProgramSourceBasePath(const Value: TFilename);
 begin
   if (FProgramSourceFiles.BasePath <> Value) then
     FProgramSourceFiles.BasePath := Value;
+end;
+
+procedure TProjectSettings.SetProgramSourceFiles(const Value: IProgramSourceFiles);
+begin
+  FProgramSourceFiles := Value;
 end;
 
 procedure TProjectSettings.SetProgramToAnalyze(const Value: TFilename);
@@ -739,15 +907,30 @@ begin
   end;
 end;
 
+procedure TProjectSettings.SetRelativeToScriptPath(const Value: Boolean);
+begin
+  FRelativeToScriptPath := Value;
+end;
+
 procedure TProjectSettings.SetReportOutputPath(const Value: TFilename);
 begin
   FReportOutputPath := Value;
+end;
+
+procedure TProjectSettings.SetScriptsOutputPath(const Value: TFilename);
+begin
+  FScriptsOutputPath := Value;
 end;
 
 function TProjectSettings.GetRelativePath(const APath: string): string;
 begin
   // Extract path relative to scripts relative
   Result := ExtractRelativepath(FScriptsOutputPath, APath);
+end;
+
+function TProjectSettings.GetRelativeToScriptPath: Boolean;
+begin
+  Result := FRelativeToScriptPath;
 end;
 
 function TProjectSettings.GetReportOutputIndexURL: string;
@@ -760,6 +943,11 @@ end;
 function TProjectSettings.GetReportOutputPath: TFilename;
 begin
   Result := FReportOutputPath;
+end;
+
+function TProjectSettings.GetScriptsOutputPath: TFilename;
+begin
+  Result := FScriptsOutputPath;
 end;
 
 procedure TProjectSettings.SaveToXML(const FileName: TFileName);
@@ -799,7 +987,7 @@ begin
   LNodeElement      := LSourceFiles.AddChild('SourceBasePath', -1);
   LNodeElement.Text := FProgramSourceFiles.BasePath;
 
-  for var SourceFileItem in FProgramSourceFiles.FItemList do
+  for var SourceFileItem in FProgramSourceFiles do
   begin
     LNodeElement      := LSourceFiles.AddChild('SourceFile', -1);
     LNodeElement.Text := SourceFileItem.Filename;
@@ -831,6 +1019,9 @@ begin
   LNodeElement      := LMisc.AddChild('UseRelativePaths', -1);
   LNodeElement.Text := BoolToStr(FRelativeToScriptPath, true);
 
+  LNodeElement      := LMisc.AddChild('AdditionalParams', -1);
+  LNodeElement.Text := FAdditionalParameter;
+
   LDocument.SaveToFile(FFileName);
 end;
 
@@ -839,7 +1030,7 @@ end;
 procedure TProgramSourceFiles.AddFile(const AItemFilename : TFilename;
                                       IsSelected          : Boolean);
 var
-  NewItem             : TProgramSourceFileItem;
+  NewItem             : IProgramSourceFileItem;
   NewItemRelativePath : TFilename;
 begin
   NewItemRelativePath := ExtractRelativePath(FBasePath, AItemFilename);
@@ -857,25 +1048,32 @@ constructor TProgramSourceFiles.Create(const BasePath: TFileName);
 begin
   inherited Create;
 
-  FItemList := TObjectList<TProgramSourceFileItem>.Create(true);
+  FItemList := TProgramSourceFileItemList.Create;
   FBasePath := BasePath;
 end;
 
 destructor TProgramSourceFiles.Destroy;
 begin
-  FreeAndNil(FItemList);
+  FItemList.Free;
+
+  inherited;
+end;
+
+function TProgramSourceFiles.GetBasePath: TFilename;
+begin
+  Result := FBasePath;
 end;
 
 procedure TProgramSourceFiles.GetCheckedItemsList(const ACheckedList: TStrings);
 var
-  SourceFileItem: TProgramSourceFileItem;
+  SourceFileItem: IProgramSourceFileItem;
 begin
   Assert(Assigned(ACheckedList), 'Non assigned list specified!');
 
   ACheckedList.Clear;
   ACheckedList.BeginUpdate;
   try
-    for SourceFileItem in FItemList do
+    for SourceFileItem in self do //FItemList do
     begin
       if (SourceFileItem.Selected) then
         ACheckedList.Add(SourceFileItem.Filename);
@@ -890,19 +1088,29 @@ begin
   Result := FItemList.Count;
 end;
 
-procedure TProgramSourceFiles.GetItemsList(const ACheckedList: TStrings);
-var
-  SourceFileItem: TProgramSourceFileItem;
+function TProgramSourceFiles.GetEnumerator: TProgramSourceFilesEnumerator;
 begin
-  Assert(Assigned(ACheckedList), 'Non assigned list specified!');
+  Result := TProgramSourceFilesEnumerator.Create(self);
+end;
 
-  ACheckedList.Clear;
-  ACheckedList.BeginUpdate;
+function TProgramSourceFiles.GetItem(Index: Integer): IProgramSourceFileItem;
+begin
+  Result := FItemList[Index];
+end;
+
+procedure TProgramSourceFiles.GetItemsList(const AList: TStrings);
+var
+  SourceFileItem: IProgramSourceFileItem;
+begin
+  Assert(Assigned(AList), 'Non assigned list specified!');
+
+  AList.Clear;
+  AList.BeginUpdate;
   try
     for SourceFileItem in FItemList do
-      ACheckedList.Add(SourceFileItem.Filename);
+      AList.Add(SourceFileItem.Filename);
   finally
-    ACheckedList.EndUpdate;
+    AList.EndUpdate;
   end;
 end;
 
@@ -922,7 +1130,7 @@ end;
 procedure TProgramSourceFiles.ReplaceSourceFilesList;
 var
   FileList : TStringDynArray;
-  Item     : TProgramSourceFileItem;
+  Item     : IProgramSourceFileItem;
 begin
   FItemList.Clear;
 
@@ -963,7 +1171,7 @@ end;
 procedure TProgramSourceFiles.UpdateSourceFilesList;
 var
   FileList : TStringDynArray;
-  Item     : TProgramSourceFileItem;
+  Item     : IProgramSourceFileItem;
   Exists   : Boolean;
   n        : Integer;
 begin
@@ -1042,8 +1250,8 @@ end;
 
 procedure TProgramSourceFiles.Sort;
 begin
-  FItemList.Sort(TComparer<TProgramSourceFileItem>.Construct(
-                    function (const L, R: TProgramSourceFileItem): integer
+  FItemList.Sort(TComparer<IProgramSourceFileItem>.Construct(
+                    function (const L, R: IProgramSourceFileItem): integer
                     begin
                       Result := CompareText(L.Filename, R.Filename);
                     end
@@ -1058,6 +1266,26 @@ begin
 
   FFilename := AFilename;
   FSelected := True;
+end;
+
+function TProgramSourceFileItem.GetFilename: string;
+begin
+  Result := FFilename;
+end;
+
+function TProgramSourceFileItem.GetSelected: Boolean;
+begin
+  Result := FSelected;
+end;
+
+procedure TProgramSourceFileItem.SetFilename(const Value: string);
+begin
+  FFilename := Value;
+end;
+
+procedure TProgramSourceFileItem.SetSelected(const Value: Boolean);
+begin
+  FSelected := Value;
 end;
 
 end.
