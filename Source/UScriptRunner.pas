@@ -22,7 +22,7 @@ interface
 
 uses
   System.Classes,
-  UProjectSettings;
+  UProjectSettingsInterface;
 
 type
   /// <summary>
@@ -43,7 +43,7 @@ type
   ///   Event for reporting that the coverage run has finished. The event is
   ///   called synchronized so performing GUI updates in it is safe
   /// </param>
-  procedure RunBatchFile(AProjectSettings : TProjectSettings;
+  procedure RunBatchFile(AProjectSettings : IProjectOutputSettingsReadOnly;
                          AOnFinished      : TOnProgramRunFinished);
 
 implementation
@@ -94,7 +94,7 @@ begin
   end;
 end;
 
-procedure RunBatchFile(AProjectSettings : TProjectSettings;
+procedure RunBatchFile(AProjectSettings : IProjectOutputSettingsReadOnly;
                        AOnFinished      : TOnProgramRunFinished);
 var
   aTask      : ITask;

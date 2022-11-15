@@ -206,7 +206,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 503
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_Output
+        ActiveCard = crd_MiscSettings
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
@@ -656,7 +656,7 @@ object FormMain: TFormMain
           end
           object LabelPath: TLabel
             Left = 32
-            Top = 80
+            Top = 104
             Width = 52
             Height = 15
             Anchors = [akLeft, akTop, akRight]
@@ -664,14 +664,21 @@ object FormMain: TFormMain
           end
           object LabelScriptPreviewCaption: TLabel
             Left = 32
-            Top = 104
+            Top = 128
             Width = 109
             Height = 15
             Caption = 'Script paths preview:'
           end
+          object LabelAdditioalParams: TLabel
+            Left = 8
+            Top = 48
+            Width = 117
+            Height = 15
+            Caption = 'Additional parameters'
+          end
           object CheckBoxRelativePaths: TCheckBox
             Left = 8
-            Top = 56
+            Top = 80
             Width = 385
             Height = 17
             Caption = 'Make all folders relative to the scripts path'
@@ -680,13 +687,20 @@ object FormMain: TFormMain
           end
           object MemoScriptPreview: TMemo
             Left = 32
-            Top = 125
+            Top = 149
             Width = 377
-            Height = 362
+            Height = 338
             Anchors = [akLeft, akTop, akRight, akBottom]
             Enabled = False
             TabOrder = 1
-            ExplicitHeight = 136
+          end
+          object EditAdditionalParameter: TEdit
+            Left = 139
+            Top = 46
+            Width = 270
+            Height = 23
+            TabOrder = 2
+            OnChange = EditAdditionalParameterChange
           end
         end
         object crd_SaveAndRun: TCard

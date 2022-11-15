@@ -25,9 +25,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.ImageList, Vcl.ImgList,
   Vcl.VirtualImageList, Vcl.StdCtrls, Vcl.WinXPanels, Vcl.ExtCtrls,
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.ComCtrls, Vcl.ButtonGroup,
-  Vcl.CheckLst, USettings, UDataModuleIcons, UProjectSettings, Vcl.WinXCtrls,
+  Vcl.CheckLst, USettings, UDataModuleIcons, Vcl.WinXCtrls, Vcl.Menus,
   Winapi.WebView2, Winapi.ActiveX, Vcl.Edge, Vcl.OleCtrls, SHDocVw,
-  MainFormLogic, Vcl.Menus;
+  MainFormLogic, UProjectSettings, UProjectSettingsInterface;
 
 type
   /// <summary>
@@ -126,6 +126,8 @@ type
     CheckBoxOpenHTMLFileExtern: TCheckBox;
     CheckBoxXMLLines: TCheckBox;
     CheckBoxXMLCombineMultiple: TCheckBox;
+    LabelAdditioalParams: TLabel;
+    EditAdditionalParameter: TEdit;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -181,6 +183,7 @@ type
     procedure CheckBoxOpenHTMLFileExternClick(Sender: TObject);
     procedure CheckBoxOpenEMMAFileExternClick(Sender: TObject);
     procedure CheckBoxEMMA21Click(Sender: TObject);
+    procedure EditAdditionalParameterChange(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -190,7 +193,7 @@ type
     /// <summary>
     ///   Manages project settings and loading/saving these from/to a file
     /// </summary>
-    FProject  : TProjectSettings;
+    FProject  : IProjectSettings;
 
     /// <summary>
     ///   Buisiness logic for the main form
@@ -344,6 +347,10 @@ type
     ///   external viewer) based on whether the format is enabled or not
     /// </summary>
     procedure UpdateHTMLCheckBoxEnableStates;
+    /// <summary>
+    ///   Displays the Save and Run card of the wizard and disables the next button
+    /// </summary>
+    procedure DisplaySaveAndRunScreen;
   public
   end;
 
@@ -542,12 +549,18 @@ begin
           crd_MiscSettings.Tag := cImgCompletedPage;
           PrepareScriptOutputPathDisplay;
         end;
-    4 : cp_Wizard.ActiveCard := crd_SaveAndRun;
+    4 : DisplaySaveAndRunScreen;
     else
       MessageDlg(Format(rUnknownMenu, [Index]), mtError, [mbOK], -1);
   end;
 
   SetActiveWizardCardImageIndex(cImgActivePage);
+end;
+
+procedure TFormMain.DisplaySaveAndRunScreen;
+begin
+  cp_Wizard.ActiveCard := crd_SaveAndRun;
+  ButtonNext.Enabled   := false;
 end;
 
 procedure TFormMain.ButtonHomeClick(Sender: TObject);
@@ -671,6 +684,7 @@ begin
 //    CheckBoxXMLCombineMultiple.Checked := false;
 
     CheckBoxRelativePaths.Checked := FProject.RelativeToScriptPath;
+    EditAdditionalParameter.Text  := FProject.AdditionalParameter;
 
     UpdateEMMACheckBoxEnableStates;
     UpdateXMLCheckBoxEnableStates;
@@ -690,7 +704,7 @@ begin
     DisplayButtonIcons;
 
     cp_Main.ActiveCard   := crd_EditSettings;
-    cp_Wizard.ActiveCard := crd_SaveAndRun;
+    DisplaySaveAndRunScreen;
     SetActiveWizardCardImageIndex(cImgActivePage);
   except
     on e:exception do
@@ -802,6 +816,11 @@ end;
 procedure TFormMain.EdgeBrowserHistoryChanged(Sender: TCustomEdgeBrowser);
 begin
   UpdateBrowserNavigationButtons;
+end;
+
+procedure TFormMain.EditAdditionalParameterChange(Sender: TObject);
+begin
+  FProject.AdditionalParameter := (Sender as TEdit).Text;
 end;
 
 procedure TFormMain.EditCodeCoverageExeChange(Sender: TObject);
@@ -1138,6 +1157,7 @@ begin
   EditMapFile.Text                   := '';
   EditScriptOutputFolder.Text        := '';
   EditReportOutputFolder.Text        := '';
+  EditAdditionalParameter.Text       := '';
   CheckBoxEMMA.Checked               := false;
   CheckBoxMeta.Checked               := false;
   CheckBoxXML.Checked                := false;
