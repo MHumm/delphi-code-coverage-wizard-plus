@@ -27,6 +27,7 @@ uses
   System.SysUtils,
   System.Classes,
   Generics.Collections,
+  Xml.XMLIntf,
   UProjectSettingsInterface;
 
 type
@@ -252,6 +253,43 @@ type
   end;
 
   /// <summary>
+  ///   Attribute for mapping settings to XML nodes
+  /// </summary>
+  SettingsAttribute = class(TCustomAttribute)
+  strict private
+    /// <summary>
+    ///   Category in which the setting is
+    /// </summary>
+    FCategory : string;
+    /// <summary>
+    ///   Name of the actual setting
+    /// </summary>
+    FProperty : string;
+  public
+    /// <summary>
+    ///   Initialize the object
+    /// </summary>
+    /// <param name="aCategory">
+    ///   Category in which the setting is
+    /// </param>
+    /// <param name="aProperty">
+    ///   Name of the actual setting
+    /// </param>
+    constructor Create(const aCategory, aProperty: string);
+
+    /// <summary>
+    ///   Category in which the setting is
+    /// </summary>
+    property Category : string
+      read   FCategory;
+    /// <summary>
+    ///   Name of the actual setting
+    /// </summary>
+    property PropertyName : string
+      read   FProperty;
+  end;
+
+  /// <summary>
   ///   Manages all settings of the project
   /// </summary>
   TProjectSettings = class(TInterfacedObject,
@@ -291,21 +329,25 @@ type
     ///   Displays the newly generated EMMA-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
+    [SettingsAttribute('OutputSettings', 'DisplayEMMAExternally')]
     FDisplayEMMAFileExt   : Boolean;
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
+    [SettingsAttribute('OutputSettings', 'DisplayXMLExternally')]
     FDisplayXMLFileExt    : Boolean;
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
+    [SettingsAttribute('OutputSettings', 'DisplayHTMLExternally')]
     FDisplayHTMLFileExt   : Boolean;
     /// <summary>
     ///   When true, paths are relative to the script path where the batch file
     ///   is stored.
     /// </summary>
+    [SettingsAttribute('MiscSettings', 'UseRelativePaths')]
     FRelativeToScriptPath : Boolean;
     /// <summary>
     ///   Any "free form" parameters specified
@@ -441,6 +483,11 @@ type
     ///   Sets the selected output formats to create
     /// </summary>
     procedure SetOutputFormats(const Value: TOutputFormatSet);
+    /// <summary>
+    ///   Saves the values of all boolean fields which have the right attribute
+    ///   defining where in the XML file to save it.
+    /// </summary>
+    procedure SaveBooleans(Document: IXMLDocument);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -634,7 +681,7 @@ uses
   System.IOUtils,
   System.Generics.Defaults,
   System.Win.ComObj,
-  Xml.XMLIntf,
+  System.Rtti,
   Xml.XMLDoc,
   UConsts;
 
@@ -1005,24 +1052,49 @@ begin
   LNodeElement      := LOutput.AddChild('ReportOutputFormats', -1);
   LNodeElement.Text := System.TypInfo.GetSetProp(self, 'OutputFormats', false);
 
-  LNodeElement      := LOutput.AddChild('DisplayEMMAExternally', -1);
-  LNodeElement.Text := BoolToStr(FDisplayEMMAFileExt, true);
-
-  LNodeElement      := LOutput.AddChild('DisplayXMLExternally', -1);
-  LNodeElement.Text := BoolToStr(FDisplayXMLFileExt, true);
-
-  LNodeElement      := LOutput.AddChild('DisplayHTMLExternally', -1);
-  LNodeElement.Text := BoolToStr(FDisplayHTMLFileExt, true);
-
   // Miscelleanous settings
   LMisc             := LDocument.DocumentElement.AddChild('MiscSettings', -1);
-  LNodeElement      := LMisc.AddChild('UseRelativePaths', -1);
-  LNodeElement.Text := BoolToStr(FRelativeToScriptPath, true);
-
   LNodeElement      := LMisc.AddChild('AdditionalParams', -1);
   LNodeElement.Text := FAdditionalParameter;
 
+  SaveBooleans(LDocument);
+
   LDocument.SaveToFile(FFileName);
+end;
+
+procedure TProjectSettings.SaveBooleans(Document: IXMLDocument);
+var
+  Context    : TRTTIContext;
+  ClassRTTI  : TRttiType;
+  Fields     : TArray<TRttiField>;
+  Field      : TRttiField;
+  Attributes : TArray<TCustomAttribute>;
+  Attribute  : TCustomAttribute;
+  CategoryNode, PropertyNode: IXMLNode;
+begin
+  ClassRTTI := Context.GetType(TProjectSettings.ClassInfo);
+  Fields   := ClassRTTI.GetFields;
+  for Field in Fields do
+  begin
+    Attributes := Field.GetAttributes;
+
+    for Attribute in Attributes do
+      if Attribute is SettingsAttribute then
+      begin
+        CategoryNode := Document.ChildNodes.FindNode('DCCProject').
+                          ChildNodes.FindNode(
+                            (Attribute as SettingsAttribute).Category);
+
+        // Only create parent/category node if necessary
+        if not Assigned(CategoryNode) then
+          CategoryNode := Document.DocumentElement.AddChild(
+                            (Attribute as SettingsAttribute).Category, -1);
+
+        PropertyNode      := CategoryNode.AddChild(
+                              (Attribute as SettingsAttribute).PropertyName, -1);
+        PropertyNode.Text := BoolToStr(Field.GetValue(self).AsBoolean, true);
+      end;
+  end;
 end;
 
 { TProgramSourceFiles }
@@ -1286,6 +1358,16 @@ end;
 procedure TProgramSourceFileItem.SetSelected(const Value: Boolean);
 begin
   FSelected := Value;
+end;
+
+{ SettingsAttribute }
+
+constructor SettingsAttribute.Create(const aCategory, aProperty: string);
+begin
+  inherited Create;
+
+  FCategory := aCategory;
+  FProperty := aProperty;
 end;
 
 end.
