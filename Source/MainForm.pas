@@ -129,6 +129,11 @@ type
     LabelAdditioalParams: TLabel;
     EditAdditionalParameter: TEdit;
     CheckBoxXMLJacocoFormat: TCheckBox;
+    ScrollBoxMisc: TScrollBox;
+    Label1: TLabel;
+    CheckBoxLogToFile: TCheckBox;
+    CheckBoxLogPerAPI: TCheckBox;
+    CheckBoxPassThroughExitCode: TCheckBox;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -188,6 +193,9 @@ type
     procedure CheckBoxXMLLinesClick(Sender: TObject);
     procedure CheckBoxXMLCombineMultipleClick(Sender: TObject);
     procedure CheckBoxXMLJacocoFormatClick(Sender: TObject);
+    procedure CheckBoxLogToFileClick(Sender: TObject);
+    procedure CheckBoxLogPerAPIClick(Sender: TObject);
+    procedure CheckBoxPassThroughExitCodeClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -672,24 +680,27 @@ begin
       EditSourcePath.OnChange := OnChangeBackup;
     end;
 
-    EditScriptOutputFolder.Text        := FProject.ScriptsOutputPath;
-    EditReportOutputFolder.Text        := FProject.ReportOutputPath;
-    EditCodeCoverageExe.Text           := FProject.CodeCoverageExePath;
+    EditScriptOutputFolder.Text         := FProject.ScriptsOutputPath;
+    EditReportOutputFolder.Text         := FProject.ReportOutputPath;
+    EditCodeCoverageExe.Text            := FProject.CodeCoverageExePath;
 
-    CheckBoxEMMA.Checked               := ofEMMA   in FProject.OutputFormats;
-    CheckBoxMeta.Checked               := ofMeta   in FProject.OutputFormats;
-    CheckBoxEMMA21.Checked             := ofEMMA21 in FProject.OutputFormats;
-    CheckBoxXML.Checked                := ofXML    in FProject.OutputFormats;
-    CheckBoxHTML.Checked               := ofHTML   in FProject.OutputFormats;
-    CheckBoxOpenEMMAFileExtern.Checked := FProject.DisplayEMMAFileExt;
-    CheckBoxOpenXMLFileExtern.Checked  := FProject.DisplayXMLFileExt;
-    CheckBoxOpenHTMLFileExtern.Checked := FProject.DisplayHTMLFileExt;
-    CheckBoxXMLLines.Checked           := FProject.AddLineNumbersToXML;
-    CheckBoxXMLCombineMultiple.Checked := FProject.CombineXMLCoverage;
-    CheckBoxXMLJacocoFormat.Checked    := FProject.XMLJacocoFormat;
+    CheckBoxEMMA.Checked                := ofEMMA   in FProject.OutputFormats;
+    CheckBoxMeta.Checked                := ofMeta   in FProject.OutputFormats;
+    CheckBoxEMMA21.Checked              := ofEMMA21 in FProject.OutputFormats;
+    CheckBoxXML.Checked                 := ofXML    in FProject.OutputFormats;
+    CheckBoxHTML.Checked                := ofHTML   in FProject.OutputFormats;
+    CheckBoxOpenEMMAFileExtern.Checked  := FProject.DisplayEMMAFileExt;
+    CheckBoxOpenXMLFileExtern.Checked   := FProject.DisplayXMLFileExt;
+    CheckBoxOpenHTMLFileExtern.Checked  := FProject.DisplayHTMLFileExt;
+    CheckBoxXMLLines.Checked            := FProject.AddLineNumbersToXML;
+    CheckBoxXMLCombineMultiple.Checked  := FProject.CombineXMLCoverage;
+    CheckBoxXMLJacocoFormat.Checked     := FProject.XMLJacocoFormat;
+    CheckBoxLogToFile.Checked           := FProject.LogToTextFile;
+    CheckBoxLogPerAPI.Checked           := FProject.LogToOutputDebugString;
+    CheckBoxPassThroughExitCode.Checked := FProject.PassTroughExitCode;
 
-    CheckBoxRelativePaths.Checked := FProject.RelativeToScriptPath;
-    EditAdditionalParameter.Text  := FProject.AdditionalParameter;
+    CheckBoxRelativePaths.Checked       := FProject.RelativeToScriptPath;
+    EditAdditionalParameter.Text        := FProject.AdditionalParameter;
 
     UpdateEMMACheckBoxEnableStates;
     UpdateXMLCheckBoxEnableStates;
@@ -1061,6 +1072,16 @@ begin
   UpdateHTMLCheckBoxEnableStates;
 end;
 
+procedure TFormMain.CheckBoxLogPerAPIClick(Sender: TObject);
+begin
+  FProject.LogToOutputDebugString := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxLogToFileClick(Sender: TObject);
+begin
+  FProject.LogToTextFile := (Sender as TCheckBox).Checked;
+end;
+
 procedure TFormMain.CheckBoxMetaClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofMETA);
@@ -1079,6 +1100,11 @@ end;
 procedure TFormMain.CheckBoxOpenXMLFileExternClick(Sender: TObject);
 begin
   FProject.DisplayXMLFileExt := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxPassThroughExitCodeClick(Sender: TObject);
+begin
+  FProject.PassTroughExitCode := (Sender as TCHeckBox).Checked;
 end;
 
 procedure TFormMain.CheckBoxRelativePathsClick(Sender: TObject);
@@ -1168,22 +1194,25 @@ end;
 
 procedure TFormMain.ClearWizardFields;
 begin
-  EditExeFile.Text                   := '';
-  EditMapFile.Text                   := '';
-  EditScriptOutputFolder.Text        := '';
-  EditReportOutputFolder.Text        := '';
-  EditAdditionalParameter.Text       := '';
-  CheckBoxEMMA.Checked               := false;
-  CheckBoxMeta.Checked               := false;
-  CheckBoxXML.Checked                := false;
-  CheckBoxHTML.Checked               := false;
-  CheckBoxEMMA21.Checked             := false;
-  CheckBoxOpenEMMAFileExtern.Checked := false;
-  CheckBoxOpenXMLFileExtern.Checked  := false;
-  CheckBoxOpenHTMLFileExtern.Checked := false;
-  CheckBoxXMLLines.Checked           := false;
-  CheckBoxXMLCombineMultiple.Checked := false;
-  CheckBoxXMLJacocoFormat.Checked    := false;
+  EditExeFile.Text                    := '';
+  EditMapFile.Text                    := '';
+  EditScriptOutputFolder.Text         := '';
+  EditReportOutputFolder.Text         := '';
+  EditAdditionalParameter.Text        := '';
+  CheckBoxEMMA.Checked                := false;
+  CheckBoxMeta.Checked                := false;
+  CheckBoxXML.Checked                 := false;
+  CheckBoxHTML.Checked                := false;
+  CheckBoxEMMA21.Checked              := false;
+  CheckBoxOpenEMMAFileExtern.Checked  := false;
+  CheckBoxOpenXMLFileExtern.Checked   := false;
+  CheckBoxOpenHTMLFileExtern.Checked  := false;
+  CheckBoxXMLLines.Checked            := false;
+  CheckBoxXMLCombineMultiple.Checked  := false;
+  CheckBoxXMLJacocoFormat.Checked     := false;
+  CheckBoxLogToFile.Checked           := true; // deliberately
+  CheckBoxLogPerAPI.Checked           := false;
+  CheckBoxPassThroughExitCode.Checked := false;
 
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;

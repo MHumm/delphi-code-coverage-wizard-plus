@@ -133,7 +133,16 @@ begin
     StringStream.WriteString(' -uf '  + (OutputPath + '_dcov_units.lst').QuotedString('"'));
     StringStream.WriteString(' -spf ' + (OutputPath + '_dcov_paths.lst').QuotedString('"'));
     StringStream.WriteString(' -od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));
-    StringStream.WriteString(' -lt '  + LogFileName);
+
+    if FSettings.LogToTextFile then
+      StringStream.WriteString(' -lt '  + LogFileName);
+
+    if FSettings.LogToOutputDebugString then
+      StringStream.WriteString(' -lapi');
+
+    if FSettings.PassTroughExitCode then
+      StringStream.WriteString(' -tec');
+
     StringStream.WriteString(' '      + FSettings.AdditionalParameter);
     StringStream.WriteString(GetOutputFormatSwitches); // they start with a spcace
 

@@ -379,6 +379,24 @@ type
     /// </summary>
     [SettingsAttribute('MiscSettings', 'AdditionalParams')]
     FAdditionalParameter  : string;
+
+    /// <summary>
+    ///   Write log messages to textfile in report output folder
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'LogToTextFile')]
+    FLogToTextFile        : Boolean;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'LogToOutputDebugString')]
+    FLogToOutputDebugString : Boolean;
+
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'PassThroughExitCode')]
+    FPassTroughExitCode     : Boolean;
+
     /// <summary>
     ///   Name of the saved or loaded project file
     /// </summary>
@@ -544,6 +562,30 @@ type
     ///   library
     /// </summary>
     procedure SetXMLJacocoFormat(const Value: Boolean);
+    /// <summary>
+    ///   When true, log texts are written to OutputDebugString
+    /// </summary>
+    function GetLogToOutputDebugString: Boolean;
+    /// <summary>
+    ///   When true, log messages are written to a textfile in report output folder
+    /// </summary>
+    function GetLogToTextFile: Boolean;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    procedure SetLogToOutputDebugString(const Value: Boolean);
+    /// <summary>
+    ///   Write log messages to textfile in report output folder
+    /// </summary>
+    procedure SetLogToTextFile(const Value: Boolean);
+    /// <summary>
+    ///   When true the exit code of the called application will be passed through
+    /// </summary>
+    function GetPassTroughExitCode: Boolean;
+    /// <summary>
+    ///   When true the exit code of the called application will be passed through
+    /// </summary>
+    procedure SetPassTroughExitCode(const Value: Boolean);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -739,6 +781,25 @@ type
     property XMLJacocoFormat : Boolean
       read   GetXMLJacocoFormat
       write  SetXMLJacocoFormat;
+
+    /// <summary>
+    ///   Write log messages to textfile in report output folder
+    /// </summary>
+    property LogToTextFile        : Boolean
+      read   GetLogToTextFile
+      write  SetLogToTextFile;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    property LogToOutputDebugString : Boolean
+      read   GetLogToOutputDebugString
+      write  SetLogToOutputDebugString;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    property PassTroughExitCode     : Boolean
+      read   GetPassTroughExitCode
+      write  SetPassTroughExitCode;
   published
     // Necessary to be able to use RTTI for this one
 
@@ -821,6 +882,16 @@ begin
   Result := FFileName;
 end;
 
+function TProjectSettings.GetLogToOutputDebugString: Boolean;
+begin
+  Result := FLogToOutputDebugString;
+end;
+
+function TProjectSettings.GetLogToTextFile: Boolean;
+begin
+  Result := FLogToTextFile;
+end;
+
 function TProjectSettings.GetMapFile: TFilename;
 begin
   Result := FMapFile;
@@ -829,6 +900,11 @@ end;
 function TProjectSettings.GetOutputFormats: TOutputFormatSet;
 begin
   Result := FOutputFormats;
+end;
+
+function TProjectSettings.GetPassTroughExitCode: Boolean;
+begin
+  Result := FPassTroughExitCode;
 end;
 
 function TProjectSettings.GetProgramSourceFiles: IProgramSourceFiles;
@@ -981,6 +1057,18 @@ begin
       LNode := LMisc.ChildNodes.FindNode('UseRelativePaths');
       if Assigned(LNode) then
         FRelativeToScriptPath := StrToBool(LNode.Text);
+
+      LNode := LMisc.ChildNodes.FindNode('LogToTextFile');
+      if Assigned(LNode) then
+        FLogToTextFile := StrToBool(LNode.Text);
+
+      LNode := LMisc.ChildNodes.FindNode('LogToOutputDebugString');
+      if Assigned(LNode) then
+        FLogToOutputDebugString := StrToBool(LNode.Text);
+
+      LNode := LMisc.ChildNodes.FindNode('PassThroughExitCode');
+      if Assigned(LNode) then
+        FPassTroughExitCode := StrToBool(LNode.Text);
     end;
 
 //    LDocument.Active := false;
@@ -1028,6 +1116,16 @@ begin
   FDisplayXMLFileExt := Value;
 end;
 
+procedure TProjectSettings.SetLogToOutputDebugString(const Value: Boolean);
+begin
+  FLogToOutputDebugString := Value;
+end;
+
+procedure TProjectSettings.SetLogToTextFile(const Value: Boolean);
+begin
+  FLogToTextFile := Value;
+end;
+
 procedure TProjectSettings.SetMapFile(const Value: TFilename);
 begin
   FMapFIle := Value;
@@ -1036,6 +1134,11 @@ end;
 procedure TProjectSettings.SetOutputFormats(const Value: TOutputFormatSet);
 begin
   FOutputFormats := Value;
+end;
+
+procedure TProjectSettings.SetPassTroughExitCode(const Value: Boolean);
+begin
+  FPassTroughExitCode := Value;
 end;
 
 procedure TProjectSettings.SetProgramSourceBasePath(const Value: TFilename);

@@ -288,6 +288,18 @@ type
     ///   library
     /// </summary>
     function GetXMLJacocoFormat: Boolean;
+    /// <summary>
+    ///   When true, log texts are written to OutputDebugString
+    /// </summary>
+    function GetLogToOutputDebugString: Boolean;
+    /// <summary>
+    ///   When true, log messages are written to a textfile in report output folder
+    /// </summary>
+    function GetLogToTextFile: Boolean;
+    /// <summary>
+    ///   When true the exit code of the called application will be passed through
+    /// </summary>
+    function GetPassTroughExitCode: Boolean;
 
     /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
@@ -324,6 +336,21 @@ type
     /// </summary>
     property XMLJacocoFormat : Boolean
       read   GetXMLJacocoFormat;
+    /// <summary>
+    ///   Write log messages to textfile in report output folder
+    /// </summary>
+    property LogToTextFile        : Boolean
+      read   GetLogToTextFile;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    property LogToOutputDebugString : Boolean
+      read   GetLogToOutputDebugString;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    property PassTroughExitCode     : Boolean
+      read   GetPassTroughExitCode;
 
     /// <summary>
     ///   Path and name of the loaded or saved project file. Empty if no file
@@ -461,6 +488,18 @@ type
     ///   Sets the selected output formats to create
     /// </summary>
     procedure SetOutputFormats(const Value: TOutputFormatSet);
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    procedure SetLogToOutputDebugString(const Value: Boolean);
+    /// <summary>
+    ///   Write log messages to textfile in report output folder
+    /// </summary>
+    procedure SetLogToTextFile(const Value: Boolean);
+    /// <summary>
+    ///   When true the exit code of the called application will be passed through
+    /// </summary>
+    procedure SetPassTroughExitCode(const Value: Boolean);
 
     /// <summary>
     ///   Checks whether both exe-file name and map-file name are defined.
@@ -636,6 +675,24 @@ type
     property XMLJacocoFormat : Boolean
       read   GetXMLJacocoFormat
       write  SetXMLJacocoFormat;
+    /// <summary>
+    ///   Write log messages to textfile in report output folder
+    /// </summary>
+    property LogToTextFile        : Boolean
+      read   GetLogToTextFile
+      write  SetLogToTextFile;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    property LogToOutputDebugString : Boolean
+      read   GetLogToOutputDebugString
+      write  SetLogToOutputDebugString;
+    /// <summary>
+    ///   Write log texts to OutputDebugString
+    /// </summary>
+    property PassTroughExitCode     : Boolean
+      read   GetPassTroughExitCode
+      write  SetPassTroughExitCode;
 
     /// <summary>
     ///   Path and name of the loaded or saved project file. Empty if no file
