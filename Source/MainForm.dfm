@@ -206,7 +206,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 503
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_MiscSettings
+        ActiveCard = crd_Output
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
@@ -518,7 +518,7 @@ object FormMain: TFormMain
             end
             object CheckBoxHTML: TCheckBox
               Left = 8
-              Top = 404
+              Top = 436
               Width = 385
               Height = 17
               Caption = 'HTML coverage output as '#39'CodeCoverage_Summary.html'#39' (-html)'
@@ -571,7 +571,6 @@ object FormMain: TFormMain
               Width = 393
               Height = 17
               Caption = 'EMMA 2.1 coverage output as '#39'coverage.es'#39'  (-emma21)'
-              Enabled = False
               TabOrder = 8
               OnClick = CheckBoxEMMA21Click
             end
@@ -583,42 +582,46 @@ object FormMain: TFormMain
               Caption = 
                 'Open generated EMMA file with assiciated application (ShellExecu' +
                 'te)'
+              Enabled = False
               TabOrder = 9
               OnClick = CheckBoxOpenEMMAFileExternClick
             end
             object CheckBoxOpenXMLFileExtern: TCheckBox
-              Left = 8
+              Left = 24
               Top = 308
               Width = 385
               Height = 17
               Caption = 
                 'Open generated XML file with assiciated application (ShellExecut' +
                 'e)'
+              Enabled = False
               TabOrder = 10
               OnClick = CheckBoxOpenXMLFileExternClick
             end
             object CheckBoxOpenHTMLFileExtern: TCheckBox
-              Left = 8
-              Top = 436
+              Left = 24
+              Top = 468
               Width = 385
               Height = 17
               Caption = 
                 'Open generated HTML file with assiciated application (ShellExecu' +
                 'te)'
+              Enabled = False
               TabOrder = 11
               OnClick = CheckBoxOpenHTMLFileExternClick
             end
             object CheckBoxXMLLines: TCheckBox
-              Left = 8
+              Left = 24
               Top = 340
               Width = 385
               Height = 17
-              Caption = 'Add source code line information to generated XML file'
+              Caption = 'Add source code line information to generated XML file (-lcl)'
               Enabled = False
               TabOrder = 12
+              OnClick = CheckBoxXMLLinesClick
             end
             object CheckBoxXMLCombineMultiple: TCheckBox
-              Left = 8
+              Left = 24
               Top = 372
               Width = 393
               Height = 17
@@ -627,6 +630,17 @@ object FormMain: TFormMain
                 'rics)'
               Enabled = False
               TabOrder = 13
+              OnClick = CheckBoxXMLCombineMultipleClick
+            end
+            object CheckBoxXMLJacocoFormat: TCheckBox
+              Left = 24
+              Top = 404
+              Width = 393
+              Height = 17
+              Caption = 'XML: output in Jacoco format (-jacoco)'
+              Enabled = False
+              TabOrder = 14
+              OnClick = CheckBoxXMLJacocoFormatClick
             end
           end
         end

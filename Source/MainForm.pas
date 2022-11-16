@@ -128,6 +128,7 @@ type
     CheckBoxXMLCombineMultiple: TCheckBox;
     LabelAdditioalParams: TLabel;
     EditAdditionalParameter: TEdit;
+    CheckBoxXMLJacocoFormat: TCheckBox;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -184,6 +185,9 @@ type
     procedure CheckBoxOpenEMMAFileExternClick(Sender: TObject);
     procedure CheckBoxEMMA21Click(Sender: TObject);
     procedure EditAdditionalParameterChange(Sender: TObject);
+    procedure CheckBoxXMLLinesClick(Sender: TObject);
+    procedure CheckBoxXMLCombineMultipleClick(Sender: TObject);
+    procedure CheckBoxXMLJacocoFormatClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -680,8 +684,9 @@ begin
     CheckBoxOpenEMMAFileExtern.Checked := FProject.DisplayEMMAFileExt;
     CheckBoxOpenXMLFileExtern.Checked  := FProject.DisplayXMLFileExt;
     CheckBoxOpenHTMLFileExtern.Checked := FProject.DisplayHTMLFileExt;
-//    CheckBoxXMLLines.Checked           := false;
-//    CheckBoxXMLCombineMultiple.Checked := false;
+    CheckBoxXMLLines.Checked           := FProject.AddLineNumbersToXML;
+    CheckBoxXMLCombineMultiple.Checked := FProject.CombineXMLCoverage;
+    CheckBoxXMLJacocoFormat.Checked    := FProject.XMLJacocoFormat;
 
     CheckBoxRelativePaths.Checked := FProject.RelativeToScriptPath;
     EditAdditionalParameter.Text  := FProject.AdditionalParameter;
@@ -1011,10 +1016,6 @@ end;
 procedure TFormMain.FormDestroy(Sender: TObject);
 begin
   FSettings.Free;
-{ TODO : Remove after conversion to an interface }
-// Do not free, as it is used via its interfaces in some places, but it is not
-// fully and interface yet.
-//  FProject.Free;
   FLogic.Free;
 end;
 
@@ -1043,11 +1044,10 @@ end;
 
 procedure TFormMain.UpdateXMLCheckBoxEnableStates;
 begin
-  CheckBoxOpenXMLFileExtern.Enabled := CheckBoxXML.Checked;
-{ TODO : Uncomment as soon as this feature got implemented }
-//  CheckBoxXMLLines.Enabled          := CheckBoxXML.Checked;
-{ TODO : Uncomment as soon as this feature got implemented }
-//  CheckBoxXMLCombineMultiple        := CheckBoxXML.Checked;
+  CheckBoxOpenXMLFileExtern.Enabled  := CheckBoxXML.Checked;
+  CheckBoxXMLLines.Enabled           := CheckBoxXML.Checked;
+  CheckBoxXMLCombineMultiple.Enabled := CheckBoxXML.Checked;
+  CheckBoxXMLJacocoFormat.Enabled    := CheckBoxXML.Checked;
 end;
 
 procedure TFormMain.UpdateHTMLCheckBoxEnableStates;
@@ -1126,6 +1126,21 @@ begin
   UpdateXMLCheckBoxEnableStates;
 end;
 
+procedure TFormMain.CheckBoxXMLCombineMultipleClick(Sender: TObject);
+begin
+  FProject.CombineXMLCoverage := (Sender as TCHeckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxXMLJacocoFormatClick(Sender: TObject);
+begin
+  FProject.XMLJacocoFormat := (Sender as TCHeckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxXMLLinesClick(Sender: TObject);
+begin
+  FProject.AddLineNumbersToXML := (Sender as TCHeckBox).Checked;
+end;
+
 procedure TFormMain.OutputFormatCheckStatusChanged(Checked      : Boolean;
                                                    OutputFormat : TOutputFormat);
 begin
@@ -1168,6 +1183,7 @@ begin
   CheckBoxOpenHTMLFileExtern.Checked := false;
   CheckBoxXMLLines.Checked           := false;
   CheckBoxXMLCombineMultiple.Checked := false;
+  CheckBoxXMLJacocoFormat.Checked    := false;
 
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;

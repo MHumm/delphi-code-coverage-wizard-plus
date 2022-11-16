@@ -24,31 +24,40 @@ const
   /// <summary>
   ///   This is the file name for the overview HTML page of generated HTML output
   /// </summary>
-  cHTMLOutputBaseFileName = 'CodeCoverage_summary.html';
+  cHTMLOutputBaseFileName  = 'CodeCoverage_summary.html';
   /// <summary>
   ///   This is the file name for the XML file of generated XML output
   /// </summary>
-  cXMLOutputBaseFileName  = 'CodeCoverage_summary.xml';
+  cXMLOutputBaseFileName   = 'CodeCoverage_summary.xml';
   /// <summary>
   ///   This is the file name for the EMMA file of generated EMMA output
   /// </summary>
-  cEMMAOutputBaseFileName = 'coverage.es';
+  cEMMAOutputBaseFileName  = 'coverage.es';
+  /// <summary>
+  ///   This is the file name used for the Jacoco compatible XML output
+  /// </summary>
+  cXMLJacocoOutputFileName = 'jacoco.xml';
 
   /// <summary>
   ///   File extension for map files
   /// </summary>
-  cMapFileExt             = '.map';
+  cMapFileExt              = '.map';
 
   /// <summary>
   ///   File extension for source code files
   /// </summary>
-  cSourceExt              = '*.pas';
+  cSourceExt               = '*.pas';
 
   /// <summary>
   ///   The name of the generated batch file consists of the project file's name
   ///   and this suffix
   /// </summary>
-  cBatchFileSuffix        = '_dcov_execute.bat';
+  cBatchFileSuffix         = '_dcov_execute.bat';
+
+  /// <summary>
+  ///   Current version of the file format
+  /// </summary>
+  cFileFormatVersion       = 1;
 
 implementation
 

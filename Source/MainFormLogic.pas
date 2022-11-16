@@ -253,6 +253,21 @@ begin
 
       Result := Result + sLineBreak + Format(rExtCallFailed, [FileName, ErrorMsg]);
     end;
+
+    if ProjectOutputSettings.XMLJacocoFormat then
+    begin
+      FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
+                                cXMLJacocoOutputFileName);
+      ErrorMsg := CallShellExecute(Handle, 'open', FileName, SW_SHOW);
+
+      if not ErrorMsg.IsEmpty then
+      begin
+        if not Result.IsEmpty then
+          Result := Result + sLineBreak;
+
+        Result := Result + sLineBreak + Format(rExtCallFailed, [FileName, ErrorMsg]);
+      end;
+    end;
   end;
 
   if (ofEMMA in ProjectOutputSettings.OutputFormats) and
