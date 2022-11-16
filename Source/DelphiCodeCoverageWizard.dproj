@@ -84,7 +84,7 @@
         <DCC_ExeOutput>..\Binaries\$(Platform)\$(Config)</DCC_ExeOutput>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
         <VerInfo_Build>3</VerInfo_Build>
-        <PostBuildEvent><![CDATA[copy /Y "C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win32\WebView2Loader.dll" $(OUTPUTDIR)
+        <PostBuildEvent><![CDATA[copy /Y "$(BDS)\Redist\win32\WebView2Loader.dll" $(OUTPUTDIR)
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
@@ -1059,7 +1059,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>copy /Y &quot;C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win32\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
+        <PostBuildEvent>copy /Y &quot;$(BDS)\Redist\win32\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' And '$(Platform)'=='Win64'">
@@ -1075,7 +1075,7 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <PreBuildEventIgnoreExitCode>False</PreBuildEventIgnoreExitCode>
         <PreLinkEvent/>
         <PreLinkEventIgnoreExitCode>False</PreLinkEventIgnoreExitCode>
-        <PostBuildEvent>copy /Y &quot;C:\Program Files (x86)\Embarcadero\Studio\22.0\Redist\win32\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
+        <PostBuildEvent>copy /Y &quot;$(BDS)\Redist\win32\WebView2Loader.dll&quot; $(OUTPUTDIR)</PostBuildEvent>
         <PostBuildEventIgnoreExitCode>False</PostBuildEventIgnoreExitCode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' And '$(Platform)'=='Win64'">

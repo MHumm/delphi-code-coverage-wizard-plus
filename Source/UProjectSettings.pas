@@ -298,11 +298,14 @@ type
     /// <summary>
     ///   Path to the executable to analyze. Absolutely encoded.
     /// </summary>
+    [SettingsAttribute('UnitTestFiles', 'ExecutableToAnalyze')]
     FExecutableToAnalyze  : TFilename;
     /// <summary>
     ///   Path to the map file of the program to analyze. Absolutely encoded.
     /// </summary>
+    [SettingsAttribute('UnitTestFiles', 'MapFile')]
     FMapFile              : TFilename;
+
     /// <summary>
     ///   List of all source files for the program including the information
     ///   which ones are actually selected to be included in the analysis.
@@ -312,14 +315,17 @@ type
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
     /// </summary>
+    [SettingsAttribute('OutputSettings', 'ScriptOutputPath')]
     FScriptsOutputPath    : TFilename;
     /// <summary>
     ///   Path where the report(s) will be output to.
     /// </summary>
+    [SettingsAttribute('OutputSettings', 'ReportOutputPath')]
     FReportOutputPath     : TFilename;
     /// <summary>
     ///   Path to the application to analyze.
     /// </summary>
+    [SettingsAttribute('UnitTestFiles', 'CodeCoverageExe')]
     FCodeCoverageExePath  : TFilename;
     /// <summary>
     ///   Selected formats for the report output.
@@ -371,6 +377,7 @@ type
     /// <summary>
     ///   Any "free form" parameters specified
     /// </summary>
+    [SettingsAttribute('MiscSettings', 'AdditionalParams')]
     FAdditionalParameter  : string;
     /// <summary>
     ///   Name of the saved or loaded project file
@@ -503,10 +510,11 @@ type
     /// </summary>
     procedure SetOutputFormats(const Value: TOutputFormatSet);
     /// <summary>
-    ///   Saves the values of all boolean fields which have the right attribute
-    ///   defining where in the XML file to save it.
+    ///   Saves the values of all fields which have the right attribute
+    ///   defined, specifying where in the XML file to save it. The implemented
+    ///   mechanism currently works for booleans, strings and integers.
     /// </summary>
-    procedure SaveBooleans(Document: IXMLDocument);
+    procedure SavePerRTTI(Document: IXMLDocument);
 
     /// <summary>
     ///   When true the generated XML output file(s) will contain line numbers
@@ -1111,7 +1119,7 @@ end;
 procedure TProjectSettings.SaveToXML(const FileName: TFileName);
 var
   LDocument: IXMLDocument;
-  LVersion, LUnitTestFiles, LSourceFiles, LOutput, LMisc, LNodeElement: IXMLNode;
+  LVersion, LSourceFiles, LOutput, LNodeElement: IXMLNode;
 begin
   Assert(FileName <> '', 'No file name for the XML file specified');
 
@@ -1133,17 +1141,6 @@ begin
   LNodeElement      := LVersion.AddChild('FileFormatVersion', -1);
   LNodeElement.Text := cFileFormatVersion.ToString;
 
-  // unit test exe to run and map file for that
-  LUnitTestFiles    := LDocument.DocumentElement.AddChild('UnitTestFiles', -1);
-  LNodeElement      := LUnitTestFiles.AddChild('ExecutableToAnalyze', -1);
-  LNodeElement.Text := FExecutableToAnalyze;
-
-  LNodeElement      := LUnitTestFiles.AddChild('MapFile', -1);
-  LNodeElement.Text := FMapFile;
-
-  LNodeElement      := LUnitTestFiles.AddChild('CodeCoverageExe', -1);
-  LNodeElement.Text := FCodeCoverageExePath;
-
   // Source code to analyze
   LSourceFiles      := LDocument.DocumentElement.AddChild('SourceCodeFiles', -1);
   LNodeElement      := LSourceFiles.AddChild('SourceBasePath', -1);
@@ -1158,26 +1155,16 @@ begin
 
   // Output options
   LOutput           := LDocument.DocumentElement.AddChild('OutputSettings', -1);
-  LNodeElement      := LOutput.AddChild('ScriptOutputPath', -1);
-  LNodeElement.Text := FScriptsOutputPath;
-
-  LNodeElement      := LOutput.AddChild('ReportOutputPath', -1);
-  LNodeElement.Text := FReportOutputPath;
 
   LNodeElement      := LOutput.AddChild('ReportOutputFormats', -1);
   LNodeElement.Text := System.TypInfo.GetSetProp(self, 'OutputFormats', false);
 
-  // Miscelleanous settings
-  LMisc             := LDocument.DocumentElement.AddChild('MiscSettings', -1);
-  LNodeElement      := LMisc.AddChild('AdditionalParams', -1);
-  LNodeElement.Text := FAdditionalParameter;
-
-  SaveBooleans(LDocument);
+  SavePerRTTI(LDocument);
 
   LDocument.SaveToFile(FFileName);
 end;
 
-procedure TProjectSettings.SaveBooleans(Document: IXMLDocument);
+procedure TProjectSettings.SavePerRTTI(Document: IXMLDocument);
 var
   Context    : TRTTIContext;
   ClassRTTI  : TRttiType;
@@ -1207,7 +1194,22 @@ begin
 
         PropertyNode      := CategoryNode.AddChild(
                               (Attribute as SettingsAttribute).PropertyName, -1);
-        PropertyNode.Text := BoolToStr(Field.GetValue(self).AsBoolean, true);
+
+        case Field.FieldType.TypeKind of
+          tkInteger     : PropertyNode.Text := Field.GetValue(self).AsInteger.ToString;
+          tkEnumeration : if Field.FieldType.Handle = TypeInfo(Boolean) then
+                            PropertyNode.Text := BoolToStr(Field.GetValue(self).AsBoolean, true)
+                          else
+                            raise ENotSupportedException.Create('Data type not implemented: ' +
+                            System.TypInfo.GetEnumName(TypeInfo(TTypeKind),
+                                                       Integer(Field.FieldType.TypeKind)));
+
+          tkUString     : PropertyNode.Text := Field.GetValue(self).AsString;
+          else
+            raise ENotSupportedException.Create('Data type not implemented: ' +
+            System.TypInfo.GetEnumName(TypeInfo(TTypeKind),
+                                       Integer(Field.FieldType.TypeKind)));
+        end;
       end;
   end;
 end;
