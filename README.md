@@ -1,6 +1,6 @@
-# Delphi Code Coverage Wizard
+# Delphi Code Coverage Wizard Plus
 
-## What is Delphi Code Coverage Wizard?
+## What is Delphi Code Coverage Wizard Plus?
 Delphi Code Coverage Wizard is a GUI which makes running the command line based 
 code coverage tool easier. 
 
@@ -69,3 +69,4 @@ versions/profiles it finds on your computer.
 ![Some screen of the wizard](/Screenshots/Wizard2.PNG)
 ![Start screen of the generated HTML output](/Screenshots/Output1.PNG)
 ![View of a unit (blue lines are not covered yet)](/Screenshots/Output2.PNG)   
+![View of a unit 2 (top with the unit's summary)](/Screenshots/Output2.PNG)   
