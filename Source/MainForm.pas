@@ -369,6 +369,7 @@ type
     ///   Displays the Save and Run card of the wizard and disables the next button
     /// </summary>
     procedure DisplaySaveAndRunScreen;
+    procedure CreateProjectSettings;
   public
   end;
 
@@ -600,7 +601,11 @@ procedure TFormMain.ButtonNewClick(Sender: TObject);
 begin
   if FProject.IsAnyDataDefined then
     if MessageDlg(rClearWizard, mtConfirmation, [mbYes, mbNo], -1) = mrYes then
+    begin
       ClearWizardFields;
+      FProject := nil;
+      CreateProjectSettings;
+    end;
 
   cp_Main.ActiveCard        := crd_EditSettings;
   cp_Wizard.ActiveCardIndex := 0;
@@ -958,13 +963,7 @@ begin
   FSettings := TSettings.Create;
   FLogic    := TMainFormLogic.Create;
 
-  if Is64BitWindows then
-    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe',
-                                         FLogic.GetFileVersion(Application.ExeName))
-  else
-    FProject  := TProjectSettings.Create('..\..\Coverage.exe',
-                                         FLogic.GetFileVersion(Application.ExeName));
-
+  CreateProjectSettings;
   SetFormPos;
   DisplayRecentProjects;
 
@@ -975,6 +974,16 @@ begin
   cp_Main.ActiveCard := crd_Start;
 
   DisplayAddToToolsMenu;
+end;
+
+procedure TFormMain.CreateProjectSettings;
+begin
+  if Is64BitWindows then
+    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe',
+                                         FLogic.GetFileVersion(Application.ExeName))
+  else
+    FProject  := TProjectSettings.Create('..\..\Coverage.exe',
+                                         FLogic.GetFileVersion(Application.ExeName));
 end;
 
 procedure TFormMain.ProcessCmdLineParams;

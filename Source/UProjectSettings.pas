@@ -634,6 +634,7 @@ type
     /// </param>
     constructor Create(const CodeCoverageExe : TFileName;
                        const Version         : string);
+
     /// <summary>
     ///   Checks whether both exe-file name and map-file name are defined.
     /// </summary>

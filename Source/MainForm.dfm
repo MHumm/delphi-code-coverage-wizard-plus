@@ -206,7 +206,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_UnitTestExecutable
+        ActiveCard = crd_MiscSettings
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
@@ -696,11 +696,13 @@ object FormMain: TFormMain
             Width = 422
             Height = 392
             Align = alClient
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            BorderStyle = bsNone
             TabOrder = 0
-            ExplicitHeight = 313
             DesignSize = (
-              418
-              388)
+              422
+              392)
             object LabelAdditioalParams: TLabel
               Left = 8
               Top = 48
@@ -720,11 +722,10 @@ object FormMain: TFormMain
             object LabelPath: TLabel
               Left = 32
               Top = 104
-              Width = 48
+              Width = 52
               Height = 15
               Anchors = [akLeft, akTop, akRight]
               Caption = 'LabelPath'
-              ExplicitWidth = 52
             end
             object LabelScriptPreviewCaption: TLabel
               Left = 32
@@ -752,7 +753,7 @@ object FormMain: TFormMain
             object EditAdditionalParameter: TEdit
               Left = 139
               Top = 46
-              Width = 245
+              Width = 249
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
@@ -761,7 +762,7 @@ object FormMain: TFormMain
             object MemoScriptPreview: TMemo
               Left = 32
               Top = 149
-              Width = 352
+              Width = 356
               Height = 110
               Anchors = [akLeft, akTop, akRight]
               Enabled = False
