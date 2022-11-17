@@ -22,6 +22,7 @@ interface
 
 uses
   System.SysUtils,
+  System.Classes,
   Winapi.Windows,
   UProjectSettingsInterface;
 
@@ -60,6 +61,16 @@ type
   ///   command line params.
   /// </summary>
   TCommandLineError = reference to procedure(const FailureMessage: string);
+
+  /// <summary>
+  ///   Deletes an entry from the list of recent projects
+  /// </summary>
+  /// <param name="Index">
+  ///   Index of the entry to be deleted. Throws an index out of range exception
+  ///   if an invalid index is specified. See RecentProjectsCount for the
+  ///   upper limit.
+  /// </param>
+  TDeleteRecentProject = reference to procedure (Index: Integer);
 
   /// <summary>
   ///   Buisiness logic for the main form
@@ -146,6 +157,19 @@ type
     /// </returns>
     function CallExternalViewers(Handle: HWND;
                                  ProjectOutputSettings : IProjectOutputSettingsReadOnly):string;
+
+    /// <summary>
+    ///   Checks if all projects in the list still exist and deletes those
+    ///   from the list which no longer exist.
+    /// </summary>
+    /// <param name="Projects">
+    ///   List of file names to check
+    /// </param>
+    /// <param name="DeleteProc">
+    ///   Method for deleting them from the internal data
+    /// </param>
+    procedure DeleteNonExistingRecentProjects(Projects: TStrings;
+                                              DeleteProc: TDeleteRecentProject);
   end;
 
 implementation
@@ -154,7 +178,7 @@ uses
   System.IOUtils,
   WinApi.ShellAPI,
   MainFormTexts,
-  UCOnsts;
+  UConsts;
 
 function TMainFormLogic.GetCommandLineAction: TActionParamRec;
 begin
@@ -253,6 +277,21 @@ begin
 
       Result := Result + sLineBreak + Format(rExtCallFailed, [FileName, ErrorMsg]);
     end;
+
+    if ProjectOutputSettings.XMLJacocoFormat then
+    begin
+      FileName := TPath.Combine(ProjectOutputSettings.ReportOutputPath,
+                                cXMLJacocoOutputFileName);
+      ErrorMsg := CallShellExecute(Handle, 'open', FileName, SW_SHOW);
+
+      if not ErrorMsg.IsEmpty then
+      begin
+        if not Result.IsEmpty then
+          Result := Result + sLineBreak;
+
+        Result := Result + sLineBreak + Format(rExtCallFailed, [FileName, ErrorMsg]);
+      end;
+    end;
   end;
 
   if (ofEMMA in ProjectOutputSettings.OutputFormats) and
@@ -309,6 +348,26 @@ begin
       else
         Result := Format(rShellExecErr, [FailureCode]);
     end;
+end;
+
+procedure TMainFormLogic.DeleteNonExistingRecentProjects(Projects: TStrings;
+                                                         DeleteProc: TDeleteRecentProject);
+var
+  i : Integer;
+begin
+  Assert(Assigned(Projects), 'List passed is not created!');
+
+  i := 0;
+  while (i < Projects.Count) do
+  begin
+    if not FileExists(Projects[i]) then
+    begin
+      DeleteProc(i);
+      Projects.Delete(i);
+    end
+    else
+      inc(i);
+  end;
 end;
 
 function TMainFormLogic.GetFileVersion(const FileName: TFileName): string;

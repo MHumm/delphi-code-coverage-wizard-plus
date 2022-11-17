@@ -120,21 +120,26 @@ resourcestring
   rShellExecErr0 = 'The operating system is out of memory or resources.';
   rShellExecErr2 = 'The specified file was not found';
   rShellExecErr3 = 'The specified path was not found.';
-  rShellExecErr5 = 'Windows 95 only: The operating system denied access to the specified file';
-  rShellExecErr8 = 'Windows 95 only: There was not enough memory to complete the operation.';
+  rShellExecErr5 = 'Windows 95 only: The operating system denied access to the ' +
+                   'specified file';
+  rShellExecErr8 = 'Windows 95 only: There was not enough memory to complete ' +
+                   'the operation.';
   rShellExecErr10= 'Wrong Windows version';
   rShellExecErr11= 'The .EXE file is invalid (non-Win32 .EXE or error in .EXE image)';
   rShellExecErr12= 'Application was designed for a different operating system';
   rShellExecErr13= 'Application was designed for MS-DOS 4.0';
   rShellExecErr15= 'Attempt to load a real-mode program';
-  rShellExecErr16= 'Attempt to load a second instance of an application with non-readonly data segments.';
+  rShellExecErr16= 'Attempt to load a second instance of an application with ' +
+                   'non-readonly data segments.';
   rShellExecErr19= 'Attempt to load a compressed application file.';
   rShellExecErr20= 'Dynamic-link library (DLL) file failure.';
   rShellExecErr26= 'A sharing violation occurred.';
   rShellExecErr27= 'The filename association is incomplete or invalid.';
-  rShellExecErr28= 'The DDE transaction could not be completed because the request timed out.';
+  rShellExecErr28= 'The DDE transaction could not be completed because the ' +
+                   'request timed out.';
   rShellExecErr29= 'The DDE transaction failed.';
-  rShellExecErr30= 'The DDE transaction could not be completed because other DDE transactions were being processed.';
+  rShellExecErr30= 'The DDE transaction could not be completed because other DDE ' +
+                   'transactions were being processed.';
   rShellExecErr31= 'There is no application associated with the given extension.';
   rShellExecErr32= 'Windows 95 only: The specified dynamic-link library was not found.';
 
@@ -144,6 +149,12 @@ resourcestring
   rExtCallFailed = 'Failure calling external application for file' + sLineBreak +
                    '%0:s' + sLineBreak +
                    'Reason: %1:s';
+
+  /// <summary>
+  ///   Failure message shown when removing no longer available recent projects failed
+  /// </summary>
+  rRemoveFailed  = 'Removal of no longer existing projects failed.' + sLineBreak +
+                   'Reason: %0:s';
 
 implementation
 

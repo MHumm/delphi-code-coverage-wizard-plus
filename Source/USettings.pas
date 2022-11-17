@@ -102,9 +102,9 @@ type
     function  GetRecentProject(Index: Integer): string;
 
     /// <summary>
-    ///   Returns the path to the ini-file where the settings are stored in
+    ///   Sets the flag which notes whether the DCCP file type has already already
+    ///   been registered (true) or not (false)
     /// </summary>
-    function GetIniPath:string;
     procedure SetIsFileExtReg(const Value: Boolean);
   public
     /// <summary>
@@ -116,6 +116,16 @@ type
     ///   internal ressources.
     /// </summary>
     destructor Destroy; override;
+
+    /// <summary>
+    ///   Returns the path and file name of the ini-file where the settings are
+    ///   stored in
+    /// </summary>
+    class function GetIniFileName:string;
+    /// <summary>
+    ///   Returns the path where tzhe ini file is/should be stored stored in
+    /// </summary>
+    class function GetIniPath: string;
 
     /// <summary>
     ///   Adds the specified file name to the list of recently used projects,
@@ -134,6 +144,10 @@ type
     ///   upper limit.
     /// </param>
     procedure DeleteRecentProject(Index: Integer);
+    /// <summary>
+    ///   Returns the list of recent projects
+    /// </summary>
+    function  GetRecentProjects : TStrings;
 
     /// <summary>
     ///   X-pos of the main form in pixel
@@ -228,11 +242,15 @@ begin
   inherited;
 end;
 
-function TSettings.GetIniPath: string;
+class function TSettings.GetIniFileName: string;
+begin
+  Result := TPath.Combine(GetIniPath, 'DelphiCodeCoverageWizard.ini');
+end;
+
+class function TSettings.GetIniPath: string;
 begin
   Result := TPath.Combine(TPath.GetSharedDocumentsPath,
-                          TPath.Combine('DelphiCodeCoverageWizard',
-                                        'DelphiCodeCoverageWizard.ini'));
+                          'DelphiCodeCoverageWizard');
 end;
 
 function TSettings.GetRecentCount: Integer;
@@ -245,11 +263,17 @@ begin
   Result := FRecentProjects[Index];
 end;
 
+function TSettings.GetRecentProjects: TStrings;
+begin
+  Result := TStringList.Create;
+  Result.AddStrings(FRecentProjects);
+end;
+
 procedure TSettings.LoadSettings;
 var
   ini : TIniFile;
 begin
-  ini := TIniFile.Create(GetIniPath);
+  ini := TIniFile.Create(GetIniFileName);
   try
     FXPos       := ini.ReadInteger('Position', 'X', 0);
     FYPos       := ini.ReadInteger('Position', 'Y', 0);
@@ -272,7 +296,9 @@ procedure TSettings.SaveSettings;
 var
   ini : TIniFile;
 begin
-  ini := TIniFile.Create(GetIniPath);
+  ForceDirectories(GetIniPath);
+
+  ini := TIniFile.Create(GetIniFileName);
   try
     ini.WriteInteger('Position', 'X', FXPos);
     ini.WriteInteger('Position', 'Y', FYPos);

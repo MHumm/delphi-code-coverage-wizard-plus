@@ -128,29 +128,33 @@ var
 begin
   // Delete all entries
   AddList := FIDEToolMgr.GetIDEVersionsList;
-  // This would add it to all IDE configurations but...
-  FIDEToolMgr.DeleteTool(FEntryPath, FEntryParams1, AddList);
-  FIDEToolMgr.DeleteTool(FEntryPath, FEntryParams2, AddList);
+  try
+    // This would add it to all IDE configurations but...
+    FIDEToolMgr.DeleteTool(FEntryPath, FEntryParams1, AddList);
+    FIDEToolMgr.DeleteTool(FEntryPath, FEntryParams2, AddList);
 
-  // ...here we remove those not selected from the list
-  for i := ListViewConfigurations.Items.Count - 1 downTo 0 do
-  begin
-    Item := ListViewConfigurations.Items[i];
-    if not Item.Checked then
-      AddList.Delete(Item.Index);
+    // ...here we remove those not selected from the list
+    for i := ListViewConfigurations.Items.Count - 1 downTo 0 do
+    begin
+      Item := ListViewConfigurations.Items[i];
+      if not Item.Checked then
+        AddList.Delete(Item.Index);
+    end;
+
+    FIDEToolMgr.AddTool(FEntryParams1,
+                        FEntryPath,
+                        FEntryName1,
+                        FEntryWorkingDir,
+                        AddList);
+
+    FIDEToolMgr.AddTool(FEntryParams2,
+                        FEntryPath,
+                        FEntryName2,
+                        FEntryWorkingDir,
+                        AddList);
+  finally
+    AddList.Free;
   end;
-
-  FIDEToolMgr.AddTool(FEntryParams1,
-                      FEntryPath,
-                      FEntryName1,
-                      FEntryWorkingDir,
-                      AddList);
-
-  FIDEToolMgr.AddTool(FEntryParams2,
-                      FEntryPath,
-                      FEntryName2,
-                      FEntryWorkingDir,
-                      AddList);
 end;
 
 procedure TConfigSelectionForm.ButtonSelectAllClick(Sender: TObject);
@@ -186,17 +190,21 @@ begin
 
   FIDEToolMgr   := TAddIDETool.Create;
   IDEConfigList := FIDEToolMgr.GetIDEVersionsList;
-  for IDEConfig in IDEConfigList do
-  begin
-    Item := ListViewConfigurations.Items.Add;
-    Item.Caption := IDEConfig.GetIDEVersionName;
+  try
+    for IDEConfig in IDEConfigList do
+    begin
+      Item := ListViewConfigurations.Items.Add;
+      Item.Caption := IDEConfig.GetIDEVersionName;
 
-    if (IDEConfig.ConfigRootKey <> 'BDS') then
-      Item.SubItems.Add(IDEConfig.ConfigRootKey);
+      if (IDEConfig.ConfigRootKey <> 'BDS') then
+        Item.SubItems.Add(IDEConfig.ConfigRootKey);
 
-    Item.Checked := FIDEToolMgr.IsInMenu(EntryPath,
-                                         FEntryParams1,
-                                         IDEConfig.GetConfigKey);
+      Item.Checked := FIDEToolMgr.IsInMenu(EntryPath,
+                                           FEntryParams1,
+                                           IDEConfig.GetConfigKey);
+    end;
+  finally
+    IDEConfigList.Free;
   end;
 end;
 

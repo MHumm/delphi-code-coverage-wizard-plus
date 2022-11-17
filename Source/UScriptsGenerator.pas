@@ -108,32 +108,58 @@ begin
 end;
 
 procedure TScriptsGenerator.GenerateDCovExecuteBatchFile;
-const
-  // Application path to CodeCoverage.exe,  ExeToAnalyze,  MapFile,  ReportPath
-  DCOV_EXECUTE_FORMAT = '"%0:s" -e "%1:s" -m "%2:s" -uf "%3:s_dcov_units.lst" ' +
-                        '-spf "%4:s_dcov_paths.lst" -od "%5:s" -lt "%6:s" %7:s';
 var
-  DCovExecuteText : TStringList;
+  OutputPath      : string;
+  LogFileName     : string;
+  StringStream    : TStringStream;
 begin
   // Create 'dcov_execute.bat'
-  DCovExecuteText := TStringList.Create;
-  // Fill
-  DCovExecuteText.Add(Format(DCOV_EXECUTE_FORMAT,
-                      [GetPath(FSettings.CodeCoverageExePath),
-                       GetPath(FSettings.ExecutableToAnalyze),
-                       GetPath(FSettings.MapFile),
-                       GetPath(TPath.Combine(FSettings.ScriptsOutputPath,
-                               TPath.GetFileNameWithoutExtension(FProjectFileName))),
-                       GetPath(TPath.Combine(FSettings.ScriptsOutputPath,
-                               TPath.GetFileNameWithoutExtension(FProjectFileName))),
-                       GetPath(FSettings.ReportOutputPath),
-                       GetPath(TPath.Combine(FSettings.ReportOutputPath,
-                                             'Delphi-Code-Coverage-Debug.log')),
-                       FSettings.AdditionalParameter]) +
-                       GetOutputFormatSwitches());
-  // Save
-  DCovExecuteText.SaveToFile(FSettings.BatchFileName);
-  FreeAndNil(DCovExecuteText);
+  StringStream := TStringStream.Create;
+  try
+    OutputPath := GetPath(TPath.Combine(FSettings.ScriptsOutputPath,
+                            TPath.GetFileNameWithoutExtension(
+                             FProjectFileName)));
+
+    LogFileName := GetPath(TPath.Combine(FSettings.ReportOutputPath,
+                             TPath.GetFileNameWithoutExtension(FSettings.FileName) +
+                             '_DelphiCodeCoverageDebug.log')).QuotedString('"');
+
+    // Fill
+
+    StringStream.WriteString(GetPath(FSettings.CodeCoverageExePath).QuotedString('"'));
+    StringStream.WriteString(' -e '   + GetPath(FSettings.ExecutableToAnalyze).QuotedString('"'));
+    StringStream.WriteString(' -m '   + GetPath(FSettings.MapFile).QuotedString('"'));
+    StringStream.WriteString(' -sd '  + GetPath(FSettings.ProgramSourceBasePath).QuotedString('"'));
+    StringStream.WriteString(' -uf '  + (OutputPath + '_dcov_units.lst').QuotedString('"'));
+    StringStream.WriteString(' -spf ' + (OutputPath + '_dcov_paths.lst').QuotedString('"'));
+    StringStream.WriteString(' -od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));
+    StringStream.WriteString(' -v'); // verbose output
+
+    if FSettings.LogToTextFile then
+      StringStream.WriteString(' -lt '  + LogFileName);
+
+    if FSettings.LogToOutputDebugString then
+      StringStream.WriteString(' -lapi');
+
+    if FSettings.PassTroughExitCode then
+      StringStream.WriteString(' -tec');
+
+    if FSettings.UseExeDirAsWorkDir then
+      StringStream.WriteString(' -twd');
+
+    if not FSettings.ExeCommandLineParams.IsEmpty then
+      StringStream.WriteString(' -a ' + FSettings.ExeCommandLineParams);
+
+    if (FSettings.CodePage > 0) then
+      StringStream.WriteString(' -cp ' + FSettings.CodePage.ToString);
+
+    StringStream.WriteString(' '      + FSettings.AdditionalParameter);
+    StringStream.WriteString(GetOutputFormatSwitches); // they start with a spcace
+
+    StringStream.SaveToFile(FSettings.BatchFileName);
+  finally
+    FreeAndNil(StringStream);
+  end;
 end;
 
 procedure TScriptsGenerator.GenerateDCovUnitsAndPathFiles;
@@ -199,10 +225,15 @@ end;
 function TScriptsGenerator.GetOutputFormatSwitches: string;
 begin
   Result := '';
-  if(ofEMMA in FSettings.OutputFormats) then Result := Result + ' -emma';
-  if(ofMETA in FSettings.OutputFormats) then Result := Result + ' -meta';
-  if(ofXML  in FSettings.OutputFormats) then Result := Result + ' -xml';
-  if(ofHTML in FSettings.OutputFormats) then Result := Result + ' -html';
+  if(ofEMMA in FSettings.OutputFormats)   then Result := Result + ' -emma';
+  if(ofEMMA21 in FSettings.OutputFormats) then Result := Result + ' -emma21';
+  if(ofMETA in FSettings.OutputFormats)   then Result := Result + ' -meta';
+  if(ofXML  in FSettings.OutputFormats)   then Result := Result + ' -xml';
+  if(ofHTML in FSettings.OutputFormats)   then Result := Result + ' -html';
+
+  if FSettings.AddLineNumbersToXML then Result := Result + ' -xmllines';
+  if FSettings.CombineXMLCoverage  then Result := Result + ' -xmlgenerics';
+  if FSettings.XMLJacocoFormat     then Result := Result + ' -jacoco';
 end;
 
 function TScriptsGenerator.GetPath(const APath: string): string;

@@ -128,6 +128,20 @@ type
     CheckBoxXMLCombineMultiple: TCheckBox;
     LabelAdditioalParams: TLabel;
     EditAdditionalParameter: TEdit;
+    CheckBoxXMLJacocoFormat: TCheckBox;
+    ScrollBoxMisc: TScrollBox;
+    Label1: TLabel;
+    CheckBoxLogToFile: TCheckBox;
+    CheckBoxLogPerAPI: TCheckBox;
+    CheckBoxPassThroughExitCode: TCheckBox;
+    CheckBoxUseApplicationWorkingDir: TCheckBox;
+    Label2: TLabel;
+    EditCommandLineParams: TEdit;
+    ScrollBoxUnitTestExecutable: TScrollBox;
+    ButtonSaveAs: TButton;
+    LabelCodePage: TLabel;
+    EditCodePage: TEdit;
+    PMRemoveInexisting: TMenuItem;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -184,6 +198,17 @@ type
     procedure CheckBoxOpenEMMAFileExternClick(Sender: TObject);
     procedure CheckBoxEMMA21Click(Sender: TObject);
     procedure EditAdditionalParameterChange(Sender: TObject);
+    procedure CheckBoxXMLLinesClick(Sender: TObject);
+    procedure CheckBoxXMLCombineMultipleClick(Sender: TObject);
+    procedure CheckBoxXMLJacocoFormatClick(Sender: TObject);
+    procedure CheckBoxLogToFileClick(Sender: TObject);
+    procedure CheckBoxLogPerAPIClick(Sender: TObject);
+    procedure CheckBoxPassThroughExitCodeClick(Sender: TObject);
+    procedure CheckBoxUseApplicationWorkingDirClick(Sender: TObject);
+    procedure EditCommandLineParamsChange(Sender: TObject);
+    procedure ButtonSaveAsClick(Sender: TObject);
+    procedure EditCodePageChange(Sender: TObject);
+    procedure PMRemoveInexistingClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -212,7 +237,8 @@ type
     /// </summary>
     procedure SetFormPos;
     /// <summary>
-    ///   Fills the list of recent projects with the data from settings
+    ///   Fills the list of recent projects with the data from settings. Clears
+    ///   the list first.
     /// </summary>
     procedure DisplayRecentProjects;
     /// <summary>
@@ -351,6 +377,7 @@ type
     ///   Displays the Save and Run card of the wizard and disables the next button
     /// </summary>
     procedure DisplaySaveAndRunScreen;
+    procedure CreateProjectSettings;
   public
   end;
 
@@ -383,7 +410,7 @@ const
   /// </summary>
   cImgCompletedPage = 8;
 
-procedure TFormMain.ButtonSaveClick(Sender: TObject);
+procedure TFormMain.ButtonSaveAsClick(Sender: TObject);
 var
   ScriptGenerator : TScriptsGenerator;
 begin
@@ -411,6 +438,30 @@ begin
                           [e.Message, FileSaveDialogProject.FileName]),
                    mtError, [mbOK], -1);
     end;
+  end;
+end;
+
+procedure TFormMain.ButtonSaveClick(Sender: TObject);
+var
+  ScriptGenerator : TScriptsGenerator;
+begin
+  try
+    FProject.SaveToXML(FProject.FileName);
+
+    crd_SaveAndRun.Tag := cImgCompletedPage;
+
+    ScriptGenerator := TScriptsGenerator.Create(FProject,
+                                                FProject.FileName);
+    try
+      ScriptGenerator.Generate;
+    finally
+      ScriptGenerator.Free;
+    end;
+  except
+    on e:exception do
+      MessageDlg(Format(rSaveFileError,
+                        [e.Message, FProject.FileName]),
+                 mtError, [mbOK], -1);
   end;
 end;
 
@@ -541,12 +592,22 @@ begin
   SetActiveWizardCardImageIndex(cp_Wizard.Cards[cp_Wizard.ActiveCardIndex].Tag);
 
   case Index of
-    0 : cp_Wizard.ActiveCard := crd_UnitTestExecutable;
-    1 : cp_Wizard.ActiveCard := crd_Source;
-    2 : cp_Wizard.ActiveCard := crd_Output;
+    0 : begin
+          cp_Wizard.ActiveCard := crd_UnitTestExecutable;
+          ButtonNext.Enabled   := FProject.IsExeAndMapDefined;
+        end;
+    1 : begin
+          cp_Wizard.ActiveCard := crd_Source;
+          ButtonNext.Enabled   := FProject.IsSourcePathAndFilesDefined;
+        end;
+    2 : begin
+          cp_Wizard.ActiveCard := crd_Output;
+          ButtonNext.Enabled   := FProject.IsOutputSettingsDefined;
+        end;
     3 : begin
           cp_Wizard.ActiveCard := crd_MiscSettings;
           crd_MiscSettings.Tag := cImgCompletedPage;
+          ButtonNext.Enabled   := true;
           PrepareScriptOutputPathDisplay;
         end;
     4 : DisplaySaveAndRunScreen;
@@ -561,6 +622,8 @@ procedure TFormMain.DisplaySaveAndRunScreen;
 begin
   cp_Wizard.ActiveCard := crd_SaveAndRun;
   ButtonNext.Enabled   := false;
+  ButtonCancel.Enabled := false;
+  ButtonSave.Enabled   := not FProject.FileName.IsEmpty;
 end;
 
 procedure TFormMain.ButtonHomeClick(Sender: TObject);
@@ -572,7 +635,11 @@ procedure TFormMain.ButtonNewClick(Sender: TObject);
 begin
   if FProject.IsAnyDataDefined then
     if MessageDlg(rClearWizard, mtConfirmation, [mbYes, mbNo], -1) = mrYes then
+    begin
       ClearWizardFields;
+      FProject := nil;
+      CreateProjectSettings;
+    end;
 
   cp_Main.ActiveCard        := crd_EditSettings;
   cp_Wizard.ActiveCardIndex := 0;
@@ -605,6 +672,24 @@ begin
 
     SetMiscSettingsCheckIfActive;
     SetFocusToFirstProjectCardControl;
+  end;
+end;
+
+procedure TFormMain.PMRemoveInexistingClick(Sender: TObject);
+var
+  Projects : TStrings;
+begin
+  Projects := FSettings.GetRecentProjects;
+  try
+    try
+      FLogic. DeleteNonExistingRecentProjects(Projects, FSettings.DeleteRecentProject);
+      DisplayRecentProjects;
+    except
+      on e:exception do
+        MessageDlg(Format(rRemoveFailed, [e.Message]), mtError, [mbOK], -1);
+    end;
+  finally
+    Projects.Free;
   end;
 end;
 
@@ -657,34 +742,41 @@ begin
   try
     FProject.LoadFromXML(FileName);
 
-    EditExeFile.Text            := FProject.ExecutableToAnalyze;
-    EditMapFile.Text            := FProject.MapFile;
+    EditExeFile.Text                         := FProject.ExecutableToAnalyze;
+    EditCommandLineParams.Text               := FProject.ExeCommandLineParams;
+    EditMapFile.Text                         := FProject.MapFile;
+    CheckBoxUseApplicationWorkingDir.Checked := FProject.UseExeDirAsWorkDir;
 
     OnChangeBackup              := EditSourcePath.OnChange;
     EditSourcePath.OnChange     := nil;
     try
       EditSourcePath.Text       := FProject.ProgramSourceBasePath;
     finally
-      EditSourcePath.OnChange := OnChangeBackup;
+      EditSourcePath.OnChange   := OnChangeBackup;
     end;
+    EditCodePage.Text           := FProject.CodePage.ToString;
 
-    EditScriptOutputFolder.Text        := FProject.ScriptsOutputPath;
-    EditReportOutputFolder.Text        := FProject.ReportOutputPath;
-    EditCodeCoverageExe.Text           := FProject.CodeCoverageExePath;
+    EditScriptOutputFolder.Text         := FProject.ScriptsOutputPath;
+    EditReportOutputFolder.Text         := FProject.ReportOutputPath;
+    EditCodeCoverageExe.Text            := FProject.CodeCoverageExePath;
 
-    CheckBoxEMMA.Checked               := ofEMMA   in FProject.OutputFormats;
-    CheckBoxMeta.Checked               := ofMeta   in FProject.OutputFormats;
-    CheckBoxEMMA21.Checked             := ofEMMA21 in FProject.OutputFormats;
-    CheckBoxXML.Checked                := ofXML    in FProject.OutputFormats;
-    CheckBoxHTML.Checked               := ofHTML   in FProject.OutputFormats;
-    CheckBoxOpenEMMAFileExtern.Checked := FProject.DisplayEMMAFileExt;
-    CheckBoxOpenXMLFileExtern.Checked  := FProject.DisplayXMLFileExt;
-    CheckBoxOpenHTMLFileExtern.Checked := FProject.DisplayHTMLFileExt;
-//    CheckBoxXMLLines.Checked           := false;
-//    CheckBoxXMLCombineMultiple.Checked := false;
+    CheckBoxEMMA.Checked                := ofEMMA   in FProject.OutputFormats;
+    CheckBoxMeta.Checked                := ofMeta   in FProject.OutputFormats;
+    CheckBoxEMMA21.Checked              := ofEMMA21 in FProject.OutputFormats;
+    CheckBoxXML.Checked                 := ofXML    in FProject.OutputFormats;
+    CheckBoxHTML.Checked                := ofHTML   in FProject.OutputFormats;
+    CheckBoxOpenEMMAFileExtern.Checked  := FProject.DisplayEMMAFileExt;
+    CheckBoxOpenXMLFileExtern.Checked   := FProject.DisplayXMLFileExt;
+    CheckBoxOpenHTMLFileExtern.Checked  := FProject.DisplayHTMLFileExt;
+    CheckBoxXMLLines.Checked            := FProject.AddLineNumbersToXML;
+    CheckBoxXMLCombineMultiple.Checked  := FProject.CombineXMLCoverage;
+    CheckBoxXMLJacocoFormat.Checked     := FProject.XMLJacocoFormat;
+    CheckBoxLogToFile.Checked           := FProject.LogToTextFile;
+    CheckBoxLogPerAPI.Checked           := FProject.LogToOutputDebugString;
+    CheckBoxPassThroughExitCode.Checked := FProject.PassTroughExitCode;
 
-    CheckBoxRelativePaths.Checked := FProject.RelativeToScriptPath;
-    EditAdditionalParameter.Text  := FProject.AdditionalParameter;
+    CheckBoxRelativePaths.Checked       := FProject.RelativeToScriptPath;
+    EditAdditionalParameter.Text        := FProject.AdditionalParameter;
 
     UpdateEMMACheckBoxEnableStates;
     UpdateXMLCheckBoxEnableStates;
@@ -829,6 +921,16 @@ begin
   DisplayExeMapInputStatus;
 end;
 
+procedure TFormMain.EditCodePageChange(Sender: TObject);
+begin
+  FProject.CodePage := StrToIntDef((Sender as TEdit).Text, 0);
+end;
+
+procedure TFormMain.EditCommandLineParamsChange(Sender: TObject);
+begin
+  FProject.ExeCommandLineParams := (Sender as TEdit).Text;
+end;
+
 procedure TFormMain.EditExeFileChange(Sender: TObject);
 begin
   FProject.ExecutableToAnalyze := (Sender As TEdit).Text;
@@ -919,13 +1021,7 @@ begin
   FSettings := TSettings.Create;
   FLogic    := TMainFormLogic.Create;
 
-  if Is64BitWindows then
-    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe',
-                                         FLogic.GetFileVersion(Application.ExeName))
-  else
-    FProject  := TProjectSettings.Create('..\..\Coverage.exe',
-                                         FLogic.GetFileVersion(Application.ExeName));
-
+  CreateProjectSettings;
   SetFormPos;
   DisplayRecentProjects;
 
@@ -936,6 +1032,16 @@ begin
   cp_Main.ActiveCard := crd_Start;
 
   DisplayAddToToolsMenu;
+end;
+
+procedure TFormMain.CreateProjectSettings;
+begin
+  if Is64BitWindows then
+    FProject  := TProjectSettings.Create('..\..\Coverage_x64.exe',
+                                         FLogic.GetFileVersion(Application.ExeName))
+  else
+    FProject  := TProjectSettings.Create('..\..\Coverage.exe',
+                                         FLogic.GetFileVersion(Application.ExeName));
 end;
 
 procedure TFormMain.ProcessCmdLineParams;
@@ -1000,21 +1106,24 @@ procedure TFormMain.DisplayRecentProjects;
 var
   Item : TListItem;
 begin
-  for var i := 0 to FSettings.RecentProjectsCount - 1 do
-  begin
-    Item := ListViewProjects.Items.Add;
-    Item.Caption := ExtractFilePath(FSettings.RecentProject[i]);
-    Item.SubItems.Add(ExtractFileName(FSettings.RecentProject[i]));
+  ListViewProjects.Items.Clear;
+
+  ListViewProjects.Items.BeginUpdate;
+  try
+    for var i := 0 to FSettings.RecentProjectsCount - 1 do
+    begin
+      Item := ListViewProjects.Items.Add;
+      Item.Caption := ExtractFilePath(FSettings.RecentProject[i]);
+      Item.SubItems.Add(ExtractFileName(FSettings.RecentProject[i]));
+    end;
+  finally
+    ListViewProjects.Items.EndUpdate;
   end;
 end;
 
 procedure TFormMain.FormDestroy(Sender: TObject);
 begin
   FSettings.Free;
-{ TODO : Remove after conversion to an interface }
-// Do not free, as it is used via its interfaces in some places, but it is not
-// fully and interface yet.
-//  FProject.Free;
   FLogic.Free;
 end;
 
@@ -1026,6 +1135,7 @@ end;
 procedure TFormMain.CheckBoxEMMA21Click(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA21);
+  UpdateEMMACheckBoxEnableStates;
 end;
 
 procedure TFormMain.CheckBoxEMMAClick(Sender: TObject);
@@ -1043,11 +1153,10 @@ end;
 
 procedure TFormMain.UpdateXMLCheckBoxEnableStates;
 begin
-  CheckBoxOpenXMLFileExtern.Enabled := CheckBoxXML.Checked;
-{ TODO : Uncomment as soon as this feature got implemented }
-//  CheckBoxXMLLines.Enabled          := CheckBoxXML.Checked;
-{ TODO : Uncomment as soon as this feature got implemented }
-//  CheckBoxXMLCombineMultiple        := CheckBoxXML.Checked;
+  CheckBoxOpenXMLFileExtern.Enabled  := CheckBoxXML.Checked;
+  CheckBoxXMLLines.Enabled           := CheckBoxXML.Checked;
+  CheckBoxXMLCombineMultiple.Enabled := CheckBoxXML.Checked;
+  CheckBoxXMLJacocoFormat.Enabled    := CheckBoxXML.Checked;
 end;
 
 procedure TFormMain.UpdateHTMLCheckBoxEnableStates;
@@ -1059,6 +1168,16 @@ procedure TFormMain.CheckBoxHTMLClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofHTML);
   UpdateHTMLCheckBoxEnableStates;
+end;
+
+procedure TFormMain.CheckBoxLogPerAPIClick(Sender: TObject);
+begin
+  FProject.LogToOutputDebugString := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxLogToFileClick(Sender: TObject);
+begin
+  FProject.LogToTextFile := (Sender as TCheckBox).Checked;
 end;
 
 procedure TFormMain.CheckBoxMetaClick(Sender: TObject);
@@ -1081,6 +1200,11 @@ begin
   FProject.DisplayXMLFileExt := (Sender as TCheckBox).Checked;
 end;
 
+procedure TFormMain.CheckBoxPassThroughExitCodeClick(Sender: TObject);
+begin
+  FProject.PassTroughExitCode := (Sender as TCHeckBox).Checked;
+end;
+
 procedure TFormMain.CheckBoxRelativePathsClick(Sender: TObject);
 begin
   FProject.RelativeToScriptPath := (Sender as TCheckBox).Checked;
@@ -1088,6 +1212,11 @@ begin
   MemoScriptPreview.Clear;
 
   DisplayScriptOutputPaths;
+end;
+
+procedure TFormMain.CheckBoxUseApplicationWorkingDirClick(Sender: TObject);
+begin
+  FProject.UseExeDirAsWorkDir := (Sender as TCheckbox).Checked;
 end;
 
 procedure TFormMain.DisplayScriptOutputPaths;
@@ -1126,6 +1255,21 @@ begin
   UpdateXMLCheckBoxEnableStates;
 end;
 
+procedure TFormMain.CheckBoxXMLCombineMultipleClick(Sender: TObject);
+begin
+  FProject.CombineXMLCoverage := (Sender as TCHeckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxXMLJacocoFormatClick(Sender: TObject);
+begin
+  FProject.XMLJacocoFormat := (Sender as TCHeckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxXMLLinesClick(Sender: TObject);
+begin
+  FProject.AddLineNumbersToXML := (Sender as TCHeckBox).Checked;
+end;
+
 procedure TFormMain.OutputFormatCheckStatusChanged(Checked      : Boolean;
                                                    OutputFormat : TOutputFormat);
 begin
@@ -1153,26 +1297,33 @@ end;
 
 procedure TFormMain.ClearWizardFields;
 begin
-  EditExeFile.Text                   := '';
-  EditMapFile.Text                   := '';
-  EditScriptOutputFolder.Text        := '';
-  EditReportOutputFolder.Text        := '';
-  EditAdditionalParameter.Text       := '';
-  CheckBoxEMMA.Checked               := false;
-  CheckBoxMeta.Checked               := false;
-  CheckBoxXML.Checked                := false;
-  CheckBoxHTML.Checked               := false;
-  CheckBoxEMMA21.Checked             := false;
-  CheckBoxOpenEMMAFileExtern.Checked := false;
-  CheckBoxOpenXMLFileExtern.Checked  := false;
-  CheckBoxOpenHTMLFileExtern.Checked := false;
-  CheckBoxXMLLines.Checked           := false;
-  CheckBoxXMLCombineMultiple.Checked := false;
+  EditExeFile.Text                         := '';
+  EditCommandLineParams.Text               := '';
+  EditMapFile.Text                         := '';
+  EditScriptOutputFolder.Text              := '';
+  EditReportOutputFolder.Text              := '';
+  EditAdditionalParameter.Text             := '';
+  CheckBoxUseApplicationWorkingDir.Checked := false;
+  CheckBoxEMMA.Checked                     := false;
+  CheckBoxMeta.Checked                     := false;
+  CheckBoxXML.Checked                      := false;
+  CheckBoxHTML.Checked                     := false;
+  CheckBoxEMMA21.Checked                   := false;
+  CheckBoxOpenEMMAFileExtern.Checked       := false;
+  CheckBoxOpenXMLFileExtern.Checked        := false;
+  CheckBoxOpenHTMLFileExtern.Checked       := false;
+  CheckBoxXMLLines.Checked                 := false;
+  CheckBoxXMLCombineMultiple.Checked       := false;
+  CheckBoxXMLJacocoFormat.Checked          := false;
+  CheckBoxLogToFile.Checked                := true; // deliberately
+  CheckBoxLogPerAPI.Checked                := false;
+  CheckBoxPassThroughExitCode.Checked      := false;
 
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;
   MemoScriptPreview.Lines.Clear;
-  SetSourcePathWithoutFileList(EditSourcePath.Text);
+  SetSourcePathWithoutFileList('');
+  EditCodePage.Text := '';
 
   PreInitCodeCoverageExe;
   UpdateEMMACheckBoxEnableStates;

@@ -1,6 +1,6 @@
-# Delphi Code Coverage Wizard
+# Delphi Code Coverage Wizard Plus
 
-## What is Delphi Code Coverage Wizard?
+## What is Delphi Code Coverage Wizard Plus?
 Delphi Code Coverage Wizard is a GUI which makes running the command line based 
 code coverage tool easier. 
 
@@ -35,11 +35,11 @@ In the root folder of the project you will find further files with information a
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 
 ## Where is the Code Coverage command line tool from?
-The command line tool used is some not yet up to date version of this one:
+The command line tool used and included is the version of this one compiled at 2022/11/13:
 https://github.com/DelphiCodeCoverage/DelphiCodeCoverage
 
-The plan is to look at it again and update it, if it is still compatible or adapt
-if there's anything to change. This should happen in the near future.
+If the CodeCoverage.exe did not really change any parameters one can replace it with 
+a new version, if desired. Updates of the wizard should contain updated versions as well.
 
 ## How to install?
 Just open and run the project provided in the Source directory.
@@ -66,6 +66,11 @@ versions/profiles it finds on your computer.
    
 ## Some impressions ##
 ![Start screen of the wizard](/Screenshots/Wizard1.PNG)
+
 ![Some screen of the wizard](/Screenshots/Wizard2.PNG)
+
 ![Start screen of the generated HTML output](/Screenshots/Output1.PNG)
+
 ![View of a unit (blue lines are not covered yet)](/Screenshots/Output2.PNG)   
+
+![View of a unit 2 (top with the unit's summary)](/Screenshots/Output3.PNG)   
