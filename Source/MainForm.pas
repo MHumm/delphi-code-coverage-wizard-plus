@@ -138,6 +138,7 @@ type
     Label2: TLabel;
     EditCommandLineParams: TEdit;
     ScrollBoxUnitTestExecutable: TScrollBox;
+    ButtonSaveAs: TButton;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -202,6 +203,7 @@ type
     procedure CheckBoxPassThroughExitCodeClick(Sender: TObject);
     procedure CheckBoxUseApplicationWorkingDirClick(Sender: TObject);
     procedure EditCommandLineParamsChange(Sender: TObject);
+    procedure ButtonSaveAsClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -402,7 +404,7 @@ const
   /// </summary>
   cImgCompletedPage = 8;
 
-procedure TFormMain.ButtonSaveClick(Sender: TObject);
+procedure TFormMain.ButtonSaveAsClick(Sender: TObject);
 var
   ScriptGenerator : TScriptsGenerator;
 begin
@@ -430,6 +432,30 @@ begin
                           [e.Message, FileSaveDialogProject.FileName]),
                    mtError, [mbOK], -1);
     end;
+  end;
+end;
+
+procedure TFormMain.ButtonSaveClick(Sender: TObject);
+var
+  ScriptGenerator : TScriptsGenerator;
+begin
+  try
+    FProject.SaveToXML(FProject.FileName);
+
+    crd_SaveAndRun.Tag := cImgCompletedPage;
+
+    ScriptGenerator := TScriptsGenerator.Create(FProject,
+                                                FProject.FileName);
+    try
+      ScriptGenerator.Generate;
+    finally
+      ScriptGenerator.Free;
+    end;
+  except
+    on e:exception do
+      MessageDlg(Format(rSaveFileError,
+                        [e.Message, FProject.FileName]),
+                 mtError, [mbOK], -1);
   end;
 end;
 
@@ -590,6 +616,8 @@ procedure TFormMain.DisplaySaveAndRunScreen;
 begin
   cp_Wizard.ActiveCard := crd_SaveAndRun;
   ButtonNext.Enabled   := false;
+  ButtonCancel.Enabled := false;
+  ButtonSave.Enabled   := not FProject.FileName.IsEmpty;
 end;
 
 procedure TFormMain.ButtonHomeClick(Sender: TObject);
@@ -1070,6 +1098,7 @@ end;
 procedure TFormMain.CheckBoxEMMA21Click(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA21);
+  UpdateEMMACheckBoxEnableStates;
 end;
 
 procedure TFormMain.CheckBoxEMMAClick(Sender: TObject);

@@ -206,35 +206,41 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_MiscSettings
+        ActiveCard = crd_Output
         BevelEdges = [beBottom]
+        BevelOuter = bvNone
         Caption = 'cp_Wizard'
         TabOrder = 0
         ExplicitHeight = 315
         object crd_UnitTestExecutable: TCard
-          Left = 1
-          Top = 1
-          Width = 422
-          Height = 392
+          Left = 0
+          Top = 0
+          Width = 424
+          Height = 394
           BevelEdges = []
           Caption = 'crd_UnitTestExecutable'
           CardIndex = 0
           TabOrder = 0
           OnEnter = crd_UnitTestExecutableEnter
+          ExplicitLeft = 1
+          ExplicitTop = 1
+          ExplicitWidth = 422
           ExplicitHeight = 313
           object ScrollBoxUnitTestExecutable: TScrollBox
             Left = 0
             Top = 0
-            Width = 422
-            Height = 392
+            Width = 424
+            Height = 394
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 0
+            ExplicitWidth = 422
+            ExplicitHeight = 392
             DesignSize = (
-              422
-              392)
+              424
+              394)
             object Label2: TLabel
               Left = 8
               Top = 248
@@ -264,7 +270,7 @@ object FormMain: TFormMain
               Caption = 'Map file of the unit test to analyze'
             end
             object ButtonOpenCodeCoverage: TButton
-              Left = 351
+              Left = 353
               Top = 196
               Width = 50
               Height = 25
@@ -275,9 +281,10 @@ object FormMain: TFormMain
               Images = VirtualImageListButtons16
               TabOrder = 0
               OnClick = ButtonOpenCodeCoverageClick
+              ExplicitLeft = 351
             end
             object ButtonOpenExe: TButton
-              Left = 351
+              Left = 353
               Top = 44
               Width = 50
               Height = 25
@@ -288,9 +295,10 @@ object FormMain: TFormMain
               Images = VirtualImageListButtons16
               TabOrder = 1
               OnClick = ButtonOpenExeClick
+              ExplicitLeft = 351
             end
             object ButtonOpenMap: TButton
-              Left = 351
+              Left = 353
               Top = 124
               Width = 50
               Height = 25
@@ -301,6 +309,7 @@ object FormMain: TFormMain
               Images = VirtualImageListButtons16
               TabOrder = 2
               OnClick = ButtonOpenMapClick
+              ExplicitLeft = 351
             end
             object CheckBoxUseApplicationWorkingDir: TCheckBox
               Left = 8
@@ -314,55 +323,62 @@ object FormMain: TFormMain
             object EditCodeCoverageExe: TEdit
               Left = 8
               Top = 197
-              Width = 334
+              Width = 336
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 4
               OnChange = EditCodeCoverageExeChange
+              ExplicitWidth = 334
             end
             object EditCommandLineParams: TEdit
               Left = 8
               Top = 269
-              Width = 393
+              Width = 395
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 5
               OnChange = EditCommandLineParamsChange
+              ExplicitWidth = 393
             end
             object EditExeFile: TEdit
               Left = 8
               Top = 45
-              Width = 334
+              Width = 336
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 6
               OnChange = EditExeFileChange
+              ExplicitWidth = 334
             end
             object EditMapFile: TEdit
               Left = 8
               Top = 125
-              Width = 334
+              Width = 336
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 7
               OnChange = EditMapFileChange
+              ExplicitWidth = 334
             end
           end
         end
         object crd_Source: TCard
-          Left = 1
-          Top = 1
-          Width = 422
-          Height = 392
+          Left = 0
+          Top = 0
+          Width = 424
+          Height = 394
           BevelEdges = []
           Caption = 'crd_Source'
           CardIndex = 1
           TabOrder = 1
           OnEnter = crd_SourceEnter
+          ExplicitLeft = 1
+          ExplicitTop = 1
+          ExplicitWidth = 422
           ExplicitHeight = 313
           DesignSize = (
-            422
-            392)
+            424
+            394)
           object LabelSourceFilesPath: TLabel
             Left = 8
             Top = 16
@@ -380,14 +396,15 @@ object FormMain: TFormMain
           object EditSourcePath: TEdit
             Left = 8
             Top = 37
-            Width = 350
+            Width = 352
             Height = 23
             Anchors = [akLeft, akTop, akRight]
             TabOrder = 0
             OnChange = EditSourcePathChange
+            ExplicitWidth = 350
           end
           object ButtonSourcePath: TButton
-            Left = 364
+            Left = 366
             Top = 36
             Width = 50
             Height = 25
@@ -398,21 +415,23 @@ object FormMain: TFormMain
             Images = VirtualImageListButtons16
             TabOrder = 1
             OnClick = ButtonSourcePathClick
+            ExplicitLeft = 364
           end
           object CheckListBoxSource: TCheckListBox
             Left = 8
             Top = 88
-            Width = 404
-            Height = 251
+            Width = 406
+            Height = 253
             Anchors = [akLeft, akTop, akRight, akBottom]
             ItemHeight = 17
             TabOrder = 2
             OnClickCheck = CheckListBoxSourceClickCheck
+            ExplicitWidth = 404
             ExplicitHeight = 172
           end
           object b_SelectAll: TButton
             Left = -1
-            Top = 343
+            Top = 345
             Width = 138
             Height = 42
             Hint = 'Select all source files'
@@ -428,7 +447,7 @@ object FormMain: TFormMain
           end
           object b_DeselectAll: TButton
             Left = 139
-            Top = 343
+            Top = 345
             Width = 138
             Height = 42
             Hint = 'deselect all source files'
@@ -444,7 +463,7 @@ object FormMain: TFormMain
           end
           object b_RefreshSourceFiles: TButton
             Left = 280
-            Top = 343
+            Top = 345
             Width = 138
             Height = 42
             Hint = 'Refresh file list'
@@ -460,31 +479,35 @@ object FormMain: TFormMain
           end
         end
         object crd_Output: TCard
-          Left = 1
-          Top = 1
-          Width = 422
-          Height = 392
+          Left = 0
+          Top = 0
+          Width = 424
+          Height = 394
           BevelEdges = []
           Caption = 'crd_Output'
           CardIndex = 2
           TabOrder = 2
           OnEnter = crd_OutputEnter
+          ExplicitLeft = 1
+          ExplicitTop = 1
+          ExplicitWidth = 422
           ExplicitHeight = 313
           object ScrollBoxOutputSettings: TScrollBox
             Left = 0
             Top = 0
-            Width = 422
-            Height = 392
+            Width = 424
+            Height = 394
             HorzScrollBar.Visible = False
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 0
+            ExplicitWidth = 422
             ExplicitHeight = 313
             DesignSize = (
-              405
-              392)
+              407
+              394)
             object Bevel1: TBevel
               Left = 93
               Top = 133
@@ -513,7 +536,7 @@ object FormMain: TFormMain
               Caption = 'Batch output folder (files needed to execute DelphiCodeCoverage)'
             end
             object ButtonReportOutputFolder: TButton
-              Left = 333
+              Left = 355
               Top = 89
               Width = 50
               Height = 25
@@ -524,10 +547,9 @@ object FormMain: TFormMain
               Images = VirtualImageListButtons16
               TabOrder = 0
               OnClick = ButtonReportOutputFolderClick
-              ExplicitLeft = 329
             end
             object ButtonScriptOutputFolder: TButton
-              Left = 333
+              Left = 355
               Top = 25
               Width = 50
               Height = 25
@@ -539,7 +561,6 @@ object FormMain: TFormMain
               TabOrder = 1
               OnClick = ButtonScriptOutputFolderClick
               OnExit = ButtonScriptOutputFolderExit
-              ExplicitLeft = 329
             end
             object CheckBoxEMMA: TCheckBox
               Left = 8
@@ -581,23 +602,21 @@ object FormMain: TFormMain
             object EditReportOutputFolder: TEdit
               Left = 5
               Top = 90
-              Width = 322
+              Width = 344
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 6
               OnChange = EditReportOutputFolderExit
-              ExplicitWidth = 318
             end
             object EditScriptOutputFolder: TEdit
               Left = 5
               Top = 26
-              Width = 322
+              Width = 344
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 7
               OnChange = EditScriptOutputFolderExit
               OnExit = EditScriptOutputFolderExit
-              ExplicitWidth = 318
             end
             object CheckBoxEMMA21: TCheckBox
               Left = 8
@@ -680,29 +699,34 @@ object FormMain: TFormMain
         end
         object crd_MiscSettings: TCard
           Tag = -1
-          Left = 1
-          Top = 1
-          Width = 422
-          Height = 392
+          Left = 0
+          Top = 0
+          Width = 424
+          Height = 394
           BevelEdges = []
           Caption = 'crd_MiscSettings'
           CardIndex = 3
           TabOrder = 3
           OnEnter = crd_MiscSettingsEnter
+          ExplicitLeft = 1
+          ExplicitTop = 1
+          ExplicitWidth = 422
           ExplicitHeight = 313
           object ScrollBoxMisc: TScrollBox
             Left = 0
             Top = 0
-            Width = 422
-            Height = 392
+            Width = 424
+            Height = 394
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 0
+            ExplicitWidth = 422
+            ExplicitHeight = 392
             DesignSize = (
-              422
-              392)
+              424
+              394)
             object LabelAdditioalParams: TLabel
               Left = 8
               Top = 48
@@ -722,10 +746,11 @@ object FormMain: TFormMain
             object LabelPath: TLabel
               Left = 32
               Top = 104
-              Width = 52
+              Width = 54
               Height = 15
               Anchors = [akLeft, akTop, akRight]
               Caption = 'LabelPath'
+              ExplicitWidth = 52
             end
             object LabelScriptPreviewCaption: TLabel
               Left = 32
@@ -753,20 +778,22 @@ object FormMain: TFormMain
             object EditAdditionalParameter: TEdit
               Left = 139
               Top = 46
-              Width = 249
+              Width = 251
               Height = 23
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 1
               OnChange = EditAdditionalParameterChange
+              ExplicitWidth = 249
             end
             object MemoScriptPreview: TMemo
               Left = 32
               Top = 149
-              Width = 356
+              Width = 358
               Height = 110
               Anchors = [akLeft, akTop, akRight]
               Enabled = False
               TabOrder = 2
+              ExplicitWidth = 356
             end
             object CheckBoxLogToFile: TCheckBox
               Left = 8
@@ -800,60 +827,86 @@ object FormMain: TFormMain
           end
         end
         object crd_SaveAndRun: TCard
-          Left = 1
-          Top = 1
-          Width = 422
-          Height = 392
+          Left = 0
+          Top = 0
+          Width = 424
+          Height = 394
           BevelEdges = []
           Caption = 'crd_SaveAndRun'
           CardIndex = 4
           TabOrder = 4
           OnEnter = crd_SaveAndRunEnter
+          ExplicitLeft = 1
+          ExplicitTop = 1
+          ExplicitWidth = 422
           ExplicitHeight = 313
           object ButtonSave: TButton
             Left = 16
             Top = 16
-            Width = 95
+            Width = 177
             Height = 73
-            Hint = 'Open an existing project for editing'
-            Caption = '&Save && generate'
+            Hint = 
+              'Save the existing project and generate all files CodeCoverage.ex' +
+              'e needs to run  it'
+            Caption = '&Save project && generate files to run it'
             ImageAlignment = iaTop
             ImageIndex = 3
             ImageName = 'Actions-document-save-icon'
             ImageMargins.Top = 5
             Images = VirtualImageListButtons32
             TabOrder = 0
+            WordWrap = True
             OnClick = ButtonSaveClick
           end
           object ButtonWizardRun: TButton
-            Left = 16
-            Top = 105
-            Width = 95
+            Left = 208
+            Top = 16
+            Width = 177
             Height = 73
-            Hint = 'Open an existing project and run it'
-            Caption = '&Run'
+            Hint = 'Run the coverage test from the generated files'
+            Caption = '&Run coverage test'
             ImageAlignment = iaTop
             ImageIndex = 0
             ImageName = 'Actions-arrow-right-icon'
             ImageMargins.Top = 5
             Images = VirtualImageListButtons32
             TabOrder = 1
+            WordWrap = True
             OnClick = ButtonWizardRunClick
           end
           object ButtonHome: TButton
-            Left = 16
-            Top = 194
-            Width = 95
+            Left = 208
+            Top = 112
+            Width = 177
             Height = 73
             Hint = 'Go back to main/start screen'
-            Caption = '&Home'
+            Caption = '&Go back to main screen'
             ImageAlignment = iaTop
             ImageIndex = 13
             ImageName = 'Actions-go-home-icon'
             ImageMargins.Top = 5
             Images = VirtualImageListButtons32
             TabOrder = 2
+            WordWrap = True
             OnClick = ButtonHomeClick
+          end
+          object ButtonSaveAs: TButton
+            Left = 16
+            Top = 112
+            Width = 177
+            Height = 73
+            Hint = 
+              'Save the project under a new name and generate all files CodeCov' +
+              'erage.exe needs to run  it'
+            Caption = '&Save project as && generate files to run it'
+            ImageAlignment = iaTop
+            ImageIndex = 3
+            ImageName = 'Actions-document-save-icon'
+            ImageMargins.Top = 5
+            Images = VirtualImageListButtons32
+            TabOrder = 3
+            WordWrap = True
+            OnClick = ButtonSaveAsClick
           end
         end
       end
@@ -913,22 +966,25 @@ object FormMain: TFormMain
         Height = 60
         Anchors = [akLeft, akTop, akRight]
         BevelEdges = [beBottom]
+        BevelKind = bkTile
+        BevelOuter = bvNone
         Caption = 'PanelHeader'
         Color = clBtnHighlight
         ParentBackground = False
         ShowCaption = False
         TabOrder = 2
         StyleElements = [seFont, seBorder]
-        ExplicitWidth = 420
         object LabelTop: TLabel
           AlignWithMargins = True
-          Left = 4
-          Top = 4
-          Width = 416
+          Left = 3
+          Top = 3
+          Width = 418
           Height = 52
           Align = alClient
           Caption = 'LabelTop'
           WordWrap = True
+          ExplicitLeft = 4
+          ExplicitTop = 4
           ExplicitWidth = 47
           ExplicitHeight = 15
         end
@@ -940,11 +996,11 @@ object FormMain: TFormMain
         Height = 50
         Anchors = [akLeft, akRight, akBottom]
         BevelEdges = [beTop]
+        BevelKind = bkTile
+        BevelOuter = bvNone
         Caption = 'PanelBottomNavigation'
         ShowCaption = False
         TabOrder = 3
-        ExplicitTop = 374
-        ExplicitWidth = 419
         object ButtonPrevious: TButton
           Left = 0
           Top = 5
