@@ -206,7 +206,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_MiscSettings
+        ActiveCard = crd_UnitTestExecutable
         BevelEdges = [beBottom]
         Caption = 'cp_Wizard'
         TabOrder = 0
@@ -222,95 +222,131 @@ object FormMain: TFormMain
           TabOrder = 0
           OnEnter = crd_UnitTestExecutableEnter
           ExplicitHeight = 313
-          DesignSize = (
-            422
-            392)
-          object LabelUnitTestExe: TLabel
-            Left = 8
-            Top = 24
-            Width = 212
-            Height = 15
-            Caption = 'Executable file of the unit test to analyze'
-          end
-          object LabelUnitTestMap: TLabel
-            Left = 8
-            Top = 104
-            Width = 179
-            Height = 15
-            Caption = 'Map file of the unit test to analyze'
-          end
-          object LabelCodeCoveragePath: TLabel
-            Left = 8
-            Top = 176
-            Width = 140
-            Height = 15
-            Caption = 'Path to CodeCoverage.exe'
-          end
-          object EditExeFile: TEdit
-            Left = 8
-            Top = 45
-            Width = 355
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
+          object ScrollBoxUnitTestExecutable: TScrollBox
+            Left = 0
+            Top = 0
+            Width = 422
+            Height = 392
+            Align = alClient
+            BevelInner = bvNone
+            BevelOuter = bvNone
+            BorderStyle = bsNone
             TabOrder = 0
-            OnChange = EditExeFileChange
-          end
-          object EditMapFile: TEdit
-            Left = 8
-            Top = 125
-            Width = 355
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 1
-            OnChange = EditMapFileChange
-          end
-          object ButtonOpenExe: TButton
-            Left = 369
-            Top = 44
-            Width = 50
-            Height = 25
-            Anchors = [akTop, akRight]
-            ImageAlignment = iaCenter
-            ImageIndex = 2
-            ImageName = 'Actions-document-open-folder-icon'
-            Images = VirtualImageListButtons16
-            TabOrder = 2
-            OnClick = ButtonOpenExeClick
-          end
-          object ButtonOpenMap: TButton
-            Left = 369
-            Top = 124
-            Width = 50
-            Height = 25
-            Anchors = [akTop, akRight]
-            ImageAlignment = iaCenter
-            ImageIndex = 2
-            ImageName = 'Actions-document-open-folder-icon'
-            Images = VirtualImageListButtons16
-            TabOrder = 3
-            OnClick = ButtonOpenMapClick
-          end
-          object EditCodeCoverageExe: TEdit
-            Left = 8
-            Top = 197
-            Width = 355
-            Height = 23
-            Anchors = [akLeft, akTop, akRight]
-            TabOrder = 4
-            OnChange = EditCodeCoverageExeChange
-          end
-          object ButtonOpenCodeCoverage: TButton
-            Left = 369
-            Top = 196
-            Width = 50
-            Height = 25
-            Anchors = [akTop, akRight]
-            ImageAlignment = iaCenter
-            ImageIndex = 2
-            ImageName = 'Actions-document-open-folder-icon'
-            Images = VirtualImageListButtons16
-            TabOrder = 5
-            OnClick = ButtonOpenCodeCoverageClick
+            DesignSize = (
+              422
+              392)
+            object Label2: TLabel
+              Left = 8
+              Top = 248
+              Width = 320
+              Height = 15
+              Caption = 'Command line parameters passed to the program to run (-a)'
+            end
+            object LabelCodeCoveragePath: TLabel
+              Left = 8
+              Top = 176
+              Width = 140
+              Height = 15
+              Caption = 'Path to CodeCoverage.exe'
+            end
+            object LabelUnitTestExe: TLabel
+              Left = 8
+              Top = 24
+              Width = 212
+              Height = 15
+              Caption = 'Executable file of the unit test to analyze'
+            end
+            object LabelUnitTestMap: TLabel
+              Left = 8
+              Top = 104
+              Width = 179
+              Height = 15
+              Caption = 'Map file of the unit test to analyze'
+            end
+            object ButtonOpenCodeCoverage: TButton
+              Left = 351
+              Top = 196
+              Width = 50
+              Height = 25
+              Anchors = [akTop, akRight]
+              ImageAlignment = iaCenter
+              ImageIndex = 2
+              ImageName = 'Actions-document-open-folder-icon'
+              Images = VirtualImageListButtons16
+              TabOrder = 0
+              OnClick = ButtonOpenCodeCoverageClick
+            end
+            object ButtonOpenExe: TButton
+              Left = 351
+              Top = 44
+              Width = 50
+              Height = 25
+              Anchors = [akTop, akRight]
+              ImageAlignment = iaCenter
+              ImageIndex = 2
+              ImageName = 'Actions-document-open-folder-icon'
+              Images = VirtualImageListButtons16
+              TabOrder = 1
+              OnClick = ButtonOpenExeClick
+            end
+            object ButtonOpenMap: TButton
+              Left = 351
+              Top = 124
+              Width = 50
+              Height = 25
+              Anchors = [akTop, akRight]
+              ImageAlignment = iaCenter
+              ImageIndex = 2
+              ImageName = 'Actions-document-open-folder-icon'
+              Images = VirtualImageListButtons16
+              TabOrder = 2
+              OnClick = ButtonOpenMapClick
+            end
+            object CheckBoxUseApplicationWorkingDir: TCheckBox
+              Left = 8
+              Top = 320
+              Width = 385
+              Height = 17
+              Caption = 'Use unit test application directory as working directory (-twd)'
+              TabOrder = 3
+              OnClick = CheckBoxUseApplicationWorkingDirClick
+            end
+            object EditCodeCoverageExe: TEdit
+              Left = 8
+              Top = 197
+              Width = 334
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 4
+              OnChange = EditCodeCoverageExeChange
+            end
+            object EditCommandLineParams: TEdit
+              Left = 8
+              Top = 269
+              Width = 393
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 5
+              OnChange = EditCommandLineParamsChange
+            end
+            object EditExeFile: TEdit
+              Left = 8
+              Top = 45
+              Width = 334
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 6
+              OnChange = EditExeFileChange
+            end
+            object EditMapFile: TEdit
+              Left = 8
+              Top = 125
+              Width = 334
+              Height = 23
+              Anchors = [akLeft, akTop, akRight]
+              TabOrder = 7
+              OnChange = EditMapFileChange
+            end
           end
         end
         object crd_Source: TCard

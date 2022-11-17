@@ -134,6 +134,10 @@ type
     CheckBoxLogToFile: TCheckBox;
     CheckBoxLogPerAPI: TCheckBox;
     CheckBoxPassThroughExitCode: TCheckBox;
+    CheckBoxUseApplicationWorkingDir: TCheckBox;
+    Label2: TLabel;
+    EditCommandLineParams: TEdit;
+    ScrollBoxUnitTestExecutable: TScrollBox;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -196,6 +200,8 @@ type
     procedure CheckBoxLogToFileClick(Sender: TObject);
     procedure CheckBoxLogPerAPIClick(Sender: TObject);
     procedure CheckBoxPassThroughExitCodeClick(Sender: TObject);
+    procedure CheckBoxUseApplicationWorkingDirClick(Sender: TObject);
+    procedure EditCommandLineParamsChange(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -553,12 +559,22 @@ begin
   SetActiveWizardCardImageIndex(cp_Wizard.Cards[cp_Wizard.ActiveCardIndex].Tag);
 
   case Index of
-    0 : cp_Wizard.ActiveCard := crd_UnitTestExecutable;
-    1 : cp_Wizard.ActiveCard := crd_Source;
-    2 : cp_Wizard.ActiveCard := crd_Output;
+    0 : begin
+          cp_Wizard.ActiveCard := crd_UnitTestExecutable;
+          ButtonNext.Enabled   := FProject.IsExeAndMapDefined;
+        end;
+    1 : begin
+          cp_Wizard.ActiveCard := crd_Source;
+          ButtonNext.Enabled   := FProject.IsSourcePathAndFilesDefined;
+        end;
+    2 : begin
+          cp_Wizard.ActiveCard := crd_Output;
+          ButtonNext.Enabled   := FProject.IsOutputSettingsDefined;
+        end;
     3 : begin
           cp_Wizard.ActiveCard := crd_MiscSettings;
           crd_MiscSettings.Tag := cImgCompletedPage;
+          ButtonNext.Enabled   := true;
           PrepareScriptOutputPathDisplay;
         end;
     4 : DisplaySaveAndRunScreen;
@@ -670,7 +686,9 @@ begin
     FProject.LoadFromXML(FileName);
 
     EditExeFile.Text            := FProject.ExecutableToAnalyze;
+    EditCommandLineParams.Text  := FProject.ExeCommandLineParams;
     EditMapFile.Text            := FProject.MapFile;
+    CheckBoxUseApplicationWorkingDir.Checked := FProject.UseExeDirAsWorkDir;
 
     OnChangeBackup              := EditSourcePath.OnChange;
     EditSourcePath.OnChange     := nil;
@@ -843,6 +861,11 @@ procedure TFormMain.EditCodeCoverageExeChange(Sender: TObject);
 begin
   FProject.CodeCoverageExePath := (Sender As TEdit).Text;
   DisplayExeMapInputStatus;
+end;
+
+procedure TFormMain.EditCommandLineParamsChange(Sender: TObject);
+begin
+  FProject.ExeCommandLineParams := (Sender as TEdit).Text;
 end;
 
 procedure TFormMain.EditExeFileChange(Sender: TObject);
@@ -1116,6 +1139,11 @@ begin
   DisplayScriptOutputPaths;
 end;
 
+procedure TFormMain.CheckBoxUseApplicationWorkingDirClick(Sender: TObject);
+begin
+  FProject.UseExeDirAsWorkDir := (Sender as TCheckbox).Checked;
+end;
+
 procedure TFormMain.DisplayScriptOutputPaths;
 begin
   if FProject.RelativeToScriptPath then
@@ -1194,25 +1222,27 @@ end;
 
 procedure TFormMain.ClearWizardFields;
 begin
-  EditExeFile.Text                    := '';
-  EditMapFile.Text                    := '';
-  EditScriptOutputFolder.Text         := '';
-  EditReportOutputFolder.Text         := '';
-  EditAdditionalParameter.Text        := '';
-  CheckBoxEMMA.Checked                := false;
-  CheckBoxMeta.Checked                := false;
-  CheckBoxXML.Checked                 := false;
-  CheckBoxHTML.Checked                := false;
-  CheckBoxEMMA21.Checked              := false;
-  CheckBoxOpenEMMAFileExtern.Checked  := false;
-  CheckBoxOpenXMLFileExtern.Checked   := false;
-  CheckBoxOpenHTMLFileExtern.Checked  := false;
-  CheckBoxXMLLines.Checked            := false;
-  CheckBoxXMLCombineMultiple.Checked  := false;
-  CheckBoxXMLJacocoFormat.Checked     := false;
-  CheckBoxLogToFile.Checked           := true; // deliberately
-  CheckBoxLogPerAPI.Checked           := false;
-  CheckBoxPassThroughExitCode.Checked := false;
+  EditExeFile.Text                         := '';
+  EditCommandLineParams.Text               := '';
+  EditMapFile.Text                         := '';
+  EditScriptOutputFolder.Text              := '';
+  EditReportOutputFolder.Text              := '';
+  EditAdditionalParameter.Text             := '';
+  CheckBoxUseApplicationWorkingDir.Checked := false;
+  CheckBoxEMMA.Checked                     := false;
+  CheckBoxMeta.Checked                     := false;
+  CheckBoxXML.Checked                      := false;
+  CheckBoxHTML.Checked                     := false;
+  CheckBoxEMMA21.Checked                   := false;
+  CheckBoxOpenEMMAFileExtern.Checked       := false;
+  CheckBoxOpenXMLFileExtern.Checked        := false;
+  CheckBoxOpenHTMLFileExtern.Checked       := false;
+  CheckBoxXMLLines.Checked                 := false;
+  CheckBoxXMLCombineMultiple.Checked       := false;
+  CheckBoxXMLJacocoFormat.Checked          := false;
+  CheckBoxLogToFile.Checked                := true; // deliberately
+  CheckBoxLogPerAPI.Checked                := false;
+  CheckBoxPassThroughExitCode.Checked      := false;
 
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;

@@ -386,6 +386,15 @@ type
     /// </summary>
     function GetProgramToAnalyze: TFilename;
     /// <summary>
+    ///   Returns the command line parameters to pass to the called exe file (if any)
+    /// </summary>
+    function GetExeCommandLineParams: string;
+    /// <summary>
+    ///   If true the working directory will be set to the directory the called
+    ///   unit test exe is in
+    /// </summary>
+    function GetUseExeDirAsWorkDir: Boolean;
+    /// <summary>
     ///   Path to the map file of the program to analyze. Absolutely encoded.
     /// </summary>
     function GetMapFile: TFilename;
@@ -500,6 +509,15 @@ type
     ///   When true the exit code of the called application will be passed through
     /// </summary>
     procedure SetPassTroughExitCode(const Value: Boolean);
+    /// <summary>
+    ///   Sets the command line parameters to pass to the called exe file (if any)
+    /// </summary>
+    procedure SetExeCommandLineParams(const Value: string);
+    /// <summary>
+    ///   If true the working directory will be set to the directory the called
+    ///   unit test exe is in
+    /// </summary>
+    procedure SetUseExeDirAsWorkDir(const Value: Boolean);
 
     /// <summary>
     ///   Checks whether both exe-file name and map-file name are defined.
@@ -574,6 +592,19 @@ type
     property ExecutableToAnalyze : TFilename
       read   GetProgramToAnalyze
       write  SetProgramToAnalyze;
+    /// <summary>
+    ///   Command line parameters to pass to the called unit test executable
+    /// </summary>
+    property ExeCommandLineParams : string
+      read   GetExeCommandLineParams
+      write  SetExeCommandLineParams;
+    /// <summary>
+    ///   When true the working dir will be set to the directory of the called
+    ///   unit test application
+    /// </summary>
+    property UseExeDirAsWorkDir : Boolean
+      read   GetUseExeDirAsWorkDir
+      write  SetUseExeDirAsWorkDir;
     /// <summary>
     ///   Path to the map file of the program to analyze. Absolutely encoded.
     /// </summary>

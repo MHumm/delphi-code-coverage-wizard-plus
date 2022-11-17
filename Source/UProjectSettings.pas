@@ -301,6 +301,17 @@ type
     [SettingsAttribute('UnitTestFiles', 'ExecutableToAnalyze')]
     FExecutableToAnalyze  : TFilename;
     /// <summary>
+    ///   Command line parameters to pass to the called unit test executable
+    /// </summary>
+    [SettingsAttribute('UnitTestFiles', 'CommandLineParams')]
+    FExeCommandLineParams : string;
+    /// <summary>
+    ///   When true the working dir will be set to the directory of the called
+    ///   unit test application
+    /// </summary>
+    [SettingsAttribute('UnitTestFiles', 'UseExeDirAsWorkingDir')]
+    FUseExeDirAsWorkDir   : Boolean;
+    /// <summary>
     ///   Path to the map file of the program to analyze. Absolutely encoded.
     /// </summary>
     [SettingsAttribute('UnitTestFiles', 'MapFile')]
@@ -586,6 +597,28 @@ type
     ///   When true the exit code of the called application will be passed through
     /// </summary>
     procedure SetPassTroughExitCode(const Value: Boolean);
+    /// <summary>
+    ///   Load all parts of the project file which can be loaded via RTTI
+    /// </summary>
+    procedure LoadPerRTTI(Document: IXMLDocument);
+    /// <summary>
+    ///   Returns the command line parameters to pass to the called exe file (if any)
+    /// </summary>
+    function GetExeCommandLineParams: string;
+    /// <summary>
+    ///   If true the working directory will be set to the directory the called
+    ///   unit test exe is in
+    /// </summary>
+    function GetUseExeDirAsWorkDir: Boolean;
+    /// <summary>
+    ///   Sets the command line parameters to pass to the called exe file (if any)
+    /// </summary>
+    procedure SetExeCommandLineParams(const Value: string);
+    /// <summary>
+    ///   If true the working directory will be set to the directory the called
+    ///   unit test exe is in
+    /// </summary>
+    procedure SetUseExeDirAsWorkDir(const Value: Boolean);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -674,6 +707,19 @@ type
     property ExecutableToAnalyze : TFilename
       read   GetProgramToAnalyze
       write  SetProgramToAnalyze;
+    /// <summary>
+    ///   Command line parameters to pass to the called unit test executable
+    /// </summary>
+    property ExeCommandLineParams : string
+      read   GetExeCommandLineParams
+      write  SetExeCommandLineParams;
+    /// <summary>
+    ///   When true the working dir will be set to the directory of the called
+    ///   unit test application
+    /// </summary>
+    property UseExeDirAsWorkDir : Boolean
+      read   GetUseExeDirAsWorkDir
+      write  SetUseExeDirAsWorkDir;
     /// <summary>
     ///   Path to the map file of the program to analyze. Absolutely encoded.
     /// </summary>
@@ -877,6 +923,11 @@ begin
   Result := FDisplayXMLFileExt;
 end;
 
+function TProjectSettings.GetExeCommandLineParams: string;
+begin
+  Result := FExeCommandLineParams;
+end;
+
 function TProjectSettings.GetFileName: string;
 begin
   Result := FFileName;
@@ -962,23 +1013,6 @@ begin
     LDocument.Options := [doNodeAutoIndent];
     LDocument.Active  := true;
 
-    // unit test exe to run and map file for that
-    LUnitTestFiles := LDocument.DocumentElement.ChildNodes['UnitTestFiles'];
-    if Assigned(LUnitTestFiles) then
-    begin
-      LNode := LUnitTestFiles.ChildNodes.FindNode('ExecutableToAnalyze');
-      if Assigned(LNode) then
-        FExecutableToAnalyze := LNode.Text;
-
-      LNode := LUnitTestFiles.ChildNodes.FindNode('MapFile');
-      if Assigned(LNode) then
-        FMapFile             := LNode.Text;
-
-      LNode := LUnitTestFiles.ChildNodes.FindNode('CodeCoverageExe');
-      if Assigned(LNode) then
-        FCodeCoverageExePath := LNode.Text;
-    end;
-
     // Source code files
     LSourceFiles := LDocument.DocumentElement.ChildNodes['SourceCodeFiles'];
     if Assigned(LSourceFiles) then
@@ -1009,75 +1043,77 @@ begin
     LOutput := LDocument.DocumentElement.ChildNodes['OutputSettings'];
     if Assigned(LOutput) then
     begin
-      LNode := LOutput.ChildNodes.FindNode('ScriptOutputPath');
-      if Assigned(LNode) then
-        FScriptsOutputPath := LNode.Text;
-
-      LNode := LOutput.ChildNodes.FindNode('ReportOutputPath');
-      if Assigned(LNode) then
-        FReportOutputPath := LNode.Text;
-
       LNode := LOutput.ChildNodes.FindNode('ReportOutputFormats');
       if Assigned(LNode) then
         System.TypInfo.SetSetProp(self, 'OutputFormats', LNode.Text);
-
-      LNode := LOutput.ChildNodes.FindNode('DisplayEMMAExternally');
-      if Assigned(LNode) then
-        FDisplayEMMAFileExt := StrToBool(LNode.Text);
-
-      LNode := LOutput.ChildNodes.FindNode('DisplayXMLExternally');
-      if Assigned(LNode) then
-        FDisplayXMLFileExt := StrToBool(LNode.Text);
-
-      LNode := LOutput.ChildNodes.FindNode('DisplayHTMLExternally');
-      if Assigned(LNode) then
-        FDisplayHTMLFileExt := StrToBool(LNode.Text);
-
-      LNode := LOutput.ChildNodes.FindNode('XMLLineNumbers');
-      if Assigned(LNode) then
-        FAddLineNumbersToXML := StrToBool(LNode.Text);
-
-      LNode := LOutput.ChildNodes.FindNode('XMLCombineLines');
-      if Assigned(LNode) then
-        FCombineXMLCoverage := StrToBool(LNode.Text);
-
-      LNode := LOutput.ChildNodes.FindNode('XMLJacocoFormat');
-      if Assigned(LNode) then
-        FXMLJacocoFormat := StrToBool(LNode.Text);
     end;
 
-    // Misc. Settings
-    LMisc := LDocument.DocumentElement.ChildNodes['MiscSettings'];
-    if Assigned(LMisc) then
-    begin
-      LNode := LMisc.ChildNodes.FindNode('AdditionalParams');
-      if Assigned(LNode) then
-        FAdditionalParameter := LNode.Text;
-
-      LNode := LMisc.ChildNodes.FindNode('UseRelativePaths');
-      if Assigned(LNode) then
-        FRelativeToScriptPath := StrToBool(LNode.Text);
-
-      LNode := LMisc.ChildNodes.FindNode('LogToTextFile');
-      if Assigned(LNode) then
-        FLogToTextFile := StrToBool(LNode.Text);
-
-      LNode := LMisc.ChildNodes.FindNode('LogToOutputDebugString');
-      if Assigned(LNode) then
-        FLogToOutputDebugString := StrToBool(LNode.Text);
-
-      LNode := LMisc.ChildNodes.FindNode('PassThroughExitCode');
-      if Assigned(LNode) then
-        FPassTroughExitCode := StrToBool(LNode.Text);
-    end;
-
-//    LDocument.Active := false;
+    // Load settings for all fields which have attributes and thus can be
+    // autromatically "found"
+    LoadPerRTTI(LDocument);
   finally
     LUnitTestFiles := nil;
     LSourceFiles   := nil;
     LOutput        := nil;
     LMisc          := nil;
     LNode          := nil;
+  end;
+end;
+
+procedure TProjectSettings.LoadPerRTTI(Document: IXMLDocument);
+var
+  Context    : TRTTIContext;
+  ClassRTTI  : TRttiType;
+  Fields     : TArray<TRttiField>;
+  Field      : TRttiField;
+  Attributes : TArray<TCustomAttribute>;
+  Attribute  : TCustomAttribute;
+  CategoryNode, PropertyNode: IXMLNode;
+  Value      : TValue;
+begin
+  ClassRTTI := Context.GetType(TProjectSettings.ClassInfo);
+  Fields   := ClassRTTI.GetFields;
+  for Field in Fields do
+  begin
+    Attributes := Field.GetAttributes;
+
+    for Attribute in Attributes do
+      if Attribute is SettingsAttribute then
+      begin
+        CategoryNode := Document.ChildNodes.FindNode('DCCProject').
+                          ChildNodes.FindNode(
+                            (Attribute as SettingsAttribute).Category);
+
+        // The parent node for the searched for property has not been found so
+        // we must skip it
+        if not Assigned(CategoryNode) then
+          Continue;
+
+        PropertyNode := CategoryNode.ChildNodes.FindNode(
+                          (Attribute as SettingsAttribute).PropertyName);
+
+        // The searched property node has not been found so we must skip it
+        if not Assigned(PropertyNode) then
+          Continue;
+
+        case Field.FieldType.TypeKind of
+          tkInteger     : Value := Value.FromVariant(PropertyNode.Text.ToInteger);
+          tkEnumeration : if Field.FieldType.Handle = TypeInfo(Boolean) then
+                            Value := Value.FromVariant(StrToBool(PropertyNode.Text))
+                          else
+                            raise ENotSupportedException.Create('Data type not implemented: ' +
+                            System.TypInfo.GetEnumName(TypeInfo(TTypeKind),
+                                                       Integer(Field.FieldType.TypeKind)));
+
+          tkUString     : Value := Value.FromVariant(PropertyNode.Text);
+          else
+            raise ENotSupportedException.Create('Data type not implemented: ' +
+            System.TypInfo.GetEnumName(TypeInfo(TTypeKind),
+                                       Integer(Field.FieldType.TypeKind)));
+        end;
+
+        Field.SetValue(self, Value);
+      end;
   end;
 end;
 
@@ -1114,6 +1150,11 @@ end;
 procedure TProjectSettings.SetDisplayXMLFileExt(const Value: Boolean);
 begin
   FDisplayXMLFileExt := Value;
+end;
+
+procedure TProjectSettings.SetExeCommandLineParams(const Value: string);
+begin
+  FExeCommandLineParams := Value;
 end;
 
 procedure TProjectSettings.SetLogToOutputDebugString(const Value: Boolean);
@@ -1181,6 +1222,11 @@ begin
   FScriptsOutputPath := Value;
 end;
 
+procedure TProjectSettings.SetUseExeDirAsWorkDir(const Value: Boolean);
+begin
+  FUseExeDirAsWorkDir := Value;
+end;
+
 procedure TProjectSettings.SetXMLJacocoFormat(const Value: Boolean);
 begin
   FXMLJacocoFormat := Value;
@@ -1212,6 +1258,11 @@ end;
 function TProjectSettings.GetScriptsOutputPath: TFilename;
 begin
   Result := FScriptsOutputPath;
+end;
+
+function TProjectSettings.GetUseExeDirAsWorkDir: Boolean;
+begin
+  Result := FUseExeDirAsWorkDir;
 end;
 
 function TProjectSettings.GetXMLJacocoFormat: Boolean;

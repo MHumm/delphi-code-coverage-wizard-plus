@@ -143,6 +143,12 @@ begin
     if FSettings.PassTroughExitCode then
       StringStream.WriteString(' -tec');
 
+    if FSettings.UseExeDirAsWorkDir then
+      StringStream.WriteString(' -twd');
+
+    if not FSettings.ExeCommandLineParams.IsEmpty then
+      StringStream.WriteString(' -a ' + FSettings.ExeCommandLineParams);
+
     StringStream.WriteString(' '      + FSettings.AdditionalParameter);
     StringStream.WriteString(GetOutputFormatSwitches); // they start with a spcace
 
