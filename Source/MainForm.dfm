@@ -1466,5 +1466,11 @@ object FormMain: TFormMain
       ImageName = 'Actions-trash-empty-icon'
       OnClick = ButtonDeleteSelectedClick
     end
+    object PMRemoveInexisting: TMenuItem
+      Caption = 'Remove non existing'
+      ImageIndex = 5
+      ImageName = 'Actions-trash-empty-icon'
+      OnClick = PMRemoveInexistingClick
+    end
   end
 end

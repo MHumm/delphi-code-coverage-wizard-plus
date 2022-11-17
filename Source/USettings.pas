@@ -134,6 +134,10 @@ type
     ///   upper limit.
     /// </param>
     procedure DeleteRecentProject(Index: Integer);
+    /// <summary>
+    ///   Returns the list of recent projects
+    /// </summary>
+    function  GetRecentProjects : TStrings;
 
     /// <summary>
     ///   X-pos of the main form in pixel
@@ -243,6 +247,12 @@ end;
 function TSettings.GetRecentProject(Index: Integer): string;
 begin
   Result := FRecentProjects[Index];
+end;
+
+function TSettings.GetRecentProjects: TStrings;
+begin
+  Result := TStringList.Create;
+  Result.AddStrings(FRecentProjects);
 end;
 
 procedure TSettings.LoadSettings;

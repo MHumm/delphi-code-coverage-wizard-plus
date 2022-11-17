@@ -141,6 +141,7 @@ type
     ButtonSaveAs: TButton;
     LabelCodePage: TLabel;
     EditCodePage: TEdit;
+    PMRemoveInexisting: TMenuItem;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -207,6 +208,7 @@ type
     procedure EditCommandLineParamsChange(Sender: TObject);
     procedure ButtonSaveAsClick(Sender: TObject);
     procedure EditCodePageChange(Sender: TObject);
+    procedure PMRemoveInexistingClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -235,7 +237,8 @@ type
     /// </summary>
     procedure SetFormPos;
     /// <summary>
-    ///   Fills the list of recent projects with the data from settings
+    ///   Fills the list of recent projects with the data from settings. Clears
+    ///   the list first.
     /// </summary>
     procedure DisplayRecentProjects;
     /// <summary>
@@ -672,6 +675,24 @@ begin
   end;
 end;
 
+procedure TFormMain.PMRemoveInexistingClick(Sender: TObject);
+var
+  Projects : TStrings;
+begin
+  Projects := FSettings.GetRecentProjects;
+  try
+    try
+      FLogic. DeleteNonExistingRecentProjects(Projects, FSettings.DeleteRecentProject);
+      DisplayRecentProjects;
+    except
+      on e:exception do
+        MessageDlg(Format(rRemoveFailed, [e.Message]), mtError, [mbOK], -1);
+    end;
+  finally
+    Projects.Free;
+  end;
+end;
+
 procedure TFormMain.PreInitCodeCoverageExe;
 var
   Path : string;
@@ -1085,11 +1106,18 @@ procedure TFormMain.DisplayRecentProjects;
 var
   Item : TListItem;
 begin
-  for var i := 0 to FSettings.RecentProjectsCount - 1 do
-  begin
-    Item := ListViewProjects.Items.Add;
-    Item.Caption := ExtractFilePath(FSettings.RecentProject[i]);
-    Item.SubItems.Add(ExtractFileName(FSettings.RecentProject[i]));
+  ListViewProjects.Items.Clear;
+
+  ListViewProjects.Items.BeginUpdate;
+  try
+    for var i := 0 to FSettings.RecentProjectsCount - 1 do
+    begin
+      Item := ListViewProjects.Items.Add;
+      Item.Caption := ExtractFilePath(FSettings.RecentProject[i]);
+      Item.SubItems.Add(ExtractFileName(FSettings.RecentProject[i]));
+    end;
+  finally
+    ListViewProjects.Items.EndUpdate;
   end;
 end;
 
