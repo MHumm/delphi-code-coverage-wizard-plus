@@ -171,18 +171,15 @@ $(PostBuildEvent)]]></PostBuildEvent>
         </DelphiCompile>
         <DCCReference Include="MainForm.pas">
             <Form>FormMain</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="USettings.pas"/>
         <DCCReference Include="UManageToolsMenu.pas"/>
         <DCCReference Include="ConfigurationSelectionForm.pas">
             <Form>ConfigSelectionForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="UAddIDETool.pas"/>
         <DCCReference Include="UDataModuleIcons.pas">
             <Form>dm_Icons</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="UProjectSettings.pas"/>
@@ -192,11 +189,11 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCCReference Include="UScriptRunner.pas"/>
         <DCCReference Include="AboutForm.pas">
             <Form>FormAbout</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="MainFormLogic.pas"/>
         <DCCReference Include="UProjectSettingsInterface.pas"/>
         <DCCReference Include="UConsts.pas"/>
+        <DCCReference Include="UUninstall.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

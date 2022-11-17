@@ -2,8 +2,8 @@ object ConfigSelectionForm: TConfigSelectionForm
   Left = 0
   Top = 0
   Caption = 'Which IDEs shall contain this in Tools menu?'
-  ClientHeight = 239
-  ClientWidth = 520
+  ClientHeight = 238
+  ClientWidth = 516
   Color = clBtnFace
   Constraints.MinHeight = 220
   Constraints.MinWidth = 532
@@ -15,13 +15,13 @@ object ConfigSelectionForm: TConfigSelectionForm
   Position = poOwnerFormCenter
   OnDestroy = FormDestroy
   DesignSize = (
-    520
-    239)
+    516
+    238)
   TextHeight = 15
   object LabelDescription: TLabel
     Left = 8
     Top = 8
-    Width = 496
+    Width = 488
     Height = 33
     Anchors = [akLeft, akTop, akRight]
     AutoSize = False
@@ -34,8 +34,8 @@ object ConfigSelectionForm: TConfigSelectionForm
   object ListViewConfigurations: TListView
     Left = 8
     Top = 55
-    Width = 498
-    Height = 136
+    Width = 490
+    Height = 135
     Anchors = [akLeft, akTop, akRight, akBottom]
     Checkboxes = True
     Columns = <
@@ -54,11 +54,10 @@ object ConfigSelectionForm: TConfigSelectionForm
     TabOrder = 0
     ViewStyle = vsReport
     ExplicitWidth = 494
-    ExplicitHeight = 135
   end
   object ButtonOK: TButton
     Left = 8
-    Top = 202
+    Top = 201
     Width = 121
     Height = 32
     Anchors = [akLeft, akBottom]
@@ -70,11 +69,10 @@ object ConfigSelectionForm: TConfigSelectionForm
     ModalResult = 1
     TabOrder = 1
     OnClick = ButtonOKClick
-    ExplicitTop = 201
   end
   object ButtonCancel: TButton
     Left = 135
-    Top = 202
+    Top = 201
     Width = 121
     Height = 32
     Anchors = [akLeft, akBottom]
@@ -86,11 +84,10 @@ object ConfigSelectionForm: TConfigSelectionForm
     Images = VirtualImageListButtons
     ModalResult = 2
     TabOrder = 2
-    ExplicitTop = 201
   end
   object ButtonSelectAll: TButton
     Left = 262
-    Top = 202
+    Top = 201
     Width = 121
     Height = 32
     Anchors = [akLeft, akBottom]
@@ -100,11 +97,10 @@ object ConfigSelectionForm: TConfigSelectionForm
     Images = VirtualImageListButtons
     TabOrder = 3
     OnClick = ButtonSelectAllClick
-    ExplicitTop = 201
   end
   object ButtonDeselectAll: TButton
     Left = 389
-    Top = 202
+    Top = 201
     Width = 121
     Height = 32
     Anchors = [akLeft, akBottom]
@@ -114,7 +110,6 @@ object ConfigSelectionForm: TConfigSelectionForm
     Images = VirtualImageListButtons
     TabOrder = 4
     OnClick = ButtonDeselectAllClick
-    ExplicitTop = 201
   end
   object VirtualImageListButtons: TVirtualImageList
     Images = <
