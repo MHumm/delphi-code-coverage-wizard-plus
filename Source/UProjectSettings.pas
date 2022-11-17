@@ -323,6 +323,11 @@ type
     /// </summary>
     FProgramSourceFiles   : IProgramSourceFiles;
     /// <summary>
+    ///   Code page for the source code files, only used if not 0
+    /// </summary>
+    [SettingsAttribute('SourceCodeFiles', 'CodePage')]
+    FCodePage             : Integer;
+    /// <summary>
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
     /// </summary>
@@ -619,6 +624,14 @@ type
     ///   unit test exe is in
     /// </summary>
     procedure SetUseExeDirAsWorkDir(const Value: Boolean);
+    /// <summary>
+    ///   Returns the code page selected for the source files. Only used if not 0.
+    /// </summary>
+    function GetCodePage: Integer;
+    /// <summary>
+    ///   Sets the code page to be used for the source files. Only used if not 0.
+    /// </summary>
+    procedure SetCodePage(const Value: Integer);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -740,6 +753,12 @@ type
     property ProgramSourceFiles : IProgramSourceFiles
       read   GetProgramSourceFiles
       write  SetProgramSourceFiles;
+    /// <summary>
+    ///   Code page for the source code files, only used if not 0
+    /// </summary>
+    property CodePage : Integer
+      read   GetCodePage
+      write  SetCodePage;
     /// <summary>
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
@@ -902,6 +921,11 @@ end;
 function TProjectSettings.GetCodeCoverageExePath: TFilename;
 begin
   Result := FCodeCoverageExePath;
+end;
+
+function TProjectSettings.GetCodePage: Integer;
+begin
+  Result := FCodePage;
 end;
 
 function TProjectSettings.GetCombineXMLCoverage: Boolean;
@@ -1131,6 +1155,11 @@ end;
 procedure TProjectSettings.SetAddLineNumbersToXML(const Value: Boolean);
 begin
   FAddLineNumbersToXML := Value;
+end;
+
+procedure TProjectSettings.SetCodePage(const Value: Integer);
+begin
+  FCodePage := Value;
 end;
 
 procedure TProjectSettings.SetCombineXMLCoverage(const Value: Boolean);

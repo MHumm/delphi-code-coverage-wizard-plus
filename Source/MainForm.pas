@@ -139,6 +139,8 @@ type
     EditCommandLineParams: TEdit;
     ScrollBoxUnitTestExecutable: TScrollBox;
     ButtonSaveAs: TButton;
+    LabelCodePage: TLabel;
+    EditCodePage: TEdit;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -204,6 +206,7 @@ type
     procedure CheckBoxUseApplicationWorkingDirClick(Sender: TObject);
     procedure EditCommandLineParamsChange(Sender: TObject);
     procedure ButtonSaveAsClick(Sender: TObject);
+    procedure EditCodePageChange(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -718,9 +721,9 @@ begin
   try
     FProject.LoadFromXML(FileName);
 
-    EditExeFile.Text            := FProject.ExecutableToAnalyze;
-    EditCommandLineParams.Text  := FProject.ExeCommandLineParams;
-    EditMapFile.Text            := FProject.MapFile;
+    EditExeFile.Text                         := FProject.ExecutableToAnalyze;
+    EditCommandLineParams.Text               := FProject.ExeCommandLineParams;
+    EditMapFile.Text                         := FProject.MapFile;
     CheckBoxUseApplicationWorkingDir.Checked := FProject.UseExeDirAsWorkDir;
 
     OnChangeBackup              := EditSourcePath.OnChange;
@@ -728,8 +731,9 @@ begin
     try
       EditSourcePath.Text       := FProject.ProgramSourceBasePath;
     finally
-      EditSourcePath.OnChange := OnChangeBackup;
+      EditSourcePath.OnChange   := OnChangeBackup;
     end;
+    EditCodePage.Text           := FProject.CodePage.ToString;
 
     EditScriptOutputFolder.Text         := FProject.ScriptsOutputPath;
     EditReportOutputFolder.Text         := FProject.ReportOutputPath;
@@ -894,6 +898,11 @@ procedure TFormMain.EditCodeCoverageExeChange(Sender: TObject);
 begin
   FProject.CodeCoverageExePath := (Sender As TEdit).Text;
   DisplayExeMapInputStatus;
+end;
+
+procedure TFormMain.EditCodePageChange(Sender: TObject);
+begin
+  FProject.CodePage := StrToIntDef((Sender as TEdit).Text, 0);
 end;
 
 procedure TFormMain.EditCommandLineParamsChange(Sender: TObject);
@@ -1285,7 +1294,8 @@ begin
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;
   MemoScriptPreview.Lines.Clear;
-  SetSourcePathWithoutFileList(EditSourcePath.Text);
+  SetSourcePathWithoutFileList('');
+  EditCodePage.Text := '';
 
   PreInitCodeCoverageExe;
   UpdateEMMACheckBoxEnableStates;

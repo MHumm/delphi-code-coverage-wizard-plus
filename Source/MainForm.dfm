@@ -206,7 +206,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_Output
+        ActiveCard = crd_Source
         BevelEdges = [beBottom]
         BevelOuter = bvNone
         Caption = 'cp_Wizard'
@@ -388,10 +388,17 @@ object FormMain: TFormMain
           end
           object LabelSourceFilesCaption: TLabel
             Left = 8
-            Top = 67
+            Top = 107
             Width = 116
             Height = 15
             Caption = 'Source files to analyze'
+          end
+          object LabelCodePage: TLabel
+            Left = 8
+            Top = 78
+            Width = 260
+            Height = 15
+            Caption = 'Code page (optional, leave empty otherwise, -cp)'
           end
           object EditSourcePath: TEdit
             Left = 8
@@ -419,15 +426,13 @@ object FormMain: TFormMain
           end
           object CheckListBoxSource: TCheckListBox
             Left = 8
-            Top = 88
+            Top = 128
             Width = 406
-            Height = 253
+            Height = 213
             Anchors = [akLeft, akTop, akRight, akBottom]
             ItemHeight = 17
-            TabOrder = 2
+            TabOrder = 3
             OnClickCheck = CheckListBoxSourceClickCheck
-            ExplicitWidth = 404
-            ExplicitHeight = 172
           end
           object b_SelectAll: TButton
             Left = -1
@@ -441,7 +446,7 @@ object FormMain: TFormMain
             ImageName = 'Actions-edit-select-all-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 3
+            TabOrder = 4
             OnClick = b_SelectAllClick
             ExplicitTop = 264
           end
@@ -457,7 +462,7 @@ object FormMain: TFormMain
             ImageName = 'Actions-edit-clear-list-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 4
+            TabOrder = 5
             OnClick = b_DeselectAllClick
             ExplicitTop = 264
           end
@@ -473,9 +478,18 @@ object FormMain: TFormMain
             ImageName = 'Actions-view-refresh-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 5
+            TabOrder = 6
             OnClick = b_RefreshSourceFilesClick
             ExplicitTop = 264
+          end
+          object EditCodePage: TEdit
+            Left = 295
+            Top = 75
+            Width = 66
+            Height = 23
+            NumbersOnly = True
+            TabOrder = 2
+            OnChange = EditCodePageChange
           end
         end
         object crd_Output: TCard
