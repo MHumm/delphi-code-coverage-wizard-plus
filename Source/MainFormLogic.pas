@@ -170,6 +170,14 @@ type
     /// </param>
     procedure DeleteNonExistingRecentProjects(Projects: TStrings;
                                               DeleteProc: TDeleteRecentProject);
+    /// <summary>
+    ///   Creates the directories for the files to run code coverage and for the
+    ///   generated report output files.
+    /// </summary>
+    /// <param name="Project">
+    ///   Project settings to get the paths from
+    /// </param>
+    procedure ForceDirectories(Project: IProjectOutputSettingsReadOnly);
   end;
 
 implementation
@@ -400,6 +408,25 @@ begin
   finally
     if Assigned(PVerInfo) then
       FreeMem(PVerInfo, VerInfoSize);
+  end;
+end;
+
+procedure TMainFormLogic.ForceDirectories(Project : IProjectOutputSettingsReadOnly);
+begin
+  try
+    System.SysUtils.ForceDirectories(Project.ScriptsOutputPath);
+  except
+    on e:exception do
+    raise Exception.Create(Format(rDirCreateFail,
+                                  [Project.ReportOutputPath, e.Message]));
+  end;
+
+  try
+    System.SysUtils.ForceDirectories(Project.ReportOutputPath);
+  except
+    on e:exception do
+    raise Exception.Create(Format(rDirCreateFail,
+                                  [Project.ReportOutputPath, e.Message]));
   end;
 end;
 

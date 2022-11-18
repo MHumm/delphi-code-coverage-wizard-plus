@@ -377,7 +377,15 @@ type
     ///   Displays the Save and Run card of the wizard and disables the next button
     /// </summary>
     procedure DisplaySaveAndRunScreen;
+    /// <summary>
+    ///   Initializes the project data management instance
+    /// </summary>
     procedure CreateProjectSettings;
+    /// <summary>
+    ///   Generates the directories, the lst files and the batch file to run
+    ///   CodeCoverage.exe
+    /// </summary>
+    procedure GenerateDirectoriesAndBatchFile;
   public
   end;
 
@@ -411,8 +419,6 @@ const
   cImgCompletedPage = 8;
 
 procedure TFormMain.ButtonSaveAsClick(Sender: TObject);
-var
-  ScriptGenerator : TScriptsGenerator;
 begin
   FileSaveDialogProject.FileName := FProject.FileName;
   if FileSaveDialogProject.Execute then
@@ -422,16 +428,9 @@ begin
       FSettings.AddRecentProject(FileSaveDialogProject.FileName);
       ListViewProjects.Items.Clear;
       DisplayRecentProjects;
-
       crd_SaveAndRun.Tag := cImgCompletedPage;
 
-      ScriptGenerator := TScriptsGenerator.Create(FProject,
-                                                  FileSaveDialogProject.FileName);
-      try
-        ScriptGenerator.Generate;
-      finally
-        ScriptGenerator.Free;
-      end;
+      GenerateDirectoriesAndBatchFile;
     except
       on e:exception do
         MessageDlg(Format(rSaveFileError,
@@ -442,26 +441,36 @@ begin
 end;
 
 procedure TFormMain.ButtonSaveClick(Sender: TObject);
-var
-  ScriptGenerator : TScriptsGenerator;
 begin
   try
     FProject.SaveToXML(FProject.FileName);
-
     crd_SaveAndRun.Tag := cImgCompletedPage;
-
-    ScriptGenerator := TScriptsGenerator.Create(FProject,
-                                                FProject.FileName);
-    try
-      ScriptGenerator.Generate;
-    finally
-      ScriptGenerator.Free;
-    end;
+    GenerateDirectoriesAndBatchFile;
   except
     on e:exception do
       MessageDlg(Format(rSaveFileError,
                         [e.Message, FProject.FileName]),
                  mtError, [mbOK], -1);
+  end;
+end;
+
+procedure TFormMain.GenerateDirectoriesAndBatchFile;
+var
+  ScriptGenerator : TScriptsGenerator;
+begin
+  try
+    FLogic.ForceDirectories(FProject);
+  except
+    on e:exception do
+      MessageDlg(e.Message, mtError, [mbOK], -1);
+  end;
+
+  ScriptGenerator := TScriptsGenerator.Create(FProject,
+                                              FProject.FileName);
+  try
+    ScriptGenerator.Generate;
+  finally
+    ScriptGenerator.Free;
   end;
 end;
 

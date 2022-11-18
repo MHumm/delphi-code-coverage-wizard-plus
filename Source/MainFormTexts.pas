@@ -155,6 +155,11 @@ resourcestring
   /// </summary>
   rRemoveFailed  = 'Removal of no longer existing projects failed.' + sLineBreak +
                    'Reason: %0:s';
+  /// <summary>
+  ///   Failure message shown when creating out of the necessary paths failed
+  /// </summary>
+  rDirCreateFail = 'Failed to create path: %0:s' + sLineBreak +
+                   'Reason: %1:s';
 
 implementation
 
