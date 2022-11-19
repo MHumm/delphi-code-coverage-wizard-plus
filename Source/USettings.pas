@@ -281,7 +281,7 @@ begin
     FHeight     := ini.ReadInteger('Position', 'Height', 400);
 
     FRecentProjects.Capacity := ini.ReadInteger('RecentProjects',
-                                                'Count', 1);
+                                                'Count', 0);
 
     for var i := 0 to FRecentProjects.Capacity - 1 do
       FRecentProjects.Add(ini.ReadString('RecentProjects', 'Project' + i.ToString, ''));

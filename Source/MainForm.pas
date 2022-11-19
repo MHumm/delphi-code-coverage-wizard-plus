@@ -142,6 +142,7 @@ type
     LabelCodePage: TLabel;
     EditCodePage: TEdit;
     PMRemoveInexisting: TMenuItem;
+    TimerSourcePath: TTimer;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -209,21 +210,28 @@ type
     procedure ButtonSaveAsClick(Sender: TObject);
     procedure EditCodePageChange(Sender: TObject);
     procedure PMRemoveInexistingClick(Sender: TObject);
+    procedure TimerSourcePathTimer(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
     /// </summary>
-    FSettings : TSettings;
+    FSettings      : TSettings;
 
     /// <summary>
     ///   Manages project settings and loading/saving these from/to a file
     /// </summary>
-    FProject  : IProjectSettings;
+    FProject       : IProjectSettings;
 
     /// <summary>
     ///   Buisiness logic for the main form
     /// </summary>
-    FLogic    : TMainFormLogic;
+    FLogic         : TMainFormLogic;
+
+    /// <summary>
+    ///   Buffered entered new source file base path. Needed because processing
+    ///   has been deferred via some timer.
+    /// </summary>
+    FNewSourcePath : string;
 
     /// <summary>
     ///   Checks whether both file names have been filled in and depending on the
@@ -386,6 +394,23 @@ type
     ///   CodeCoverage.exe
     /// </summary>
     procedure GenerateDirectoriesAndBatchFile;
+    /// <summary>
+    ///   Adds a project to the list of recent projects, if it's not already in
+    ///   that list and refreshes list display
+    /// </summary>
+    /// <param name="FileName">
+    ///   Path and name of the file to add
+    /// </param>
+    procedure AddAndUpdateRecentProjects(const FileName: string);
+    /// <summary>
+    ///   Asks if the file list may be changed if its not empty or the source
+    ///   path should be reverted to the old path and if it shall be changed
+    ///   updates the file list
+    /// </summary>
+    /// <param name="NewSourcePath">
+    ///   New source file base path
+    /// </param>
+    procedure DoSourcePathChange(const NewSourcePath: string);
   public
   end;
 
@@ -425,9 +450,7 @@ begin
   begin
     try
       FProject.SaveToXML(FileSaveDialogProject.FileName);
-      FSettings.AddRecentProject(FileSaveDialogProject.FileName);
-      ListViewProjects.Items.Clear;
-      DisplayRecentProjects;
+      AddAndUpdateRecentProjects(FileSaveDialogProject.FileName);
       crd_SaveAndRun.Tag := cImgCompletedPage;
 
       GenerateDirectoriesAndBatchFile;
@@ -452,6 +475,13 @@ begin
                         [e.Message, FProject.FileName]),
                  mtError, [mbOK], -1);
   end;
+end;
+
+procedure TFormMain.AddAndUpdateRecentProjects(const FileName: string);
+begin
+  FSettings.AddRecentProject(FileName);
+  ListViewProjects.Items.Clear;
+  DisplayRecentProjects;
 end;
 
 procedure TFormMain.GenerateDirectoriesAndBatchFile;
@@ -750,6 +780,7 @@ begin
 
   try
     FProject.LoadFromXML(FileName);
+    AddAndUpdateRecentProjects(FileName);
 
     EditExeFile.Text                         := FProject.ExecutableToAnalyze;
     EditCommandLineParams.Text               := FProject.ExeCommandLineParams;
@@ -968,6 +999,12 @@ end;
 
 procedure TFormMain.EditSourcePathChange(Sender: TObject);
 begin
+  FNewSourcePath := (Sender as TEdit).Text;
+  TimerSourcePath.Enabled := true;
+end;
+
+procedure TFormMain.DoSourcePathChange(const NewSourcePath: string);
+begin
   if (FProject.ProgramSourceFiles.Count > 0) then
   begin
     if (MessageDlg(rClearFileList, mtConfirmation,
@@ -981,7 +1018,7 @@ begin
 
   // This not only updates the base path, but the list of source files as well
   // if the new path is really different
-  FProject.ProgramSourceBasePath := (Sender as TEdit).Text;
+  FProject.ProgramSourceBasePath := NewSourcePath;
 
   DisplaySourceFiles;
   DisplaySourceFilesStatus;
@@ -998,6 +1035,12 @@ begin
   finally
     EditSourcePath.OnChange := OnChange;
   end;
+end;
+
+procedure TFormMain.TimerSourcePathTimer(Sender: TObject);
+begin
+  (Sender as TTimer).Enabled := false;
+  DoSourcePathChange(FNewSourcePath);
 end;
 
 procedure TFormMain.DisplaySourceFiles;
