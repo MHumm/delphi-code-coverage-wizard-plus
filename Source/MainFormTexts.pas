@@ -161,6 +161,13 @@ resourcestring
   rDirCreateFail = 'Failed to create path: %0:s' + sLineBreak +
                    'Reason: %1:s';
 
+  /// <summary>
+  ///   Question asked on first startup about registering the DCCP file extension
+  /// </summary>
+  rRegisterDCCP  = 'The DCCP project file type has not been registered '+ sLineBreak +
+                   'yet for your user. Registering enables opening DCCP ' + sLineBreak +
+                   'files from Explorer. Register it now?';
+
 implementation
 
 end.

@@ -411,6 +411,11 @@ type
     ///   New source file base path
     /// </param>
     procedure DoSourcePathChange(const NewSourcePath: string);
+    /// <summary>
+    ///   Checks if the question about registering the DCCP file extension has
+    ///   already been asked and if not asks it and adds the extension if requested
+    /// </summary>
+    procedure DisplayAddFileExtension;
   public
   end;
 
@@ -1084,6 +1089,7 @@ begin
   cp_Main.ActiveCard := crd_Start;
 
   DisplayAddToToolsMenu;
+  DisplayAddFileExtension;
 end;
 
 procedure TFormMain.CreateProjectSettings;
@@ -1151,6 +1157,17 @@ begin
     ToolsMenuManager.CheckAndSetIDEToolsEntry(self);
   finally
     ToolsMenuManager.Free;
+  end;
+end;
+
+procedure TFormMain.DisplayAddFileExtension;
+begin
+  if not FSettings.IsFileExtReg then
+  begin
+    if MessageDlg(rRegisterDCCP, mtConfirmation, [mbYes, mbNo], -1) = mrYes then
+      FLogic.RegisterFileType(Application.ExeName);
+
+    FSettings.IsFileExtReg := true;
   end;
 end;
 

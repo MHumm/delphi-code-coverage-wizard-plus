@@ -178,6 +178,13 @@ type
     ///   Project settings to get the paths from
     /// </param>
     procedure ForceDirectories(Project: IProjectOutputSettingsReadOnly);
+    /// <summary>
+    ///   Registers the DCCP file tpye
+    /// </summary>
+    /// <param name="ExeName">
+    ///   Path and name of the application to open the files with
+    /// </param>
+    procedure RegisterFileType(const ExeName: string);
   end;
 
 implementation
@@ -186,7 +193,8 @@ uses
   System.IOUtils,
   WinApi.ShellAPI,
   MainFormTexts,
-  UConsts;
+  UConsts,
+  UUtils;
 
 function TMainFormLogic.GetCommandLineAction: TActionParamRec;
 begin
@@ -428,6 +436,23 @@ begin
     raise Exception.Create(Format(rDirCreateFail,
                                   [Project.ReportOutputPath, e.Message]));
   end;
+end;
+
+procedure TMainFormLogic.RegisterFileType(const ExeName: string);
+begin
+  UUtils.RegisterFileType('DCCP',
+                          'DelphiCodeCoverageWizardPlus',
+                          'Delphi Code Coverage Wizard Plus project file',
+                          ExeName,
+                          '-O',
+                          'open');
+  UUtils.RegisterFileType('DCCP',
+                          'DelphiCodeCoverageWizardPlus',
+                          'Delphi Code Coverage Wizard Plus project file',
+                          ExeName,
+                          '-R',
+                          'run');
+
 end;
 
 end.

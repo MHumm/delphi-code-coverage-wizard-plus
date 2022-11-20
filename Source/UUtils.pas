@@ -16,12 +16,46 @@ unit UUtils;
 
 interface
 
+  /// <summary>
+  ///   Checks whether we are running on a Windows 64 bit instance
+  /// </summary>
+  /// <returns>
+  ///   true if yes
+  /// </returns>
   function Is64BitWindows: Boolean;
+
+  /// <summary>
+  ///   Registers a file type for the current user
+  /// </summary>
+  /// <param name="Extension">
+  ///   file suffix to register, e.g. dccp, withlout the .
+  /// </param>
+  /// <param name="TypeName">
+  ///   name of the file type like "DelphiCodeCoverageWizardPlus"
+  /// </param>
+  /// <param name="Description">
+  ///   Description text, e.g. "Delphi Code Coverage Wizard Plus project file"
+  /// </param>
+  /// <param name="Application">
+  ///   Absolute path and file name of the application to call, e.g.
+  ///   "C:\WINDOWS\notepad.exe"
+  /// </param>
+  /// <param name="Param">
+  ///   If not empty a command line parameter passed to the application before
+  ///   the file name.
+  /// </param>
+  /// <param name="Verb">
+  ///   Name of the action to perform, usually "open" but could be "print" as well etc.
+  /// </param>
+  procedure RegisterFileType(const Extension, TypeName, Description, Application,
+                             Param, Verb: string);
 
 implementation
 
 uses
-  Winapi.Windows;
+  Winapi.Windows,
+  Winapi.ShlObj,
+  System.Win.Registry;
 
 function Is64BitWindows: Boolean;
 {$IFDEF WIN32}
@@ -50,6 +84,36 @@ begin
 {$ELSE} //if were running 64bit code, OS must be 64bit :)
    Result := True;
 {$ENDIF}
+end;
+
+procedure RegisterFileType(const Extension, TypeName, Description, Application, Param, Verb: string);
+var
+  Registry    : TRegistry;
+  ParamIntern : string;
+begin
+  Assert(Extension <> '', 'No file extension specified');
+
+  Registry := TRegistry.Create;
+  try
+    Registry.RootKey := HKEY_CURRENT_USER;
+    if Registry.OpenKey('\Software\Classes\.' + Extension, true) then
+      Registry.WriteString('', TypeName);
+    if Registry.OpenKey('\Software\Classes\' + TypeName, true) then
+      Registry.WriteString('', Description);
+    if Registry.OpenKey('\Software\Classes\' + TypeName + '\DefaultIcon', true) then
+      Registry.WriteString('', Application);
+
+    ParamIntern := Param;
+    if ParamIntern <> '' then
+      ParamIntern := ' ' + ParamIntern;
+
+    if Registry.OpenKey('\Software\Classes\' + TypeName + '\shell\' + Verb + '\command',
+               true) then
+      Registry.WriteString('', Application + ParamIntern + ' "%1"');
+  finally
+    Registry.Free;
+  end;
+  SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nil, nil);
 end;
 
 end.
