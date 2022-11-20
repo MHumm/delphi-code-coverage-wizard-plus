@@ -267,6 +267,11 @@ type
     /// </summary>
     function GetReportOutputPath: TFilename;
     /// <summary>
+    ///   Returns the path to which the batch file and the other files to be
+    ///   generated will be written to
+    /// </summary>
+    function GetScriptsOutputPath: TFilename;
+    /// <summary>
     ///   Returns the name of the generated batch file
     /// </summary>
     function GetBatchFileName: TFileName;
@@ -365,6 +370,13 @@ type
       read   GetBatchFileName;
 
     /// <summary>
+    ///   Path where the batch file to call the code coverage cmd line tool will
+    ///   be stored.
+    /// </summary>
+    property ScriptsOutputPath : TFilename
+      read   GetScriptsOutputPath;
+
+    /// <summary>
     ///   Path where the report(s) will be output to.
     /// </summary>
     property ReportOutputPath : TFilename
@@ -432,11 +444,6 @@ type
     ///   Sets the list of defined source code files for analysis
     /// </summary>
     procedure SetProgramSourceFiles(const Value: IProgramSourceFiles);
-    /// <summary>
-    ///   Returns the path to which the batch file and the other files to be
-    ///   generated will be written to
-    /// </summary>
-    function GetScriptsOutputPath: TFilename;
     /// <summary>
     ///   Sets the path to which the batch file and the other files to be
     ///   generated will be written to

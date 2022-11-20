@@ -1473,4 +1473,11 @@ object FormMain: TFormMain
       OnClick = PMRemoveInexistingClick
     end
   end
+  object TimerSourcePath: TTimer
+    Enabled = False
+    Interval = 300
+    OnTimer = TimerSourcePathTimer
+    Left = 80
+    Top = 300
+  end
 end

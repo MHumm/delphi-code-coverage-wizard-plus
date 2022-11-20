@@ -155,6 +155,24 @@ resourcestring
   /// </summary>
   rRemoveFailed  = 'Removal of no longer existing projects failed.' + sLineBreak +
                    'Reason: %0:s';
+  /// <summary>
+  ///   Failure message shown when creating out of the necessary paths failed
+  /// </summary>
+  rDirCreateFail = 'Failed to create path: %0:s' + sLineBreak +
+                   'Reason: %1:s';
+
+  /// <summary>
+  ///   Question asked on first startup about registering the DCCP file extension
+  /// </summary>
+  rRegisterDCCP  = 'The DCCP project file type has not been registered' + sLineBreak +
+                   'yet for your user. Registering enables opening DCCP' + sLineBreak +
+                   'files from Explorer. Register it now?';
+
+  /// <summary>
+  ///   Failure message displayed when registering the file type failed
+  /// </summary>
+  rRegisterFailed= 'Failed to register DCCP project file type.' + sLineBreak +
+                   'Reason: %0:s';
 
 implementation
 

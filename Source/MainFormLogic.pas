@@ -170,6 +170,21 @@ type
     /// </param>
     procedure DeleteNonExistingRecentProjects(Projects: TStrings;
                                               DeleteProc: TDeleteRecentProject);
+    /// <summary>
+    ///   Creates the directories for the files to run code coverage and for the
+    ///   generated report output files.
+    /// </summary>
+    /// <param name="Project">
+    ///   Project settings to get the paths from
+    /// </param>
+    procedure ForceDirectories(Project: IProjectOutputSettingsReadOnly);
+    /// <summary>
+    ///   Registers the DCCP file tpye
+    /// </summary>
+    /// <param name="ExeName">
+    ///   Path and name of the application to open the files with
+    /// </param>
+    procedure RegisterFileType(const ExeName: string);
   end;
 
 implementation
@@ -178,7 +193,8 @@ uses
   System.IOUtils,
   WinApi.ShellAPI,
   MainFormTexts,
-  UConsts;
+  UConsts,
+  UUtils;
 
 function TMainFormLogic.GetCommandLineAction: TActionParamRec;
 begin
@@ -400,6 +416,49 @@ begin
   finally
     if Assigned(PVerInfo) then
       FreeMem(PVerInfo, VerInfoSize);
+  end;
+end;
+
+procedure TMainFormLogic.ForceDirectories(Project : IProjectOutputSettingsReadOnly);
+begin
+  try
+    System.SysUtils.ForceDirectories(Project.ScriptsOutputPath);
+  except
+    on e:exception do
+    raise Exception.Create(Format(rDirCreateFail,
+                                  [Project.ReportOutputPath, e.Message]));
+  end;
+
+  try
+    System.SysUtils.ForceDirectories(Project.ReportOutputPath);
+  except
+    on e:exception do
+    raise Exception.Create(Format(rDirCreateFail,
+                                  [Project.ReportOutputPath, e.Message]));
+  end;
+end;
+
+procedure TMainFormLogic.RegisterFileType(const ExeName: string);
+var
+  FileTypeMgr : TFileTypeManager;
+begin
+  FileTypeMgr := TFileTypeManager.Create;
+
+  try
+    FileTypeMgr.RegisterFileType(cProjectExtension,
+                                 cProjectFileTypeName,
+                                 'Delphi Code Coverage Wizard Plus project file',
+                                 ExeName,
+                                 '-O',
+                                 'open');
+    FileTypeMgr.RegisterFileType(cProjectExtension,
+                                 cProjectFileTypeName,
+                                 'Delphi Code Coverage Wizard Plus project file',
+                                 ExeName,
+                                 '-R',
+                                 'run');
+  finally
+    FileTypeMgr.Free;
   end;
 end;
 

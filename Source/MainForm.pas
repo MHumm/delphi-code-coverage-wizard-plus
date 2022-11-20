@@ -142,6 +142,7 @@ type
     LabelCodePage: TLabel;
     EditCodePage: TEdit;
     PMRemoveInexisting: TMenuItem;
+    TimerSourcePath: TTimer;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -209,21 +210,28 @@ type
     procedure ButtonSaveAsClick(Sender: TObject);
     procedure EditCodePageChange(Sender: TObject);
     procedure PMRemoveInexistingClick(Sender: TObject);
+    procedure TimerSourcePathTimer(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
     /// </summary>
-    FSettings : TSettings;
+    FSettings      : TSettings;
 
     /// <summary>
     ///   Manages project settings and loading/saving these from/to a file
     /// </summary>
-    FProject  : IProjectSettings;
+    FProject       : IProjectSettings;
 
     /// <summary>
     ///   Buisiness logic for the main form
     /// </summary>
-    FLogic    : TMainFormLogic;
+    FLogic         : TMainFormLogic;
+
+    /// <summary>
+    ///   Buffered entered new source file base path. Needed because processing
+    ///   has been deferred via some timer.
+    /// </summary>
+    FNewSourcePath : string;
 
     /// <summary>
     ///   Checks whether both file names have been filled in and depending on the
@@ -377,7 +385,37 @@ type
     ///   Displays the Save and Run card of the wizard and disables the next button
     /// </summary>
     procedure DisplaySaveAndRunScreen;
+    /// <summary>
+    ///   Initializes the project data management instance
+    /// </summary>
     procedure CreateProjectSettings;
+    /// <summary>
+    ///   Generates the directories, the lst files and the batch file to run
+    ///   CodeCoverage.exe
+    /// </summary>
+    procedure GenerateDirectoriesAndBatchFile;
+    /// <summary>
+    ///   Adds a project to the list of recent projects, if it's not already in
+    ///   that list and refreshes list display
+    /// </summary>
+    /// <param name="FileName">
+    ///   Path and name of the file to add
+    /// </param>
+    procedure AddAndUpdateRecentProjects(const FileName: string);
+    /// <summary>
+    ///   Asks if the file list may be changed if its not empty or the source
+    ///   path should be reverted to the old path and if it shall be changed
+    ///   updates the file list
+    /// </summary>
+    /// <param name="NewSourcePath">
+    ///   New source file base path
+    /// </param>
+    procedure DoSourcePathChange(const NewSourcePath: string);
+    /// <summary>
+    ///   Checks if the question about registering the DCCP file extension has
+    ///   already been asked and if not asks it and adds the extension if requested
+    /// </summary>
+    procedure DisplayAddFileExtension;
   public
   end;
 
@@ -411,27 +449,16 @@ const
   cImgCompletedPage = 8;
 
 procedure TFormMain.ButtonSaveAsClick(Sender: TObject);
-var
-  ScriptGenerator : TScriptsGenerator;
 begin
   FileSaveDialogProject.FileName := FProject.FileName;
   if FileSaveDialogProject.Execute then
   begin
     try
       FProject.SaveToXML(FileSaveDialogProject.FileName);
-      FSettings.AddRecentProject(FileSaveDialogProject.FileName);
-      ListViewProjects.Items.Clear;
-      DisplayRecentProjects;
-
+      AddAndUpdateRecentProjects(FileSaveDialogProject.FileName);
       crd_SaveAndRun.Tag := cImgCompletedPage;
 
-      ScriptGenerator := TScriptsGenerator.Create(FProject,
-                                                  FileSaveDialogProject.FileName);
-      try
-        ScriptGenerator.Generate;
-      finally
-        ScriptGenerator.Free;
-      end;
+      GenerateDirectoriesAndBatchFile;
     except
       on e:exception do
         MessageDlg(Format(rSaveFileError,
@@ -442,26 +469,43 @@ begin
 end;
 
 procedure TFormMain.ButtonSaveClick(Sender: TObject);
-var
-  ScriptGenerator : TScriptsGenerator;
 begin
   try
     FProject.SaveToXML(FProject.FileName);
-
     crd_SaveAndRun.Tag := cImgCompletedPage;
-
-    ScriptGenerator := TScriptsGenerator.Create(FProject,
-                                                FProject.FileName);
-    try
-      ScriptGenerator.Generate;
-    finally
-      ScriptGenerator.Free;
-    end;
+    GenerateDirectoriesAndBatchFile;
   except
     on e:exception do
       MessageDlg(Format(rSaveFileError,
                         [e.Message, FProject.FileName]),
                  mtError, [mbOK], -1);
+  end;
+end;
+
+procedure TFormMain.AddAndUpdateRecentProjects(const FileName: string);
+begin
+  FSettings.AddRecentProject(FileName);
+  ListViewProjects.Items.Clear;
+  DisplayRecentProjects;
+end;
+
+procedure TFormMain.GenerateDirectoriesAndBatchFile;
+var
+  ScriptGenerator : TScriptsGenerator;
+begin
+  try
+    FLogic.ForceDirectories(FProject);
+  except
+    on e:exception do
+      MessageDlg(e.Message, mtError, [mbOK], -1);
+  end;
+
+  ScriptGenerator := TScriptsGenerator.Create(FProject,
+                                              FProject.FileName);
+  try
+    ScriptGenerator.Generate;
+  finally
+    ScriptGenerator.Free;
   end;
 end;
 
@@ -741,6 +785,7 @@ begin
 
   try
     FProject.LoadFromXML(FileName);
+    AddAndUpdateRecentProjects(FileName);
 
     EditExeFile.Text                         := FProject.ExecutableToAnalyze;
     EditCommandLineParams.Text               := FProject.ExeCommandLineParams;
@@ -959,6 +1004,12 @@ end;
 
 procedure TFormMain.EditSourcePathChange(Sender: TObject);
 begin
+  FNewSourcePath := (Sender as TEdit).Text;
+  TimerSourcePath.Enabled := true;
+end;
+
+procedure TFormMain.DoSourcePathChange(const NewSourcePath: string);
+begin
   if (FProject.ProgramSourceFiles.Count > 0) then
   begin
     if (MessageDlg(rClearFileList, mtConfirmation,
@@ -972,7 +1023,7 @@ begin
 
   // This not only updates the base path, but the list of source files as well
   // if the new path is really different
-  FProject.ProgramSourceBasePath := (Sender as TEdit).Text;
+  FProject.ProgramSourceBasePath := NewSourcePath;
 
   DisplaySourceFiles;
   DisplaySourceFilesStatus;
@@ -989,6 +1040,12 @@ begin
   finally
     EditSourcePath.OnChange := OnChange;
   end;
+end;
+
+procedure TFormMain.TimerSourcePathTimer(Sender: TObject);
+begin
+  (Sender as TTimer).Enabled := false;
+  DoSourcePathChange(FNewSourcePath);
 end;
 
 procedure TFormMain.DisplaySourceFiles;
@@ -1032,6 +1089,7 @@ begin
   cp_Main.ActiveCard := crd_Start;
 
   DisplayAddToToolsMenu;
+  DisplayAddFileExtension;
 end;
 
 procedure TFormMain.CreateProjectSettings;
@@ -1099,6 +1157,30 @@ begin
     ToolsMenuManager.CheckAndSetIDEToolsEntry(self);
   finally
     ToolsMenuManager.Free;
+  end;
+end;
+
+procedure TFormMain.DisplayAddFileExtension;
+var
+  FileTypeMgr : TFileTypeManager;
+begin
+  FileTypeMgr := TFileTypeManager.Create;
+
+  try
+    if not FileTypeMgr.HasFileTypeAssociationBeenAsked then
+    begin
+      if MessageDlg(rRegisterDCCP, mtConfirmation, [mbYes, mbNo], -1) = mrYes then
+        try
+          FLogic.RegisterFileType(Application.ExeName);
+        except
+          on e:Exception do
+            MessageDlg(Format(rRegisterFailed, [e.Message]), mtError, [mbOK], -1);
+        end;
+
+      FileTypeMgr.HasFileTypeAssociationBeenAsked := true;
+    end;
+  finally
+    FileTypeMgr.Free;
   end;
 end;
 
