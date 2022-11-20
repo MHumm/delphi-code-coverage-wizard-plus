@@ -26,7 +26,7 @@ begin
   ReportMemoryLeaksOnShutdown := true;
   Application.Initialize;
 
-  if (ParamStr(1).ToUpper = '/UNINSTALL') then
+  if (ParamStr(1).ToUpper = '-UNINSTALL') then
     UninstallWizard
   else
   begin

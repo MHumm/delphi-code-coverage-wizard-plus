@@ -164,9 +164,15 @@ resourcestring
   /// <summary>
   ///   Question asked on first startup about registering the DCCP file extension
   /// </summary>
-  rRegisterDCCP  = 'The DCCP project file type has not been registered '+ sLineBreak +
-                   'yet for your user. Registering enables opening DCCP ' + sLineBreak +
+  rRegisterDCCP  = 'The DCCP project file type has not been registered' + sLineBreak +
+                   'yet for your user. Registering enables opening DCCP' + sLineBreak +
                    'files from Explorer. Register it now?';
+
+  /// <summary>
+  ///   Failure message displayed when registering the file type failed
+  /// </summary>
+  rRegisterFailed= 'Failed to register DCCP project file type.' + sLineBreak +
+                   'Reason: %0:s';
 
 implementation
 

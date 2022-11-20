@@ -59,6 +59,16 @@ const
   /// </summary>
   cFileFormatVersion       = 1;
 
+  /// <summary>
+  ///   File extension for the project file format
+  /// </summary>
+  cProjectExtension        = 'DCCP';
+  /// <summary>
+  ///   Name of the project file file type associating the type with the
+  ///   application for direct opening via explorer
+  /// </summary>
+  cProjectFileTypeName     = 'DelphiCodeCoverageWizardPlus';
+
 implementation
 
 end.

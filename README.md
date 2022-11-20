@@ -42,10 +42,12 @@ If the CodeCoverage.exe did not really change any parameters one can replace it 
 a new version, if desired. Updates of the wizard should contain updated versions as well.
 
 ## How to install?
-Just open and run the project provided in the Source directory.
+You might need EdgeView2SDK from Tools/GetIt package manager to be installed first.
+Afterwards just open and run the project provided in the Source directory.
 When run for the first time or when you installed another version of the IDE it will 
-display a dialog you can use to add it to the Tools menus of all Delphi 
-versions/profiles it finds on your computer.
+display a dialog you can use to add it to the Tools menus of all Delphi versions/profiles 
+it finds on your computer. It will additionally ask if it shall associate the .DCCP project 
+file extension with the tool so you can open these files directly from file Explorer.
 
 ## How to use it?
 

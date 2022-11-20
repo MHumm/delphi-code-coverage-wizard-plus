@@ -36,7 +36,9 @@ uses
   System.Win.Registry,
   Vcl.Forms,
   USettings,
-  UAddIDETool;
+  UAddIDETool,
+  UUtils,
+  UConsts;
 
 resourcestring
   /// <summary>
@@ -53,6 +55,7 @@ var
   IDEToolsMgr : TAddIDETool;
   Registry    : TRegistry;
   IDEVersList : TIDEVersionList;
+  FileTypeMgr : TFileTypeManager;
 begin
   // Remove ini file
   try
@@ -96,6 +99,15 @@ begin
     end;
   finally
     IDEToolsMgr.Free;
+  end;
+
+  // Remove file type association
+  FileTypeMgr := TFileTypeManager.Create;
+
+  try
+    FileTypeMgr.UnRegisterFileType(cProjectExtension, cProjectFileTypeName);
+  finally
+    FileTypeMgr.Free;
   end;
 
   // Remove registry entry

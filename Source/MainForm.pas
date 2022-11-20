@@ -1161,13 +1161,26 @@ begin
 end;
 
 procedure TFormMain.DisplayAddFileExtension;
+var
+  FileTypeMgr : TFileTypeManager;
 begin
-  if not FSettings.IsFileExtReg then
-  begin
-    if MessageDlg(rRegisterDCCP, mtConfirmation, [mbYes, mbNo], -1) = mrYes then
-      FLogic.RegisterFileType(Application.ExeName);
+  FileTypeMgr := TFileTypeManager.Create;
 
-    FSettings.IsFileExtReg := true;
+  try
+    if not FileTypeMgr.HasFileTypeAssociationBeenAsked then
+    begin
+      if MessageDlg(rRegisterDCCP, mtConfirmation, [mbYes, mbNo], -1) = mrYes then
+        try
+          FLogic.RegisterFileType(Application.ExeName);
+        except
+          on e:Exception do
+            MessageDlg(Format(rRegisterFailed, [e.Message]), mtError, [mbOK], -1);
+        end;
+
+      FileTypeMgr.HasFileTypeAssociationBeenAsked := true;
+    end;
+  finally
+    FileTypeMgr.Free;
   end;
 end;
 

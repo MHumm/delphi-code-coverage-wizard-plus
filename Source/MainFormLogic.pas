@@ -439,20 +439,27 @@ begin
 end;
 
 procedure TMainFormLogic.RegisterFileType(const ExeName: string);
+var
+  FileTypeMgr : TFileTypeManager;
 begin
-  UUtils.RegisterFileType('DCCP',
-                          'DelphiCodeCoverageWizardPlus',
-                          'Delphi Code Coverage Wizard Plus project file',
-                          ExeName,
-                          '-O',
-                          'open');
-  UUtils.RegisterFileType('DCCP',
-                          'DelphiCodeCoverageWizardPlus',
-                          'Delphi Code Coverage Wizard Plus project file',
-                          ExeName,
-                          '-R',
-                          'run');
+  FileTypeMgr := TFileTypeManager.Create;
 
+  try
+    FileTypeMgr.RegisterFileType(cProjectExtension,
+                                 cProjectFileTypeName,
+                                 'Delphi Code Coverage Wizard Plus project file',
+                                 ExeName,
+                                 '-O',
+                                 'open');
+    FileTypeMgr.RegisterFileType(cProjectExtension,
+                                 cProjectFileTypeName,
+                                 'Delphi Code Coverage Wizard Plus project file',
+                                 ExeName,
+                                 '-R',
+                                 'run');
+  finally
+    FileTypeMgr.Free;
+  end;
 end;
 
 end.

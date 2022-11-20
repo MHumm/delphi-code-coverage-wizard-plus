@@ -53,10 +53,6 @@ type
     ///   Height of the main form in pixel
     /// </summary>
     FHeight       : Integer;
-    /// <summary>
-    ///   When true the DCCP file extension is already registered for "open"
-    /// </summary>
-    FIsFileExtReg : Boolean;
 
     /// <summary>
     ///   True if any settings were changed
@@ -100,12 +96,6 @@ type
     ///   exception will be thrown.
     /// </param>
     function  GetRecentProject(Index: Integer): string;
-
-    /// <summary>
-    ///   Sets the flag which notes whether the DCCP file type has already already
-    ///   been registered (true) or not (false)
-    /// </summary>
-    procedure SetIsFileExtReg(const Value: Boolean);
   public
     /// <summary>
     ///   Initialization and loading of the settings
@@ -173,13 +163,6 @@ type
     property Height      : Integer
       read   FHeight
       write  SetHeight;
-
-    /// <summary>
-    ///   When true the DCCP file extension is already registered for "open"
-    /// </summary>
-    property IsFileExtReg : Boolean
-      read   FIsFileExtReg
-      write  SetIsFileExtReg;
 
     /// <summary>
     ///   Returns the number of entries in the recent projects list
@@ -285,8 +268,6 @@ begin
 
     for var i := 0 to FRecentProjects.Capacity - 1 do
       FRecentProjects.Add(ini.ReadString('RecentProjects', 'Project' + i.ToString, ''));
-
-    FIsFileExtReg := ini.ReadBool('FileExtension', 'RegisteredOpen', false);
   finally
     ini.Free;
   end;
@@ -311,8 +292,6 @@ begin
 
     for var i := 0 to FRecentProjects.Count - 1 do
       ini.WriteString('RecentProjects', 'Project' + i.ToString, FRecentProjects[i]);
-
-      ini.WriteBool('FileExtension', 'RegisteredOpen', FIsFileExtReg);
   finally
     ini.Free;
   end;
@@ -324,15 +303,6 @@ begin
   begin
     FHeight  := Value;
     FChanged := true;
-  end;
-end;
-
-procedure TSettings.SetIsFileExtReg(const Value: Boolean);
-begin
-  if (Value <> FIsFileExtReg) then
-  begin
-    FIsFileExtReg := Value;
-    FChanged      := true;
   end;
 end;
 
