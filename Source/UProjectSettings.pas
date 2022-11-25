@@ -397,6 +397,12 @@ type
     FAdditionalParameter  : string;
 
     /// <summary>
+    ///   Index "free form" parameters within the batch file
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'AdditionalParamsIndex')]
+    FAdditionalParIndex   : Integer;
+
+    /// <summary>
     ///   Write log messages to textfile in report output folder
     /// </summary>
     [SettingsAttribute('MiscSettings', 'LogToTextFile')]
@@ -632,6 +638,16 @@ type
     ///   Sets the code page to be used for the source files. Only used if not 0.
     /// </summary>
     procedure SetCodePage(const Value: Integer);
+    /// <summary>
+    ///   Returns the index/position where additional parameters specified will
+    ///   be placed within the generated batch file.
+    /// </summary>
+    function GetAdditionalParIndex: Integer;
+    /// <summary>
+    ///   Specifies the index/position where additional parameters specified will
+    ///   be placed within the generated batch file.
+    /// </summary>
+    procedure SetAdditionalParIndex(const Value: Integer);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -792,6 +808,12 @@ type
     property AdditionalParameter : string
       read   GetAdditionalParameter
       write  SetAdditionalParameter;
+    /// <summary>
+    ///   Index "free form" parameters within the batch file
+    /// </summary>
+    property AdditionalParIndex : Integer
+      read   GetAdditionalParIndex
+      write  SetAdditionalParIndex;
 
     /// <summary>
     ///   Returns the name of the generated batch file
@@ -904,6 +926,11 @@ end;
 function TProjectSettings.GetAdditionalParameter: string;
 begin
   Result := FAdditionalParameter;
+end;
+
+function TProjectSettings.GetAdditionalParIndex: Integer;
+begin
+  Result := FAdditionalParIndex;
 end;
 
 function TProjectSettings.GetAddLineNumbersToXML: Boolean;
@@ -1150,6 +1177,11 @@ end;
 procedure TProjectSettings.SetAdditionalParameter(const Value: string);
 begin
   FAdditionalParameter := Value;
+end;
+
+procedure TProjectSettings.SetAdditionalParIndex(const Value: Integer);
+begin
+  FAdditionalParIndex := Value;
 end;
 
 procedure TProjectSettings.SetAddLineNumbersToXML(const Value: Boolean);

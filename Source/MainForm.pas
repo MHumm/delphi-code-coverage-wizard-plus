@@ -143,6 +143,9 @@ type
     EditCodePage: TEdit;
     PMRemoveInexisting: TMenuItem;
     TimerSourcePath: TTimer;
+    Label3AdditionalParamIndex: TLabel;
+    EditAdditionalParamIndex: TEdit;
+    BalloonHintMap: TBalloonHint;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -211,6 +214,7 @@ type
     procedure EditCodePageChange(Sender: TObject);
     procedure PMRemoveInexistingClick(Sender: TObject);
     procedure TimerSourcePathTimer(Sender: TObject);
+    procedure EditAdditionalParamIndexChange(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -822,6 +826,7 @@ begin
 
     CheckBoxRelativePaths.Checked       := FProject.RelativeToScriptPath;
     EditAdditionalParameter.Text        := FProject.AdditionalParameter;
+    EditAdditionalParamIndex.Text       := FProject.AdditionalParIndex.ToString;
 
     UpdateEMMACheckBoxEnableStates;
     UpdateXMLCheckBoxEnableStates;
@@ -960,6 +965,21 @@ begin
   FProject.AdditionalParameter := (Sender as TEdit).Text;
 end;
 
+procedure TFormMain.EditAdditionalParamIndexChange(Sender: TObject);
+var
+  Idx : Integer;
+begin
+  if ((Sender as TEdit).Text <> '') then
+  begin
+    Idx := StrToInt((Sender as TEdit).Text);
+
+    if (Idx < 0) or (Idx > 20) then
+      MessageDlg(rAddParamsIdxErr, mtError, [mbOK], -1)
+    else
+      FProject.AdditionalParIndex := Idx;
+  end;
+end;
+
 procedure TFormMain.EditCodeCoverageExeChange(Sender: TObject);
 begin
   FProject.CodeCoverageExePath := (Sender As TEdit).Text;
@@ -980,6 +1000,13 @@ procedure TFormMain.EditExeFileChange(Sender: TObject);
 begin
   FProject.ExecutableToAnalyze := (Sender As TEdit).Text;
   EditMapFile.Text             := FProject.MapFile;
+
+  if not TFile.Exists(EditMapFile.Text) then
+  begin
+    BalloonHintMap.Title       := rNoMapFile;
+    BalloonHintMap.Description := rNoMapFileDetail;
+    BalloonHintMap.ShowHint(EditMapFile);
+  end;
 
   DisplayExeMapInputStatus;
 end;
@@ -1385,6 +1412,7 @@ begin
   EditScriptOutputFolder.Text              := '';
   EditReportOutputFolder.Text              := '';
   EditAdditionalParameter.Text             := '';
+  EditAdditionalParamIndex.Text            := '0';
   CheckBoxUseApplicationWorkingDir.Checked := false;
   CheckBoxEMMA.Checked                     := false;
   CheckBoxMeta.Checked                     := false;
@@ -1485,6 +1513,11 @@ begin
     if ofHTML in FProject.OutputFormats then
     begin
       cp_Main.ActiveCard := crd_Finished;
+
+{ TODO :
+Check whether WebView2Loader.dll exists in the same folder as
+the own exe and if not display some label telling about Edge2SDK... }
+
       EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
       UpdateBrowserNavigationButtons;
       ErrorMessage := FLogic.CallExternalViewers(Handle, FProject);

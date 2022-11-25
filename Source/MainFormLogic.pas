@@ -426,7 +426,7 @@ begin
   except
     on e:exception do
     raise Exception.Create(Format(rDirCreateFail,
-                                  [Project.ReportOutputPath, e.Message]));
+                                  [Project.ReportOutputPath, rScriptPath, e.Message]));
   end;
 
   try
@@ -434,7 +434,7 @@ begin
   except
     on e:exception do
     raise Exception.Create(Format(rDirCreateFail,
-                                  [Project.ReportOutputPath, e.Message]));
+                                  [Project.ReportOutputPath, rReportPath, e.Message]));
   end;
 end;
 

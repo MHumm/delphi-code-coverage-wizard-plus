@@ -533,6 +533,16 @@ type
     ///   Sets the code page to be used for the source files. Only used if not 0.
     /// </summary>
     procedure SetCodePage(const Value: Integer);
+    /// <summary>
+    ///   Returns the index/position where additional parameters specified will
+    ///   be placed within the generated batch file.
+    /// </summary>
+    function GetAdditionalParIndex: Integer;
+    /// <summary>
+    ///   Specifies the index/position where additional parameters specified will
+    ///   be placed within the generated batch file.
+    /// </summary>
+    procedure SetAdditionalParIndex(const Value: Integer);
 
     /// <summary>
     ///   Checks whether both exe-file name and map-file name are defined.
@@ -678,6 +688,12 @@ type
     property AdditionalParameter : string
       read   GetAdditionalParameter
       write  SetAdditionalParameter;
+    /// <summary>
+    ///   Index "free form" parameters within the batch file
+    /// </summary>
+    property AdditionalParIndex : Integer
+      read   GetAdditionalParIndex
+      write  SetAdditionalParIndex;
 
     /// <summary>
     ///   Path and name of the loaded or saved project file. Empty if no file
