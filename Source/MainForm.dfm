@@ -26,7 +26,7 @@ object FormMain: TFormMain
     Width = 624
     Height = 505
     Align = alClient
-    ActiveCard = crd_Run
+    ActiveCard = crd_Finished
     BevelEdges = []
     BevelOuter = bvNone
     Caption = 'cp_Main'
@@ -1089,6 +1089,19 @@ object FormMain: TFormMain
       DesignSize = (
         624
         505)
+      object LabelEdgeSDK: TLabel
+        Left = 8
+        Top = 64
+        Width = 600
+        Height = 30
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 
+          'The integrated HTML view is not available because WebView2Loader' +
+          '.dll is not in the directory of the Delphi Code Coverage Wizard ' +
+          'Plus executable. To fix this install EdgeView2SDK from Tools/Get' +
+          'It and recompile this application.'
+        WordWrap = True
+      end
       object ButtonHomeAfterRun: TButton
         Left = 0
         Top = 0
@@ -1464,6 +1477,7 @@ object FormMain: TFormMain
     Top = 300
   end
   object BalloonHintMap: TBalloonHint
+    HideAfter = 3000
     Left = 80
     Top = 168
   end

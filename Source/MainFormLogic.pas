@@ -185,6 +185,17 @@ type
     ///   Path and name of the application to open the files with
     /// </param>
     procedure RegisterFileType(const ExeName: string);
+    /// <summary>
+    ///   Checks wheter the WebView2Loader.dll file is present in the folder
+    ///   of the exe file. This file is necessary for the integrated HTML view.
+    /// </summary>
+    /// <param name="ExeName">
+    ///   Path and file name of the exe file
+    /// </param>
+    /// <returns>
+    ///   true, if in that path the WebView2Loader.dll file is present
+    /// </returns>
+    function DoesWebView2LoaderExist(const ExeName: string): Boolean;
   end;
 
 implementation
@@ -436,6 +447,12 @@ begin
     raise Exception.Create(Format(rDirCreateFail,
                                   [Project.ReportOutputPath, rReportPath, e.Message]));
   end;
+end;
+
+function TMainFormLogic.DoesWebView2LoaderExist(const ExeName: string): Boolean;
+begin
+  Result := TFile.Exists(TPath.Combine(ExtractFilePath(Exename),
+                                       'WebView2Loader.dll'), false);
 end;
 
 procedure TMainFormLogic.RegisterFileType(const ExeName: string);

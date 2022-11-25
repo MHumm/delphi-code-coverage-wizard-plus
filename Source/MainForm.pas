@@ -146,6 +146,7 @@ type
     Label3AdditionalParamIndex: TLabel;
     EditAdditionalParamIndex: TEdit;
     BalloonHintMap: TBalloonHint;
+    LabelEdgeSDK: TLabel;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -1512,14 +1513,25 @@ begin
   begin
     if ofHTML in FProject.OutputFormats then
     begin
-      cp_Main.ActiveCard := crd_Finished;
+      cp_Main.ActiveCard   := crd_Finished;
 
-{ TODO :
-Check whether WebView2Loader.dll exists in the same folder as
-the own exe and if not display some label telling about Edge2SDK... }
+      if FLogic.DoesWebView2LoaderExist(Application.ExeName) then
+      begin
+        LabelEdgeSDK.Visible      := false;
+        EdgeBrowser.Visible       := true;
+        ButtonBrowserBack.Visible := true;
+        ButtonBrowserNext.Visible := true;
+        EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
+        UpdateBrowserNavigationButtons;
+      end
+      else
+      begin
+        LabelEdgeSDK.Visible      := true;
+        EdgeBrowser.Visible       := false;
+        ButtonBrowserBack.Visible := false;
+        ButtonBrowserNext.Visible := false;
+      end;
 
-      EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
-      UpdateBrowserNavigationButtons;
       ErrorMessage := FLogic.CallExternalViewers(Handle, FProject);
 
       if not ErrorMessage.IsEmpty then
