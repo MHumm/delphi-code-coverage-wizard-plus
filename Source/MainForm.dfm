@@ -202,7 +202,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_UnitTestExecutable
+        ActiveCard = crd_SaveAndRun
         BevelEdges = [beBottom]
         BevelOuter = bvNone
         Caption = 'cp_Wizard'
@@ -1103,9 +1103,9 @@ object FormMain: TFormMain
         WordWrap = True
       end
       object ButtonHomeAfterRun: TButton
-        Left = 0
+        Left = 100
         Top = 0
-        Width = 158
+        Width = 98
         Height = 42
         Hint = 'Go back to start screen of the application'
         Caption = '&Home'
@@ -1117,9 +1117,9 @@ object FormMain: TFormMain
         OnClick = ButtonHomeClick
       end
       object ButtonBrowserBack: TButton
-        Left = 160
+        Left = 200
         Top = 0
-        Width = 138
+        Width = 98
         Height = 42
         Hint = 'go to previous page'
         Caption = '&Back'
@@ -1133,7 +1133,7 @@ object FormMain: TFormMain
       object ButtonBrowserNext: TButton
         Left = 300
         Top = 0
-        Width = 138
+        Width = 98
         Height = 42
         Hint = 'go to next page'
         Caption = '&Next'
@@ -1154,6 +1154,35 @@ object FormMain: TFormMain
         UserDataFolder = '%LOCALAPPDATA%\bds.exe.WebView2'
         OnCreateWebViewCompleted = EdgeBrowserCreateWebViewCompleted
         OnHistoryChanged = EdgeBrowserHistoryChanged
+      end
+      object ButtonBackToProject: TButton
+        Left = 0
+        Top = 0
+        Width = 98
+        Height = 42
+        Hint = 'Go back to start screen of the application'
+        Caption = 'Back to &project'
+        ImageIndex = 15
+        ImageName = 'Actions-document-edit-icon'
+        ImageMargins.Left = 5
+        Images = VirtualImageListButtons32
+        TabOrder = 4
+        WordWrap = True
+        OnClick = ButtonBackToProjectClick
+      end
+      object ButtonRunAgain: TButton
+        Left = 400
+        Top = 0
+        Width = 98
+        Height = 42
+        Hint = 'go to next page'
+        Caption = '&Run again'
+        ImageIndex = 0
+        ImageName = 'Actions-arrow-right-icon'
+        ImageMargins.Left = 5
+        Images = VirtualImageListButtons32
+        TabOrder = 5
+        OnClick = ButtonWizardRunClick
       end
     end
   end
@@ -1234,6 +1263,11 @@ object FormMain: TFormMain
         CollectionIndex = 14
         CollectionName = 'Magic-icon'
         Name = 'Magic-icon'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = 'Actions-document-edit-icon'
+        Name = 'Actions-document-edit-icon'
       end>
     ImageCollection = dm_Icons.ImageCollection
     Width = 32
@@ -1318,6 +1352,11 @@ object FormMain: TFormMain
         CollectionIndex = 14
         CollectionName = 'Magic-icon'
         Name = 'Magic-icon'
+      end
+      item
+        CollectionIndex = 15
+        CollectionName = 'Actions-document-edit-icon'
+        Name = 'Actions-document-edit-icon'
       end>
     ImageCollection = dm_Icons.ImageCollection
     Left = 362

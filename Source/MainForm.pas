@@ -147,6 +147,8 @@ type
     EditAdditionalParamIndex: TEdit;
     BalloonHintMap: TBalloonHint;
     LabelEdgeSDK: TLabel;
+    ButtonBackToProject: TButton;
+    ButtonRunAgain: TButton;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -216,6 +218,7 @@ type
     procedure PMRemoveInexistingClick(Sender: TObject);
     procedure TimerSourcePathTimer(Sender: TObject);
     procedure EditAdditionalParamIndexChange(Sender: TObject);
+    procedure ButtonBackToProjectClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -590,6 +593,11 @@ begin
   finally
     FormAbout.Free;
   end;
+end;
+
+procedure TFormMain.ButtonBackToProjectClick(Sender: TObject);
+begin
+  cp_Main.ActiveCard := crd_EditSettings;
 end;
 
 procedure TFormMain.ButtonBrowserBackClick(Sender: TObject);
