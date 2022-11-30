@@ -107,6 +107,8 @@ begin
   aTask := TTask.Create(
     procedure
     begin
+      SetCurrentDir(ExtractFilePath(AProjectSettings.BatchFileName));
+
       CallResult := RunProcess(AProjectSettings.BatchFileName,
                                SW_NORMAL, true, @ProcID);
 

@@ -141,6 +141,7 @@ begin
     BatchParts.Add('-m '   + GetPath(FSettings.MapFile).QuotedString('"'));
     BatchParts.Add('-sd '  + GetPath(FSettings.ProgramSourceBasePath).QuotedString('"'));
     BatchParts.Add('-ife');
+
     BatchParts.Add('-uf '  + (OutputPath + '_dcov_units.lst').QuotedString('"'));
     BatchParts.Add('-spf ' + (OutputPath + '_dcov_paths.lst').QuotedString('"'));
     BatchParts.Add('-od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));
