@@ -479,9 +479,14 @@ end;
 procedure TFormMain.ButtonSaveClick(Sender: TObject);
 begin
   try
-    FProject.SaveToXML(FProject.FileName);
-    crd_SaveAndRun.Tag := cImgCompletedPage;
-    GenerateDirectoriesAndBatchFile;
+    if TFile.Exists(FProject.FileName) then
+    begin
+      FProject.SaveToXML(FProject.FileName);
+      crd_SaveAndRun.Tag := cImgCompletedPage;
+      GenerateDirectoriesAndBatchFile;
+    end
+    else
+      ButtonSaveAsClick(Sender);
   except
     on e:exception do
       MessageDlg(Format(rSaveFileError,
@@ -1496,9 +1501,15 @@ end;
 procedure TFormMain.DisplayOutputSettingsStatus;
 begin
   if FProject.IsOutputSettingsDefined then
-    crd_Output.Tag := cImgCompletedPage
+  begin
+    ButtonNext.Enabled := true;
+    crd_Output.Tag     := cImgCompletedPage;
+  end
   else
-    crd_Output.Tag := -1;
+  begin
+    ButtonNext.Enabled := false;
+    crd_Output.Tag     := -1;
+  end;
 end;
 
 procedure TFormMain.RunScript;
@@ -1549,7 +1560,13 @@ begin
       cp_Main.ActiveCard := crd_Start;
   end
   else
+  begin
+    ActivityIndicator.Visible := false;
+    ActivityIndicator.Animate := false;
     MessageDlg(Format(rRunScriptError, [CallResult]), mtError, [mbOK], -1);
+    cp_Main.ActiveCard   := crd_EditSettings;
+    cp_Wizard.ActiveCard := crd_SaveAndRun;
+  end;
 end;
 
 end.

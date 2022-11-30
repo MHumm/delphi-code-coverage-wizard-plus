@@ -26,7 +26,7 @@ object FormMain: TFormMain
     Width = 624
     Height = 505
     Align = alClient
-    ActiveCard = crd_Finished
+    ActiveCard = crd_EditSettings
     BevelEdges = []
     BevelOuter = bvNone
     Caption = 'cp_Main'
@@ -202,7 +202,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_SaveAndRun
+        ActiveCard = crd_Output
         BevelEdges = [beBottom]
         BevelOuter = bvNone
         Caption = 'cp_Wizard'
@@ -1160,7 +1160,7 @@ object FormMain: TFormMain
         Top = 0
         Width = 98
         Height = 42
-        Hint = 'Go back to start screen of the application'
+        Hint = 'Go back to project settings'
         Caption = 'Back to &project'
         ImageIndex = 15
         ImageName = 'Actions-document-edit-icon'
@@ -1175,7 +1175,7 @@ object FormMain: TFormMain
         Top = 0
         Width = 98
         Height = 42
-        Hint = 'go to next page'
+        Hint = 'Run this project again'
         Caption = '&Run again'
         ImageIndex = 0
         ImageName = 'Actions-arrow-right-icon'
