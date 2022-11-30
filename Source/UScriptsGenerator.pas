@@ -142,8 +142,8 @@ begin
     BatchParts.Add('-sd '  + GetPath(FSettings.ProgramSourceBasePath).QuotedString('"'));
     BatchParts.Add('-ife');
 
-    BatchParts.Add('-uf '  + ExtractRelativepath(FSettings.CodeCoverageExePath, (OutputPath + '_dcov_units.lst')).QuotedString('"'));
-    BatchParts.Add('-spf ' + ExtractRelativepath(FSettings.CodeCoverageExePath, (OutputPath + '_dcov_paths.lst')).QuotedString('"'));
+    BatchParts.Add('-uf '  + (OutputPath + '_dcov_units.lst').QuotedString('"'));
+    BatchParts.Add('-spf ' + (OutputPath + '_dcov_paths.lst').QuotedString('"'));
     BatchParts.Add('-od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));
     BatchParts.Add('-v'); // verbose output
 
