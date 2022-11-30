@@ -143,6 +143,12 @@ type
     EditCodePage: TEdit;
     PMRemoveInexisting: TMenuItem;
     TimerSourcePath: TTimer;
+    Label3AdditionalParamIndex: TLabel;
+    EditAdditionalParamIndex: TEdit;
+    BalloonHintMap: TBalloonHint;
+    LabelEdgeSDK: TLabel;
+    ButtonBackToProject: TButton;
+    ButtonRunAgain: TButton;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -211,6 +217,8 @@ type
     procedure EditCodePageChange(Sender: TObject);
     procedure PMRemoveInexistingClick(Sender: TObject);
     procedure TimerSourcePathTimer(Sender: TObject);
+    procedure EditAdditionalParamIndexChange(Sender: TObject);
+    procedure ButtonBackToProjectClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -471,9 +479,14 @@ end;
 procedure TFormMain.ButtonSaveClick(Sender: TObject);
 begin
   try
-    FProject.SaveToXML(FProject.FileName);
-    crd_SaveAndRun.Tag := cImgCompletedPage;
-    GenerateDirectoriesAndBatchFile;
+    if TFile.Exists(FProject.FileName) then
+    begin
+      FProject.SaveToXML(FProject.FileName);
+      crd_SaveAndRun.Tag := cImgCompletedPage;
+      GenerateDirectoriesAndBatchFile;
+    end
+    else
+      ButtonSaveAsClick(Sender);
   except
     on e:exception do
       MessageDlg(Format(rSaveFileError,
@@ -585,6 +598,11 @@ begin
   finally
     FormAbout.Free;
   end;
+end;
+
+procedure TFormMain.ButtonBackToProjectClick(Sender: TObject);
+begin
+  cp_Main.ActiveCard := crd_EditSettings;
 end;
 
 procedure TFormMain.ButtonBrowserBackClick(Sender: TObject);
@@ -822,6 +840,7 @@ begin
 
     CheckBoxRelativePaths.Checked       := FProject.RelativeToScriptPath;
     EditAdditionalParameter.Text        := FProject.AdditionalParameter;
+    EditAdditionalParamIndex.Text       := FProject.AdditionalParIndex.ToString;
 
     UpdateEMMACheckBoxEnableStates;
     UpdateXMLCheckBoxEnableStates;
@@ -960,6 +979,21 @@ begin
   FProject.AdditionalParameter := (Sender as TEdit).Text;
 end;
 
+procedure TFormMain.EditAdditionalParamIndexChange(Sender: TObject);
+var
+  Idx : Integer;
+begin
+  if ((Sender as TEdit).Text <> '') then
+  begin
+    Idx := StrToInt((Sender as TEdit).Text);
+
+    if (Idx < 0) or (Idx > 20) then
+      MessageDlg(rAddParamsIdxErr, mtError, [mbOK], -1)
+    else
+      FProject.AdditionalParIndex := Idx;
+  end;
+end;
+
 procedure TFormMain.EditCodeCoverageExeChange(Sender: TObject);
 begin
   FProject.CodeCoverageExePath := (Sender As TEdit).Text;
@@ -980,6 +1014,13 @@ procedure TFormMain.EditExeFileChange(Sender: TObject);
 begin
   FProject.ExecutableToAnalyze := (Sender As TEdit).Text;
   EditMapFile.Text             := FProject.MapFile;
+
+  if not TFile.Exists(EditMapFile.Text) then
+  begin
+    BalloonHintMap.Title       := rNoMapFile;
+    BalloonHintMap.Description := rNoMapFileDetail;
+    BalloonHintMap.ShowHint(EditMapFile);
+  end;
 
   DisplayExeMapInputStatus;
 end;
@@ -1385,6 +1426,7 @@ begin
   EditScriptOutputFolder.Text              := '';
   EditReportOutputFolder.Text              := '';
   EditAdditionalParameter.Text             := '';
+  EditAdditionalParamIndex.Text            := '0';
   CheckBoxUseApplicationWorkingDir.Checked := false;
   CheckBoxEMMA.Checked                     := false;
   CheckBoxMeta.Checked                     := false;
@@ -1459,9 +1501,15 @@ end;
 procedure TFormMain.DisplayOutputSettingsStatus;
 begin
   if FProject.IsOutputSettingsDefined then
-    crd_Output.Tag := cImgCompletedPage
+  begin
+    ButtonNext.Enabled := true;
+    crd_Output.Tag     := cImgCompletedPage;
+  end
   else
-    crd_Output.Tag := -1;
+  begin
+    ButtonNext.Enabled := false;
+    crd_Output.Tag     := -1;
+  end;
 end;
 
 procedure TFormMain.RunScript;
@@ -1484,9 +1532,25 @@ begin
   begin
     if ofHTML in FProject.OutputFormats then
     begin
-      cp_Main.ActiveCard := crd_Finished;
-      EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
-      UpdateBrowserNavigationButtons;
+      cp_Main.ActiveCard   := crd_Finished;
+
+      if FLogic.DoesWebView2LoaderExist(Application.ExeName) then
+      begin
+        LabelEdgeSDK.Visible      := false;
+        EdgeBrowser.Visible       := true;
+        ButtonBrowserBack.Visible := true;
+        ButtonBrowserNext.Visible := true;
+        EdgeBrowser.Navigate(FProject.GetReportOutputIndexURL);
+        UpdateBrowserNavigationButtons;
+      end
+      else
+      begin
+        LabelEdgeSDK.Visible      := true;
+        EdgeBrowser.Visible       := false;
+        ButtonBrowserBack.Visible := false;
+        ButtonBrowserNext.Visible := false;
+      end;
+
       ErrorMessage := FLogic.CallExternalViewers(Handle, FProject);
 
       if not ErrorMessage.IsEmpty then
@@ -1496,7 +1560,13 @@ begin
       cp_Main.ActiveCard := crd_Start;
   end
   else
+  begin
+    ActivityIndicator.Visible := false;
+    ActivityIndicator.Animate := false;
     MessageDlg(Format(rRunScriptError, [CallResult]), mtError, [mbOK], -1);
+    cp_Main.ActiveCard   := crd_EditSettings;
+    cp_Wizard.ActiveCard := crd_SaveAndRun;
+  end;
 end;
 
 end.

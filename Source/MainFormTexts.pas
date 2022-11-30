@@ -159,7 +159,18 @@ resourcestring
   ///   Failure message shown when creating out of the necessary paths failed
   /// </summary>
   rDirCreateFail = 'Failed to create path: %0:s' + sLineBreak +
-                   'Reason: %1:s';
+                   'for this option: %1:s' + sLineBreak +
+                   'Reason: %2:s';
+
+  /// <summary>
+  ///  Text which will be inserted into the rDirCreateFail message
+  /// </summary>
+  rScriptPath    = 'Script output path';
+
+  /// <summary>
+  ///  Text which will be inserted into the rDirCreateFail message
+  /// </summary>
+  rReportPath    = 'Report output path';
 
   /// <summary>
   ///   Question asked on first startup about registering the DCCP file extension
@@ -173,6 +184,22 @@ resourcestring
   /// </summary>
   rRegisterFailed= 'Failed to register DCCP project file type.' + sLineBreak +
                    'Reason: %0:s';
+
+  /// <summary>
+  ///   Error message shown when the entered number is outside the range
+  /// </summary>
+  rAddParamsIdxErr='Index where the additional params specified will be placed ' +
+                   'in the generated batch file must be between 0 and 20';
+
+  /// <summary>
+  ///   Title of the hint displayed when no map file has been found
+  /// </summary>
+  rNoMapFile      = 'No map file found';
+  /// <summary>
+  ///   Details of the hint displayed when no map file has been found
+  /// </summary>
+  rNoMapFileDetail= 'Either select an existing map file or change linker ' + sLineBreak +
+                    'settings of the project to generate a detailed map file';
 
 implementation
 

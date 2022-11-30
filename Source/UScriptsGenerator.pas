@@ -23,6 +23,7 @@ unit UScriptsGenerator;
 interface
 
 uses
+  System.Classes,
   UProjectSettingsInterface;
 
 type
@@ -65,6 +66,15 @@ type
     ///   Relative path if that project setting is on, otherwise absolute path
     /// </returns>
     function GetPath(const APath : string) : string;
+    /// <summary>
+    ///   Saves all the strings contained in the list as one long string into the
+    ///   batch file specified in project settings.
+    /// </summary>
+    /// <param name="BatchParts">
+    ///   List with all the parameters etc. which shall be written into the
+    ///   batch file
+    /// </param>
+    procedure SaveBatchPartsToFile(BatchParts: TStringList);
   public
     /// <summary>
     ///   Creates and initializes the instance
@@ -86,7 +96,6 @@ type
 implementation
 
 uses
-  System.Classes,
   System.SysUtils,
   System.IOUtils;
 
@@ -109,12 +118,13 @@ end;
 
 procedure TScriptsGenerator.GenerateDCovExecuteBatchFile;
 var
-  OutputPath      : string;
-  LogFileName     : string;
-  StringStream    : TStringStream;
+  OutputPath    : string;
+  LogFileName   : string;
+  BatchParts    : TStringList;
+  AddParamIndex : Integer;
 begin
   // Create 'dcov_execute.bat'
-  StringStream := TStringStream.Create;
+  BatchParts := TStringList.Create;
   try
     OutputPath := GetPath(TPath.Combine(FSettings.ScriptsOutputPath,
                             TPath.GetFileNameWithoutExtension(
@@ -126,35 +136,62 @@ begin
 
     // Fill
 
-    StringStream.WriteString(GetPath(FSettings.CodeCoverageExePath).QuotedString('"'));
-    StringStream.WriteString(' -e '   + GetPath(FSettings.ExecutableToAnalyze).QuotedString('"'));
-    StringStream.WriteString(' -m '   + GetPath(FSettings.MapFile).QuotedString('"'));
-    StringStream.WriteString(' -sd '  + GetPath(FSettings.ProgramSourceBasePath).QuotedString('"'));
-    StringStream.WriteString(' -uf '  + (OutputPath + '_dcov_units.lst').QuotedString('"'));
-    StringStream.WriteString(' -spf ' + (OutputPath + '_dcov_paths.lst').QuotedString('"'));
-    StringStream.WriteString(' -od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));
-    StringStream.WriteString(' -v'); // verbose output
+    BatchParts.Add(GetPath(FSettings.CodeCoverageExePath).QuotedString('"'));
+    BatchParts.Add('-e '   + GetPath(FSettings.ExecutableToAnalyze).QuotedString('"'));
+    BatchParts.Add('-m '   + GetPath(FSettings.MapFile).QuotedString('"'));
+    BatchParts.Add('-sd '  + GetPath(FSettings.ProgramSourceBasePath).QuotedString('"'));
+    BatchParts.Add('-ife');
+    BatchParts.Add('-uf '  + (OutputPath + '_dcov_units.lst').QuotedString('"'));
+    BatchParts.Add('-spf ' + (OutputPath + '_dcov_paths.lst').QuotedString('"'));
+    BatchParts.Add('-od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));
+    BatchParts.Add('-v'); // verbose output
 
     if FSettings.LogToTextFile then
-      StringStream.WriteString(' -lt '  + LogFileName);
+      BatchParts.Add('-lt '  + LogFileName);
 
     if FSettings.LogToOutputDebugString then
-      StringStream.WriteString(' -lapi');
+      BatchParts.Add('-lapi');
 
     if FSettings.PassTroughExitCode then
-      StringStream.WriteString(' -tec');
+      BatchParts.Add('-tec');
 
     if FSettings.UseExeDirAsWorkDir then
-      StringStream.WriteString(' -twd');
+      BatchParts.Add('-twd');
 
     if not FSettings.ExeCommandLineParams.IsEmpty then
-      StringStream.WriteString(' -a ' + FSettings.ExeCommandLineParams);
+      BatchParts.Add('-a ' + FSettings.ExeCommandLineParams);
 
     if (FSettings.CodePage > 0) then
-      StringStream.WriteString(' -cp ' + FSettings.CodePage.ToString);
+      BatchParts.Add('-cp ' + FSettings.CodePage.ToString);
 
-    StringStream.WriteString(' '      + FSettings.AdditionalParameter);
-    StringStream.WriteString(GetOutputFormatSwitches); // they start with a spcace
+    BatchParts.Add(GetOutputFormatSwitches); // they start with a spcace
+
+    AddParamIndex := FSettings.AdditionalParIndex;
+    if AddParamIndex >= BatchParts.Count then
+      AddParamIndex := BatchParts.Count;
+
+    BatchParts.Insert(AddParamIndex, FSettings.AdditionalParameter);
+
+    SaveBatchPartsToFile(BatchParts);
+  finally
+    FreeAndNil(BatchParts);
+  end;
+end;
+
+procedure TScriptsGenerator.SaveBatchPartsToFile(BatchParts: TStringList);
+var
+  StringStream : TStringStream;
+begin
+  StringStream := TStringStream.Create;
+  try
+    for var i := 0 to BatchParts.Count - 1 do
+    begin
+      // separate the individual params by a blank, unless its the first one
+      if i > 0 then
+        StringStream.WriteString(' ');
+
+      StringStream.WriteString(BatchParts[i]);
+    end;
 
     StringStream.SaveToFile(FSettings.BatchFileName);
   finally
@@ -234,13 +271,22 @@ begin
   if FSettings.AddLineNumbersToXML then Result := Result + ' -xmllines';
   if FSettings.CombineXMLCoverage  then Result := Result + ' -xmlgenerics';
   if FSettings.XMLJacocoFormat     then Result := Result + ' -jacoco';
+
+  Result := Result.TrimLeft;
 end;
 
 function TScriptsGenerator.GetPath(const APath: string): string;
+var
+  ScriptPath : string;
 begin
   if FSettings.RelativeToScriptPath then
+  begin
     // Extract path relative to scripts relative
-    Result := ExtractRelativepath(FSettings.ScriptsOutputPath , APath)
+    ScriptPath := FSettings.ScriptsOutputPath;
+    if not ScriptPath.EndsWith(System.SysUtils.PathDelim) then
+      ScriptPath := ScriptPath + System.SysUtils.PathDelim;
+    Result := ExtractRelativepath(ScriptPath, APath);
+  end
   else
     Result := APath;
 end;
