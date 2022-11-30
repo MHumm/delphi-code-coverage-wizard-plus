@@ -1088,6 +1088,10 @@ begin
         FProgramSourceFiles.AddFile(SourceFileName, IsSelected);
 
         LNode := LNode.NextSibling;
+
+        // Skip code page node
+        if (LNode.NodeName = 'CodePage') then
+          LNode := LNode.NextSibling;
       end;
     end;
 

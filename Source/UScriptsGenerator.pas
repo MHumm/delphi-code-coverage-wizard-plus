@@ -276,10 +276,17 @@ begin
 end;
 
 function TScriptsGenerator.GetPath(const APath: string): string;
+var
+  ScriptPath : string;
 begin
   if FSettings.RelativeToScriptPath then
+  begin
     // Extract path relative to scripts relative
-    Result := ExtractRelativepath(FSettings.ScriptsOutputPath , APath)
+    ScriptPath := FSettings.ScriptsOutputPath;
+    if not ScriptPath.EndsWith(System.SysUtils.PathDelim) then
+      ScriptPath := ScriptPath + System.SysUtils.PathDelim;
+    Result := ExtractRelativepath(ScriptPath, APath);
+  end
   else
     Result := APath;
 end;

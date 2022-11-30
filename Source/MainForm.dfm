@@ -202,7 +202,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_Output
+        ActiveCard = crd_MiscSettings
         BevelEdges = [beBottom]
         BevelOuter = bvNone
         Caption = 'cp_Wizard'
@@ -726,7 +726,7 @@ object FormMain: TFormMain
             end
             object LabelPath: TLabel
               Left = 32
-              Top = 136
+              Top = 135
               Width = 52
               Height = 15
               Anchors = [akLeft, akTop, akRight]
@@ -734,7 +734,7 @@ object FormMain: TFormMain
             end
             object LabelScriptPreviewCaption: TLabel
               Left = 32
-              Top = 160
+              Top = 155
               Width = 109
               Height = 15
               Caption = 'Script paths preview:'
@@ -755,7 +755,7 @@ object FormMain: TFormMain
             end
             object CheckBoxRelativePaths: TCheckBox
               Left = 6
-              Top = 113
+              Top = 112
               Width = 385
               Height = 17
               Caption = 'Make all folders relative to the scripts path'
@@ -780,7 +780,6 @@ object FormMain: TFormMain
               Anchors = [akLeft, akTop, akRight]
               Enabled = False
               TabOrder = 3
-              ExplicitWidth = 354
             end
             object CheckBoxLogToFile: TCheckBox
               Left = 8
