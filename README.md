@@ -22,27 +22,24 @@ until you either have covered all lines of your code by unit tests or have only
 those lines missing which would be really hard to cover.
 
 ## Which Delphi versions are compatible?
-The current version 1.0 is compatible with Delphi 11.0 Alexandria and most
-likely with 10.4 Sydney.
-
-## What is the current status of this project?
-The current version in this repository is considered to be a release candidate for
-V1.0. It looks like it still has a few small quirks with disabling next button in
-editing mode but other than that it looks fine.
+The current version 2.0 is compatible with Delphi 11.x Alexandria and most
+likely with 10.4.x Sydney.
 
 ## Where can I get further information? For example if I'd like to contribute?
 In the root folder of the project you will find further files with information about 
 this project like *NOTICE.txt*, *CONTRIBUTING.md*, *SECURITY.md*.
 
 ## Where is the Code Coverage command line tool from?
-The command line tool used and included is the version of this one compiled at 2022/11/13:
+The command line tool used and included is the version of this one compiled at 2022/11/20:
 https://github.com/DelphiCodeCoverage/DelphiCodeCoverage
 
 If the CodeCoverage.exe did not really change any parameters one can replace it with 
-a new version, if desired. Updates of the wizard should contain updated versions as well.
+a new version, if desired. Later updates of this wizard should contain updated versions 
+as well.
 
 ## How to install?
-You might need EdgeView2SDK from Tools/GetIt package manager to be installed first.
+If you want to use the built in display of HTML formatted rerports you might need 
+EdgeView2SDK from Tools/GetIt package manager to be installed first.
 Afterwards just open and run the project provided in the Source directory.
 When run for the first time or when you installed another version of the IDE it will 
 display a dialog you can use to add it to the Tools menus of all Delphi versions/profiles 
@@ -52,15 +49,17 @@ file extension with the tool so you can open these files directly from file Expl
 ## How to use it?
 
 1. Make sure your project has detailed MAP-file generation turned on in linker settings.
-2. If not done yet develop some DUnit/DUnitX unit tests for your project. If you set it
-   up as a console project, you only need to press enter after the tests have run, 
-   otherwise you need to start them manually when running code coverage. 
-3. Run this tool and generate a code coverage project for your project. The tool provides
-   a wizzard for this.
-4. Save the generated project.
-5. Run the generated project. It should start your unit tests.
-6. Run your unit tests and close the test runner.
-7. The coverage report should be generated in the format(s) you specified in the wizard. 
+2. Compile your project to get a MAP file created.
+3. If not done yet, develop some DUnit/DUnitX unit tests for your project. If you set it
+   up as a console project, you only need to press enter after the tests have run during 
+   code coverage analysis later, otherwise you need to start them manually (when using 
+   DUnit's GUI) each time when running code coverage. 
+4. Run this tool and generate a code coverage project for your project. The tool provides
+   a wizard for this.
+5. Save the generated project.
+6. Run the generated project. It should start your unit tests.
+7. Run your unit tests and close the test runner.
+8. The coverage report should be generated in the format(s) you specified in the wizard. 
    If you checked HTML format, the result will be displayed in code coverage wizard plus,
    but you can still open it in any browser outside this tool.
    
