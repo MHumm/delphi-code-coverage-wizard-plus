@@ -47,12 +47,6 @@ resourcestring
                    'and the checked ones will be included in the analysis.';
 
   /// <summary>
-  ///   Description text for class prefix exclude masks
-  /// </summary>
-  rClassPrefixExcludes = 'Specify classes to exclude from processing via ' +
-                         'exclude prefix masks. One prefix and mask per line.';
-
-  /// <summary>
   ///   Description text for the output path and options
   /// </summary>
   rOutputOptions = 'Specify the path where the report(s) should be saved to ' +

@@ -469,9 +469,10 @@ function TIDEVersionRec.GetIDEVersionName: string;
 begin
   Result := '';
 
+  if (BDSVersion = '23.0') then
+    Exit('12.0 Athens');
   if (BDSVersion = '22.0') then
     Exit('11.0 Alexandria');
-
   if (BDSVersion = '21.0') then
     Exit('10.4 Sydney');
   if (BDSVersion = '20.0') then
