@@ -58,7 +58,7 @@ object FormAbout: TFormAbout
     Top = 64
     Width = 364
     Height = 15
-    Caption = #169' 2022-2022 Markus Humm and Team Delphi Code Coverage Wizard'
+    Caption = #169' 2022-2023 Markus Humm and Team Delphi Code Coverage Wizard'
   end
   object Label4: TLabel
     Left = 16
@@ -103,7 +103,7 @@ object FormAbout: TFormAbout
     BevelKind = bkTile
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 212
+    ExplicitTop = 334
     ExplicitWidth = 475
     object ButtonOK: TButton
       Left = 16

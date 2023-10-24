@@ -253,7 +253,7 @@ begin
       FN       := FileName.ToUpper;
       if not FN.EndsWith('DCCP') then
       begin
-        if FN.EndsWith('dpr') or FN.EndsWith('dproj') then
+        if FN.EndsWith('DPR') or FN.EndsWith('DPROJ') then
           FileName := TPath.ChangeExtension(FileName, 'DCCP')
         else
           raise Exception.Create(Format(rWrongExtension, [FileName]));

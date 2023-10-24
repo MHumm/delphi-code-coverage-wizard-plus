@@ -167,6 +167,19 @@ begin
 
     BatchParts.Add(GetOutputFormatSwitches); // they start with a spcace
 
+    if (FSettings.UseNumberOfLineExecutes) then
+      BatchParts.Add('-lcl ' + FSettings.NumberOfLineExecutes.ToString);
+
+{ TODO : Since this is a multiline setting we need to test it with multiline data }
+    if (not FSettings.ExcludedClassPrefixes.IsEmpty) then
+      BatchParts.Add('-ecp ' + FSettings.ExcludedClassPrefixes);
+
+{ TODO : Not tested yet }
+    if FSettings.IncludeFileExtension then
+      BatchParts.Add('-ife')
+    else
+      BatchParts.Add('-efe');
+
     AddParamIndex := FSettings.AdditionalParIndex;
     if AddParamIndex >= BatchParts.Count then
       AddParamIndex := BatchParts.Count;
