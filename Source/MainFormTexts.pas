@@ -56,8 +56,9 @@ resourcestring
   /// <summary>
   ///   Description text for the misc. options and batch file previes
   /// </summary>
-  rMiscOptions   = 'Provides the option to store all paths in relative form ' +
-                   'and to preview the generated batch file.';
+  rMiscOptions   = 'Provides the option to store all paths in relative form, ' +
+                   'write log messages to file, how often a line may be executed ' +
+                   'and other settings';
 
   /// <summary>
   ///   Description text for the exclude classes by prefix

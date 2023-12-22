@@ -689,20 +689,24 @@ begin
     0 : begin
           cp_Wizard.ActiveCard := crd_UnitTestExecutable;
           ButtonNext.Enabled   := FProject.IsExeAndMapDefined;
+          crd_UnitTestExecutableEnter(Sender);
         end;
     1 : begin
           cp_Wizard.ActiveCard := crd_Source;
           ButtonNext.Enabled   := FProject.IsSourcePathAndFilesDefined;
+          crd_SourceEnter(Sender);
         end;
     2 : begin
           cp_Wizard.ActiveCard := crd_Output;
           ButtonNext.Enabled   := FProject.IsOutputSettingsDefined;
+          crd_OutputEnter(Sender);
         end;
     3 : begin
           cp_Wizard.ActiveCard := crd_MiscSettings;
           crd_MiscSettings.Tag := cImgCompletedPage;
           ButtonNext.Enabled   := true;
           PrepareScriptOutputPathDisplay;
+          crd_MiscSettingsEnter(Sender);
         end;
     4 : DisplaySaveAndRunScreen;
     else
@@ -718,6 +722,7 @@ begin
   ButtonNext.Enabled   := false;
   ButtonCancel.Enabled := false;
   ButtonSave.Enabled   := not FProject.FileName.IsEmpty;
+  crd_SaveAndRunEnter(self);
 end;
 
 procedure TFormMain.ButtonHomeClick(Sender: TObject);
@@ -869,12 +874,6 @@ begin
     CheckBoxLogToFile.Checked           := FProject.LogToTextFile;
     CheckBoxLogPerAPI.Checked           := FProject.LogToOutputDebugString;
     CheckBoxPassThroughExitCode.Checked := FProject.PassTroughExitCode;
-    CheckBoxIncludeFileExtension.Checked:= FProject.IncludeFileExtension;
-
-    CheckBoxLimitNumberOfExecutionTime.Checked := FProject.UseNumberOfLineExecutes;
-    NumberBoxLineExecutionCount.ValueInt       := FProject.NumberOfLineExecutes;
-
-    MemoClassPrefixExcluded.Lines.Add(FProject.ExcludedClassPrefixes);
 
     CheckBoxRelativePaths.Checked       := FProject.RelativeToScriptPath;
     EditAdditionalParameter.Text        := FProject.AdditionalParameter;
@@ -1501,9 +1500,6 @@ begin
   CheckBoxLogToFile.Checked                := true; // deliberately
   CheckBoxLogPerAPI.Checked                := false;
   CheckBoxPassThroughExitCode.Checked      := false;
-
-  CheckBoxLimitNumberOfExecutionTime.Checked := false;
-  NumberBoxLineExecutionCount.ValueInt       := 1;
 
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;

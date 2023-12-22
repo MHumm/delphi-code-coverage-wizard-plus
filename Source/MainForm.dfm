@@ -198,7 +198,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_SaveAndRun
+        ActiveCard = crd_MiscSettings
         BevelEdges = [beBottom]
         BevelOuter = bvNone
         Caption = 'cp_Wizard'
@@ -696,7 +696,7 @@ object FormMain: TFormMain
             BorderStyle = bsNone
             TabOrder = 0
             DesignSize = (
-              424
+              407
               394)
             object LabelAdditioalParams: TLabel
               Left = 8
@@ -742,6 +742,13 @@ object FormMain: TFormMain
               Width = 164
               Height = 15
               Caption = 'Index of additional parameters:'
+            end
+            object Label3: TLabel
+              Left = 35
+              Top = 423
+              Width = 90
+              Height = 15
+              Caption = 'Number of times'
             end
             object CheckBoxRelativePaths: TCheckBox
               Left = 6
@@ -813,6 +820,38 @@ object FormMain: TFormMain
               TabOrder = 1
               Text = '0'
               OnChange = EditAdditionalParamIndexChange
+            end
+            object CheckBoxLimitNumberOfExecutionTime: TCheckBox
+              Left = 8
+              Top = 392
+              Width = 353
+              Height = 17
+              Caption = 'Limit number of times a line is executed (-lcl)'
+              TabOrder = 7
+              OnClick = CheckBoxLimitNumberOfExecutionTimeClick
+            end
+            object NumberBoxLineExecutionCount: TNumberBox
+              Left = 152
+              Top = 420
+              Width = 121
+              Height = 23
+              Decimal = 0
+              HideSelection = False
+              MinValue = 1.000000000000000000
+              MaxValue = 1000.000000000000000000
+              TabOrder = 8
+              Value = 1.000000000000000000
+              SpinButtonOptions.Placement = nbspInline
+              OnChangeValue = NumberBoxLineExecutionCountChangeValue
+            end
+            object CheckBoxIncludeFileExtension: TCheckBox
+              Left = 6
+              Top = 456
+              Width = 353
+              Height = 17
+              Caption = 'Include file extension (-ife/-efe)'
+              TabOrder = 9
+              OnClick = CheckBoxIncludeFileExtensionClick
             end
           end
         end
@@ -893,6 +932,73 @@ object FormMain: TFormMain
             TabOrder = 3
             WordWrap = True
             OnClick = ButtonSaveAsClick
+          end
+        end
+        object crd_ClassPrefixExcludes: TCard
+          Left = 0
+          Top = 0
+          Width = 424
+          Height = 394
+          Caption = 'crd_ClassPrefixExcludes'
+          CardIndex = 5
+          TabOrder = 5
+          OnEnter = crd_ClassPrefixExcludesEnter
+          DesignSize = (
+            424
+            394)
+          object b_SelectAllClassPrefixExcluded: TButton
+            Left = 0
+            Top = 352
+            Width = 138
+            Height = 42
+            Hint = 'Select all class prefixes'
+            Anchors = [akLeft, akBottom]
+            Caption = 'Select &all'
+            ImageIndex = 11
+            ImageName = 'Actions-edit-select-all-icon'
+            ImageMargins.Left = 5
+            Images = VirtualImageListButtons32
+            TabOrder = 0
+            OnClick = b_SelectAllClassPrefixExcludedClick
+          end
+          object b_DeselectAllClassPrefixExcluded: TButton
+            Left = 140
+            Top = 352
+            Width = 138
+            Height = 42
+            Hint = 'deselect class prefixes'
+            Anchors = [akLeft, akBottom]
+            Caption = '&Deselect all'
+            ImageIndex = 10
+            ImageName = 'Actions-edit-clear-list-icon'
+            ImageMargins.Left = 5
+            Images = VirtualImageListButtons32
+            TabOrder = 1
+            OnClick = b_DeselectAllClassPrefixExcludedClick
+          end
+          object b_DeleteSelectedClassExclusionMasks: TButton
+            Left = 282
+            Top = 352
+            Width = 138
+            Height = 42
+            Hint = 'Refresh file list'
+            Anchors = [akLeft, akBottom]
+            Caption = 'D&elete'
+            ImageIndex = 5
+            ImageName = 'Actions-trash-empty-icon'
+            ImageMargins.Left = 5
+            Images = VirtualImageListButtons32
+            TabOrder = 2
+            OnClick = b_DeleteSelectedClassExclusionMasksClick
+          end
+          object MemoClassPrefixExcluded: TMemo
+            Left = 6
+            Top = 6
+            Width = 415
+            Height = 340
+            Anchors = [akLeft, akTop, akRight, akBottom]
+            TabOrder = 3
+            OnChange = MemoClassPrefixExcludedChange
           end
         end
       end
