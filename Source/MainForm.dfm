@@ -31,8 +31,6 @@ object FormMain: TFormMain
     BevelOuter = bvNone
     Caption = 'cp_Main'
     TabOrder = 0
-    ExplicitWidth = 620
-    ExplicitHeight = 504
     object crd_Start: TCard
       Left = 0
       Top = 0
@@ -191,8 +189,6 @@ object FormMain: TFormMain
       Caption = 'crd_EditSettings'
       CardIndex = 1
       TabOrder = 1
-      ExplicitWidth = 620
-      ExplicitHeight = 504
       DesignSize = (
         624
         505)
@@ -202,13 +198,11 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_MiscSettings
+        ActiveCard = crd_SaveAndRun
         BevelEdges = [beBottom]
         BevelOuter = bvNone
         Caption = 'cp_Wizard'
         TabOrder = 0
-        ExplicitWidth = 420
-        ExplicitHeight = 393
         object crd_UnitTestExecutable: TCard
           Left = 0
           Top = 0
@@ -691,8 +685,6 @@ object FormMain: TFormMain
           CardIndex = 3
           TabOrder = 3
           OnEnter = crd_MiscSettingsEnter
-          ExplicitWidth = 420
-          ExplicitHeight = 393
           object ScrollBoxMisc: TScrollBox
             Left = 0
             Top = 0
@@ -703,8 +695,6 @@ object FormMain: TFormMain
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 0
-            ExplicitWidth = 420
-            ExplicitHeight = 393
             DesignSize = (
               424
               394)
@@ -770,7 +760,6 @@ object FormMain: TFormMain
               Anchors = [akLeft, akTop, akRight]
               TabOrder = 0
               OnChange = EditAdditionalParameterChange
-              ExplicitWidth = 186
             end
             object MemoScriptPreview: TMemo
               Left = 32
@@ -824,7 +813,6 @@ object FormMain: TFormMain
               TabOrder = 1
               Text = '0'
               OnChange = EditAdditionalParamIndexChange
-              ExplicitWidth = 58
             end
           end
         end
@@ -896,7 +884,7 @@ object FormMain: TFormMain
             Hint = 
               'Save the project under a new name and generate all files CodeCov' +
               'erage.exe needs to run  it'
-            Caption = '&Save project as && generate files to run it'
+            Caption = 'Save project as &new && generate files to run it'
             ImageAlignment = iaTop
             ImageIndex = 3
             ImageName = 'Actions-document-save-icon'
@@ -916,7 +904,6 @@ object FormMain: TFormMain
         Align = alLeft
         BevelEdges = [beRight]
         TabOrder = 1
-        ExplicitHeight = 504
         object ButtonGroup1: TButtonGroup
           Left = 1
           Top = 1
@@ -954,7 +941,6 @@ object FormMain: TFormMain
           TabOrder = 0
           TabStop = False
           OnButtonClicked = ButtonGroup1ButtonClicked
-          ExplicitHeight = 502
         end
       end
       object PanelHeader: TPanel
@@ -972,7 +958,6 @@ object FormMain: TFormMain
         ShowCaption = False
         TabOrder = 2
         StyleElements = [seFont, seBorder]
-        ExplicitWidth = 420
         object LabelTop: TLabel
           AlignWithMargins = True
           Left = 3
@@ -998,8 +983,6 @@ object FormMain: TFormMain
         Caption = 'PanelBottomNavigation'
         ShowCaption = False
         TabOrder = 3
-        ExplicitTop = 453
-        ExplicitWidth = 419
         object ButtonPrevious: TButton
           Left = 0
           Top = 5
@@ -1150,6 +1133,8 @@ object FormMain: TFormMain
         Height = 457
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 3
+        AllowSingleSignOnUsingOSPrimaryAccount = False
+        TargetCompatibleBrowserVersion = '117.0.2045.28'
         UserDataFolder = '%LOCALAPPDATA%\bds.exe.WebView2'
         OnCreateWebViewCompleted = EdgeBrowserCreateWebViewCompleted
         OnHistoryChanged = EdgeBrowserHistoryChanged

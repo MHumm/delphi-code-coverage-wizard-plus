@@ -307,6 +307,16 @@ type
     function GetPassTroughExitCode: Boolean;
 
     /// <summary>
+    ///   Gets the value of the on/off switch of the limit number of execution
+    ///   times setting
+    /// </summary>
+    function GetUseNumberOfLineExecutes: Boolean;
+    /// <summary>
+    ///   Returns the "number of times a code line is executed" setting value
+    /// </summary>
+    function GetNumberOfLineExecutes: UInt32;
+
+    /// <summary>
     ///   Displays the newly generated XML-file in the associated viewer
     ///   via ShellExecute
     /// </summary>
@@ -387,6 +397,19 @@ type
     /// </summary>
     property OutputFormats : TOutputFormatSet
       read   GetOutputFormats;
+
+    /// <summary>
+    ///   Turn using number of times a line is executed up to the specified limit
+    ///   parameter on or off
+    /// </summary>
+    property UseNumberOfLineExecutes : Boolean
+      read   GetUseNumberOfLineExecutes;
+
+    /// <summary>
+    ///   Number of times a line is executed up to the specified limit
+    /// </summary>
+    property NumberOfLineExecutes   : UInt32
+      read   GetNumberOfLineExecutes;
   end;
 
   /// <summary>
@@ -543,6 +566,42 @@ type
     ///   be placed within the generated batch file.
     /// </summary>
     procedure SetAdditionalParIndex(const Value: Integer);
+
+    /// <summary>
+    ///   Sets the value of the on/off switch of the limit number of execution
+    ///   times setting
+    /// </summary>
+    procedure SetUseNumberOfLineExecutes(const Value: Boolean);
+    /// <summary>
+    ///   Sets the "number of times a code line is executed" setting value
+    /// </summary>
+    procedure SetNumberOfLineExecutes(const Value: UInt32);
+
+    /// <summary>
+    ///   Returns the class prefixes to exclude from processing. The list is
+    ///   cr/lf formatted
+    /// </summary>
+    function GetExcludedClassPrefixes: string;
+    /// <summary>
+    ///   Sets the class prefixes to exclude from processing. The list is
+    ///   cr/lf formatted
+    /// </summary>
+    procedure SetExcludedClassPrefixes(const Value: string);
+
+    /// <summary>
+    ///   Returns the value for the file extension include setting.
+    ///   When true the file extension for a unit is included, wen off it will
+    ///   get hidden, but has the consequences in cases like Common.Encodings.pas
+    ///   to remove Encodings.pas and not only .pas
+    /// </summary>
+    function GetIncludeFileExtension: Boolean;
+    /// <summary>
+    ///   Sets the file extension include setting.
+    ///   When true the file extension for a unit is included, wen off it will
+    ///   get hidden, but has the consequences in cases like Common.Encodings.pas
+    ///   to remove Encodings.pas and not only .pas
+    /// </summary>
+    procedure SetIncludeFileExtension(const Value: Boolean);
 
     /// <summary>
     ///   Checks whether both exe-file name and map-file name are defined.
@@ -782,6 +841,37 @@ type
     property OutputFormats : TOutputFormatSet
       read   GetOutputFormats
       write  SetOutputFormats;
+
+    /// <summary>
+    ///   Turn using number of times a line is executed up to the specified limit
+    ///   parameter on or off
+    /// </summary>
+    property UseNumberOfLineExecutes : Boolean
+      read   GetUseNumberOfLineExecutes
+      write  SetUseNumberOfLineExecutes;
+
+    /// <summary>
+    ///   Number of times a line is executed up to the specified limit
+    /// </summary>
+    property NumberOfLineExecutes   : UInt32
+      read   GetNumberOfLineExecutes
+      write  SetNumberOfLineExecutes;
+
+    /// <summary>
+    ///   Class prefixes to exclude from processing, cr/lf delimited
+    /// </summary>
+    property ExcludedClassPrefixes : string
+      read   GetExcludedClassPrefixes
+      write  SetExcludedClassPrefixes;
+
+    /// <summary>
+    ///   When true the file extension for a unit is included, wen off it will
+    ///   get hidden, but has the consequences in cases like Common.Encodings.pas
+    ///   to remove Encodings.pas and not only .pas
+    /// </summary>
+    property IncludeFileExtension : Boolean
+      read   GetIncludeFileExtension
+      write  SetIncludeFileExtension;
   end;
 
 implementation

@@ -58,6 +58,13 @@ resourcestring
   /// </summary>
   rMiscOptions   = 'Provides the option to store all paths in relative form ' +
                    'and to preview the generated batch file.';
+
+  /// <summary>
+  ///   Description text for the exclude classes by prefix
+  /// </summary>
+  rClassPrefixExcludes = 'Specify the class name prefixes for classes to ' +
+                         'exclude from coverage testing';
+
   /// <summary>
   ///   Description text for the save and run screen
   /// </summary>

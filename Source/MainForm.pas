@@ -27,7 +27,7 @@ uses
   Vcl.BaseImageCollection, Vcl.ImageCollection, Vcl.ComCtrls, Vcl.ButtonGroup,
   Vcl.CheckLst, USettings, UDataModuleIcons, Vcl.WinXCtrls, Vcl.Menus,
   Winapi.WebView2, Winapi.ActiveX, Vcl.Edge, Vcl.OleCtrls, SHDocVw,
-  MainFormLogic, UProjectSettings, UProjectSettingsInterface;
+  MainFormLogic, UProjectSettings, UProjectSettingsInterface, Vcl.NumberBox;
 
 type
   /// <summary>
@@ -149,6 +149,15 @@ type
     LabelEdgeSDK: TLabel;
     ButtonBackToProject: TButton;
     ButtonRunAgain: TButton;
+    CheckBoxLimitNumberOfExecutionTime: TCheckBox;
+    Label3: TLabel;
+    NumberBoxLineExecutionCount: TNumberBox;
+    crd_ClassPrefixExcludes: TCard;
+    b_SelectAllClassPrefixExcluded: TButton;
+    b_DeselectAllClassPrefixExcluded: TButton;
+    b_DeleteSelectedClassExclusionMasks: TButton;
+    MemoClassPrefixExcluded: TMemo;
+    CheckBoxIncludeFileExtension: TCheckBox;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -219,6 +228,14 @@ type
     procedure TimerSourcePathTimer(Sender: TObject);
     procedure EditAdditionalParamIndexChange(Sender: TObject);
     procedure ButtonBackToProjectClick(Sender: TObject);
+    procedure CheckBoxLimitNumberOfExecutionTimeClick(Sender: TObject);
+    procedure NumberBoxLineExecutionCountChangeValue(Sender: TObject);
+    procedure b_SelectAllClassPrefixExcludedClick(Sender: TObject);
+    procedure b_DeselectAllClassPrefixExcludedClick(Sender: TObject);
+    procedure b_DeleteSelectedClassExclusionMasksClick(Sender: TObject);
+    procedure MemoClassPrefixExcludedChange(Sender: TObject);
+    procedure crd_ClassPrefixExcludesEnter(Sender: TObject);
+    procedure CheckBoxIncludeFileExtensionClick(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -556,6 +573,11 @@ begin
   RunScript;
 end;
 
+procedure TFormMain.b_SelectAllClassPrefixExcludedClick(Sender: TObject);
+begin
+  MemoClassPrefixExcluded.SelectAll;
+end;
+
 procedure TFormMain.b_SelectAllClick(Sender: TObject);
 begin
   SelectDeselectAllSourceFiles(true);
@@ -577,6 +599,11 @@ begin
   end;
 end;
 
+procedure TFormMain.b_DeselectAllClassPrefixExcludedClick(Sender: TObject);
+begin
+  MemoClassPrefixExcluded.ClearSelection;
+end;
+
 procedure TFormMain.b_DeselectAllClick(Sender: TObject);
 begin
   SelectDeselectAllSourceFiles(false);
@@ -586,6 +613,11 @@ procedure TFormMain.b_RefreshSourceFilesClick(Sender: TObject);
 begin
   FProject.ProgramSourceFiles.UpdateSourceFilesList;
   DisplaySourceFiles;
+end;
+
+procedure TFormMain.b_DeleteSelectedClassExclusionMasksClick(Sender: TObject);
+begin
+  MemoClassPrefixExcluded.SelText := '';
 end;
 
 procedure TFormMain.ButtonAboutClick(Sender: TObject);
@@ -837,6 +869,12 @@ begin
     CheckBoxLogToFile.Checked           := FProject.LogToTextFile;
     CheckBoxLogPerAPI.Checked           := FProject.LogToOutputDebugString;
     CheckBoxPassThroughExitCode.Checked := FProject.PassTroughExitCode;
+    CheckBoxIncludeFileExtension.Checked:= FProject.IncludeFileExtension;
+
+    CheckBoxLimitNumberOfExecutionTime.Checked := FProject.UseNumberOfLineExecutes;
+    NumberBoxLineExecutionCount.ValueInt       := FProject.NumberOfLineExecutes;
+
+    MemoClassPrefixExcluded.Lines.Add(FProject.ExcludedClassPrefixes);
 
     CheckBoxRelativePaths.Checked       := FProject.RelativeToScriptPath;
     EditAdditionalParameter.Text        := FProject.AdditionalParameter;
@@ -918,6 +956,17 @@ begin
   if Assigned(Item) and (Item.SubItems.Count >= 1) and
      not Item.Caption.IsEmpty then
     LoadProjectFile(TPath.Combine(Item.Caption, Item.SubItems[0]));
+end;
+
+procedure TFormMain.MemoClassPrefixExcludedChange(Sender: TObject);
+begin
+  FProject.ExcludedClassPrefixes := MemoClassPrefixExcluded.Lines.Text;
+end;
+
+procedure TFormMain.NumberBoxLineExecutionCountChangeValue(Sender: TObject);
+begin
+  if Assigned(FProject) then
+    FProject.NumberOfLineExecutes := (Sender as TNumberBox).ValueInt;
 end;
 
 procedure TFormMain.ButtonPreviousClick(Sender: TObject);
@@ -1293,6 +1342,16 @@ begin
   UpdateHTMLCheckBoxEnableStates;
 end;
 
+procedure TFormMain.CheckBoxIncludeFileExtensionClick(Sender: TObject);
+begin
+  FProject.IncludeFileExtension := (Sender as TCheckBox).Checked;
+end;
+
+procedure TFormMain.CheckBoxLimitNumberOfExecutionTimeClick(Sender: TObject);
+begin
+  FProject.UseNumberOfLineExecutes := (Sender as TCheckBox).Checked;
+end;
+
 procedure TFormMain.CheckBoxLogPerAPIClick(Sender: TObject);
 begin
   FProject.LogToOutputDebugString := (Sender as TCheckBox).Checked;
@@ -1443,6 +1502,9 @@ begin
   CheckBoxLogPerAPI.Checked                := false;
   CheckBoxPassThroughExitCode.Checked      := false;
 
+  CheckBoxLimitNumberOfExecutionTime.Checked := false;
+  NumberBoxLineExecutionCount.ValueInt       := 1;
+
   CheckBoxRelativePaths.Checked := false;
   CheckListBoxSource.Items.Clear;
   MemoScriptPreview.Lines.Clear;
@@ -1451,6 +1513,11 @@ begin
 
   PreInitCodeCoverageExe;
   UpdateEMMACheckBoxEnableStates;
+end;
+
+procedure TFormMain.crd_ClassPrefixExcludesEnter(Sender: TObject);
+begin
+  LabelTop.Caption := rClassPrefixExcludes;
 end;
 
 procedure TFormMain.crd_MiscSettingsEnter(Sender: TObject);

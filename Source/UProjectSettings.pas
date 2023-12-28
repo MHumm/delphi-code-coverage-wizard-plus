@@ -32,7 +32,7 @@ uses
 
 type
   /// <summary>
-  ///   One entry in the lsit of source files to analyze
+  ///   One entry in the list of source files to analyze
   /// </summary>
   TProgramSourceFileItem = class(TInterfacedObject, IProgramSourceFileItem)
   strict private
@@ -327,6 +327,7 @@ type
     /// </summary>
     [SettingsAttribute('SourceCodeFiles', 'CodePage')]
     FCodePage             : Integer;
+
     /// <summary>
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
@@ -403,6 +404,12 @@ type
     FAdditionalParIndex   : Integer;
 
     /// <summary>
+    ///   Code page for the source code files, only used if not 0
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'ExcludedClassPrefixes')]
+    FExcludedClassPrefixes : string;
+
+    /// <summary>
     ///   Write log messages to textfile in report output folder
     /// </summary>
     [SettingsAttribute('MiscSettings', 'LogToTextFile')]
@@ -418,6 +425,27 @@ type
     /// </summary>
     [SettingsAttribute('MiscSettings', 'PassThroughExitCode')]
     FPassTroughExitCode     : Boolean;
+
+    /// <summary>
+    ///   Turn using number of times a line is executed up to the specified limit
+    ///   parameter on or off
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'UseNumberOfTimesLineExecutes')]
+    FUseNumberOfLineExecutes : Boolean;
+
+    /// <summary>
+    ///   Number of times a line is executed up to the specified limit
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'NumberOfTimesLineExecutes')]
+    FNumberOfLineExecutes    : UInt32;
+
+    /// <summary>
+    ///   When true the file extension for a unit is included, wen off it will
+    ///   get hidden, but has the consequences in cases like Common.Encodings.pas
+    ///   to remove Encodings.pas and not only .pas
+    /// </summary>
+    [SettingsAttribute('MiscSettings', 'IncludeFileExtension')]
+    FIncludeFileExtension    : Boolean;
 
     /// <summary>
     ///   Name of the saved or loaded project file
@@ -648,6 +676,48 @@ type
     ///   be placed within the generated batch file.
     /// </summary>
     procedure SetAdditionalParIndex(const Value: Integer);
+    /// <summary>
+    ///   Returns the "number of times a code line is executed" setting value
+    /// </summary>
+    function GetNumberOfLineExecutes: UInt32;
+    /// <summary>
+    ///   Sets the "number of times a code line is executed" setting value
+    /// </summary>
+    procedure SetNumberOfLineExecutes(const Value: UInt32);
+    /// <summary>
+    ///   Gets the value of the on/off switch of the limit number of execution
+    ///   times setting
+    /// </summary>
+    function GetUseNumberOfLineExecutes: Boolean;
+    /// <summary>
+    ///   Sets the value of the on/off switch of the limit number of execution
+    ///   times setting
+    /// </summary>
+    procedure SetUseNumberOfLineExecutes(const Value: Boolean);
+    /// <summary>
+    ///   Returns the class prefixes to exclude from processing. The list is
+    ///   cr/lf formatted
+    /// </summary>
+    function GetExcludedClassPrefixes: string;
+    /// <summary>
+    ///   Sets the class prefixes to exclude from processing. The list is
+    ///   cr/lf formatted
+    /// </summary>
+    procedure SetExcludedClassPrefixes(const Value: string);
+    /// <summary>
+    ///   Returns the value for the file extension include setting.
+    ///   When true the file extension for a unit is included, wen off it will
+    ///   get hidden, but has the consequences in cases like Common.Encodings.pas
+    ///   to remove Encodings.pas and not only .pas
+    /// </summary>
+    function GetIncludeFileExtension: Boolean;
+    /// <summary>
+    ///   Sets the file extension include setting.
+    ///   When true the file extension for a unit is included, wen off it will
+    ///   get hidden, but has the consequences in cases like Common.Encodings.pas
+    ///   to remove Encodings.pas and not only .pas
+    /// </summary>
+    procedure SetIncludeFileExtension(const Value: Boolean);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -776,6 +846,21 @@ type
       read   GetCodePage
       write  SetCodePage;
     /// <summary>
+    ///   Class prefixes to exclude from processing, cr/lf delimited
+    /// </summary>
+    property ExcludedClassPrefixes : string
+      read   GetExcludedClassPrefixes
+      write  SetExcludedClassPrefixes;
+
+    /// <summary>
+    ///   When true the file extension for a unit is included, wen off it will
+    ///   get hidden, but has the consequences in cases like Common.Encodings.pas
+    ///   to remove Encodings.pas and not only .pas
+    /// </summary>
+    property IncludeFileExtension : Boolean
+      read   GetIncludeFileExtension
+      write  SetIncludeFileExtension;
+    /// <summary>
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
     /// </summary>
@@ -888,6 +973,21 @@ type
     property PassTroughExitCode     : Boolean
       read   GetPassTroughExitCode
       write  SetPassTroughExitCode;
+
+    /// <summary>
+    ///   Turn using number of times a line is executed up to the specified limit
+    ///   parameter on or off
+    /// </summary>
+    property UseNumberOfLineExecutes : Boolean
+      read   GetUseNumberOfLineExecutes
+      write  SetUseNumberOfLineExecutes;
+
+    /// <summary>
+    ///   Number of times a line is executed up to the specified limit
+    /// </summary>
+    property NumberOfLineExecutes   : UInt32
+      read   GetNumberOfLineExecutes
+      write  SetNumberOfLineExecutes;
   published
     // Necessary to be able to use RTTI for this one
 
@@ -980,9 +1080,19 @@ begin
   Result := FExeCommandLineParams;
 end;
 
+function TProjectSettings.GetExcludedClassPrefixes: string;
+begin
+  Result := FExcludedClassPrefixes;
+end;
+
 function TProjectSettings.GetFileName: string;
 begin
   Result := FFileName;
+end;
+
+function TProjectSettings.GetIncludeFileExtension: Boolean;
+begin
+  Result := FIncludeFileExtension;
 end;
 
 function TProjectSettings.GetLogToOutputDebugString: Boolean;
@@ -998,6 +1108,11 @@ end;
 function TProjectSettings.GetMapFile: TFilename;
 begin
   Result := FMapFile;
+end;
+
+function TProjectSettings.GetNumberOfLineExecutes: UInt32;
+begin
+  Result := FNumberOfLineExecutes;
 end;
 
 function TProjectSettings.GetOutputFormats: TOutputFormatSet;
@@ -1223,6 +1338,16 @@ begin
   FExeCommandLineParams := Value;
 end;
 
+procedure TProjectSettings.SetIncludeFileExtension(const Value: Boolean);
+begin
+  FIncludeFileExtension := Value;
+end;
+
+procedure TProjectSettings.SetExcludedClassPrefixes(const Value: string);
+begin
+  FExcludedClassPrefixes := Value;
+end;
+
 procedure TProjectSettings.SetLogToOutputDebugString(const Value: Boolean);
 begin
   FLogToOutputDebugString := Value;
@@ -1236,6 +1361,11 @@ end;
 procedure TProjectSettings.SetMapFile(const Value: TFilename);
 begin
   FMapFIle := Value;
+end;
+
+procedure TProjectSettings.SetNumberOfLineExecutes(const Value: UInt32);
+begin
+  FNumberOfLineExecutes := Value;
 end;
 
 procedure TProjectSettings.SetOutputFormats(const Value: TOutputFormatSet);
@@ -1293,6 +1423,11 @@ begin
   FUseExeDirAsWorkDir := Value;
 end;
 
+procedure TProjectSettings.SetUseNumberOfLineExecutes(const Value: Boolean);
+begin
+  FUseNumberOfLineExecutes := Value;
+end;
+
 procedure TProjectSettings.SetXMLJacocoFormat(const Value: Boolean);
 begin
   FXMLJacocoFormat := Value;
@@ -1329,6 +1464,11 @@ end;
 function TProjectSettings.GetUseExeDirAsWorkDir: Boolean;
 begin
   Result := FUseExeDirAsWorkDir;
+end;
+
+function TProjectSettings.GetUseNumberOfLineExecutes: Boolean;
+begin
+  Result := FUseNumberOfLineExecutes;
 end;
 
 function TProjectSettings.GetXMLJacocoFormat: Boolean;

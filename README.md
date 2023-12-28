@@ -22,8 +22,8 @@ until you either have covered all lines of your code by unit tests or have only
 those lines missing which would be really hard to cover.
 
 ## Which Delphi versions are compatible?
-The current version 2.0 is compatible with Delphi 11.x Alexandria and most
-likely with 10.4.x Sydney.
+The current version 2.1 is compatible with Delphi 12.0 Athens, 11.x Alexandria 
+and most likely with 10.4.x Sydney.
 
 ## Where can I get further information? For example if I'd like to contribute?
 In the root folder of the project you will find further files with information about 
