@@ -329,6 +329,18 @@ type
     FCodePage             : Integer;
 
     /// <summary>
+    ///   List of excluded file masks -esm
+    /// </summary>
+    [SettingsAttribute('SourceCodeFiles', 'ExcludedFileMasks')]
+    FExcludedFileMasks : string;
+
+    /// <summary>
+    ///   List of excluded file masks -ism
+    /// </summary>
+    [SettingsAttribute('SourceCodeFiles', 'IncludedFileMasks')]
+    FIncludedFileMasks : string;
+
+    /// <summary>
     ///   Path where the batch file to call the code coverage cmd line tool will
     ///   be stored.
     /// </summary>
@@ -718,6 +730,25 @@ type
     ///   to remove Encodings.pas and not only .pas
     /// </summary>
     procedure SetIncludeFileExtension(const Value: Boolean);
+
+    /// <summary>
+    ///   Returns the list of excluded file masks
+    /// </summary>
+    function GetExcludedFileMasks: string;
+    /// <summary>
+    ///   Returns the list of included file masks, means: only those listed
+    ///   here are processed, no matter which other units have been specified
+    /// </summary>
+    function GetIncludedFileMasks: string;
+    /// <summary>
+    ///   Sets the list of excluded file masks
+    /// </summary>
+    procedure SetExcludedFileMasks(const Value: string);
+    /// <summary>
+    ///   Sets the list of included file masks, means: only those listed
+    ///   here are processed, no matter which other units have been specified
+    /// </summary>
+    procedure SetIncludedFileMasks(const Value: string);
   public
     /// <summary>
     ///   Creates the instance and its internal objects and preinitializes the
@@ -845,6 +876,21 @@ type
     property CodePage : Integer
       read   GetCodePage
       write  SetCodePage;
+
+    /// <summary>
+    ///   List of excluded file masks -esm
+    /// </summary>
+    property ExcludedFileMasks : string
+      read   GetExcludedFileMasks
+      write  SetExcludedFileMasks;
+
+    /// <summary>
+    ///   List of excluded file masks -ism
+    /// </summary>
+    property IncludedFileMasks : string
+      read   GetIncludedFileMasks
+      write  SetIncludedFileMasks;
+
     /// <summary>
     ///   Class prefixes to exclude from processing, cr/lf delimited
     /// </summary>
@@ -1085,9 +1131,19 @@ begin
   Result := FExcludedClassPrefixes;
 end;
 
+function TProjectSettings.GetExcludedFileMasks: string;
+begin
+
+end;
+
 function TProjectSettings.GetFileName: string;
 begin
   Result := FFileName;
+end;
+
+function TProjectSettings.GetIncludedFileMasks: string;
+begin
+
 end;
 
 function TProjectSettings.GetIncludeFileExtension: Boolean;
@@ -1338,6 +1394,11 @@ begin
   FExeCommandLineParams := Value;
 end;
 
+procedure TProjectSettings.SetIncludedFileMasks(const Value: string);
+begin
+  FIncludedFileMasks := Value;
+end;
+
 procedure TProjectSettings.SetIncludeFileExtension(const Value: Boolean);
 begin
   FIncludeFileExtension := Value;
@@ -1346,6 +1407,11 @@ end;
 procedure TProjectSettings.SetExcludedClassPrefixes(const Value: string);
 begin
   FExcludedClassPrefixes := Value;
+end;
+
+procedure TProjectSettings.SetExcludedFileMasks(const Value: string);
+begin
+  FExcludedFileMasks := Value;
 end;
 
 procedure TProjectSettings.SetLogToOutputDebugString(const Value: Boolean);

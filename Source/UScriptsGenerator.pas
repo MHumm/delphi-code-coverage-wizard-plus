@@ -147,6 +147,12 @@ begin
     BatchParts.Add('-od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));
     BatchParts.Add('-v'); // verbose output
 
+    if not FSettings.ExcludedFileMasks.IsEmpty then
+      BatchParts.Add('-esm '  + FSettings.ExcludedFileMasks);
+
+    if not FSettings.IncludedFileMasks.IsEmpty then
+      BatchParts.Add('-ism '  + FSettings.IncludedFileMasks);
+
     if FSettings.LogToTextFile then
       BatchParts.Add('-lt '  + LogFileName);
 

@@ -139,8 +139,8 @@ type
     EditCommandLineParams: TEdit;
     ScrollBoxUnitTestExecutable: TScrollBox;
     ButtonSaveAs: TButton;
-    LabelCodePage: TLabel;
-    EditCodePage: TEdit;
+    LabelExcludeMasks: TLabel;
+    EditExcludeMasks: TEdit;
     PMRemoveInexisting: TMenuItem;
     TimerSourcePath: TTimer;
     Label3AdditionalParamIndex: TLabel;
@@ -158,6 +158,10 @@ type
     b_DeleteSelectedClassExclusionMasks: TButton;
     MemoClassPrefixExcluded: TMemo;
     CheckBoxIncludeFileExtension: TCheckBox;
+    Label4: TLabel;
+    EditIncludeMasks: TEdit;
+    LabelCodePage: TLabel;
+    EditCodePage: TEdit;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -236,6 +240,8 @@ type
     procedure MemoClassPrefixExcludedChange(Sender: TObject);
     procedure crd_ClassPrefixExcludesEnter(Sender: TObject);
     procedure CheckBoxIncludeFileExtensionClick(Sender: TObject);
+    procedure EditExcludeMasksChange(Sender: TObject);
+    procedure EditIncludeMasksChange(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -854,6 +860,8 @@ begin
     finally
       EditSourcePath.OnChange   := OnChangeBackup;
     end;
+    EditExcludeMasks.Text       := FProject.ExcludedFileMasks;
+    EditIncludeMasks.Text       := FProject.IncludedFileMasks;
     EditCodePage.Text           := FProject.CodePage.ToString;
 
     EditScriptOutputFolder.Text         := FProject.ScriptsOutputPath;
@@ -1058,6 +1066,11 @@ begin
   FProject.ExeCommandLineParams := (Sender as TEdit).Text;
 end;
 
+procedure TFormMain.EditExcludeMasksChange(Sender: TObject);
+begin
+  FProject.ExcludedFileMasks := (Sender as TEdit).Text;
+end;
+
 procedure TFormMain.EditExeFileChange(Sender: TObject);
 begin
   FProject.ExecutableToAnalyze := (Sender As TEdit).Text;
@@ -1071,6 +1084,11 @@ begin
   end;
 
   DisplayExeMapInputStatus;
+end;
+
+procedure TFormMain.EditIncludeMasksChange(Sender: TObject);
+begin
+  FProject.IncludedFileMasks := (Sender as TEdit).Text;
 end;
 
 procedure TFormMain.EditMapFileChange(Sender: TObject);

@@ -603,6 +603,27 @@ type
     /// </summary>
     procedure SetIncludeFileExtension(const Value: Boolean);
 
+
+    /// <summary>
+    ///   Returns the list of excluded file masks
+    /// </summary>
+    function GetExcludedFileMasks: string;
+    /// <summary>
+    ///   Sets the list of excluded file masks
+    /// </summary>
+    procedure SetExcludedFileMasks(const Value: string);
+
+    /// <summary>
+    ///   Returns the list of included file masks, means: only those listed
+    ///   here are processed, no matter which other units have been specified
+    /// </summary>
+    function GetIncludedFileMasks: string;
+    /// <summary>
+    ///   Sets the list of included file masks, means: only those listed
+    ///   here are processed, no matter which other units have been specified
+    /// </summary>
+    procedure SetIncludedFileMasks(const Value: string);
+
     /// <summary>
     ///   Checks whether both exe-file name and map-file name are defined.
     /// </summary>
@@ -708,6 +729,18 @@ type
     property ProgramSourceFiles : IProgramSourceFiles
       read   GetProgramSourceFiles
       write  SetProgramSourceFiles;
+    /// <summary>
+    ///   List of excluded file masks -esm
+    /// </summary>
+    property ExcludedFileMasks : string
+      read   GetExcludedFileMasks
+      write  SetExcludedFileMasks;
+    /// <summary>
+    ///   List of excluded file masks -ism
+    /// </summary>
+    property IncludedFileMasks : string
+      read   GetIncludedFileMasks
+      write  SetIncludedFileMasks;
     /// <summary>
     ///   Code page for the source code files, only used if not 0
     /// </summary>
@@ -865,7 +898,7 @@ type
       write  SetExcludedClassPrefixes;
 
     /// <summary>
-    ///   When true the file extension for a unit is included, wen off it will
+    ///   When true the file extension for a unit is included, when off it will
     ///   get hidden, but has the consequences in cases like Common.Encodings.pas
     ///   to remove Encodings.pas and not only .pas
     /// </summary>

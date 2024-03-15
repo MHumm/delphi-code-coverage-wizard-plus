@@ -198,7 +198,7 @@ object FormMain: TFormMain
         Width = 424
         Height = 394
         Anchors = [akLeft, akTop, akRight, akBottom]
-        ActiveCard = crd_MiscSettings
+        ActiveCard = crd_Source
         BevelEdges = [beBottom]
         BevelOuter = bvNone
         Caption = 'cp_Wizard'
@@ -361,15 +361,29 @@ object FormMain: TFormMain
             Caption = 'Directory with the source files of the project to analyze'
           end
           object LabelSourceFilesCaption: TLabel
-            Left = 8
-            Top = 107
+            Left = 6
+            Top = 187
             Width = 116
             Height = 15
             Caption = 'Source files to analyze'
           end
-          object LabelCodePage: TLabel
+          object LabelExcludeMasks: TLabel
             Left = 8
             Top = 78
+            Width = 200
+            Height = 15
+            Caption = 'File masks to exclude (optional, -esm)'
+          end
+          object Label4: TLabel
+            Left = 8
+            Top = 118
+            Width = 236
+            Height = 15
+            Caption = 'Include only units listed here (optional, -ism)'
+          end
+          object LabelCodePage: TLabel
+            Left = 8
+            Top = 158
             Width = 260
             Height = 15
             Caption = 'Code page (optional, leave empty otherwise, -cp)'
@@ -398,12 +412,12 @@ object FormMain: TFormMain
           end
           object CheckListBoxSource: TCheckListBox
             Left = 8
-            Top = 128
+            Top = 208
             Width = 406
-            Height = 213
+            Height = 133
             Anchors = [akLeft, akTop, akRight, akBottom]
             ItemHeight = 17
-            TabOrder = 3
+            TabOrder = 5
             OnClickCheck = CheckListBoxSourceClickCheck
           end
           object b_SelectAll: TButton
@@ -418,7 +432,7 @@ object FormMain: TFormMain
             ImageName = 'Actions-edit-select-all-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 4
+            TabOrder = 6
             OnClick = b_SelectAllClick
           end
           object b_DeselectAll: TButton
@@ -433,7 +447,7 @@ object FormMain: TFormMain
             ImageName = 'Actions-edit-clear-list-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 5
+            TabOrder = 7
             OnClick = b_DeselectAllClick
           end
           object b_RefreshSourceFiles: TButton
@@ -448,16 +462,39 @@ object FormMain: TFormMain
             ImageName = 'Actions-view-refresh-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 6
+            TabOrder = 8
             OnClick = b_RefreshSourceFilesClick
           end
-          object EditCodePage: TEdit
-            Left = 295
+          object EditExcludeMasks: TEdit
+            Left = 280
             Top = 75
+            Width = 137
+            Height = 23
+            Hint = 'File masks, space delimited'
+            Anchors = [akLeft, akTop, akRight]
+            NumbersOnly = True
+            TabOrder = 2
+            OnChange = EditExcludeMasksChange
+          end
+          object EditIncludeMasks: TEdit
+            Left = 280
+            Top = 115
+            Width = 137
+            Height = 23
+            Hint = 
+              'If used only include files matching the file masks specified her' +
+              'e'
+            NumbersOnly = True
+            TabOrder = 3
+            OnChange = EditIncludeMasksChange
+          end
+          object EditCodePage: TEdit
+            Left = 280
+            Top = 155
             Width = 66
             Height = 23
             NumbersOnly = True
-            TabOrder = 2
+            TabOrder = 4
             OnChange = EditCodePageChange
           end
         end
@@ -1362,7 +1399,7 @@ object FormMain: TFormMain
     ImageCollection = dm_Icons.ImageCollection
     Width = 32
     Height = 32
-    Left = 521
+    Left = 513
     Top = 105
   end
   object VirtualImageListButtons16: TVirtualImageList
@@ -1450,7 +1487,7 @@ object FormMain: TFormMain
       end>
     ImageCollection = dm_Icons.ImageCollection
     Left = 362
-    Top = 102
+    Top = 104
   end
   object FileOpenDialogProject: TFileOpenDialog
     ClientGuid = '{7CE6B840-18A0-43F6-A6AB-F59FF4579DF5}'
