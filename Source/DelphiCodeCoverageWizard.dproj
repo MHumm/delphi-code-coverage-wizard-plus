@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{EB221752-E7EB-4749-8EFD-863662B9B3D5}</ProjectGuid>
-        <ProjectVersion>20.1</ProjectVersion>
+        <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -77,14 +77,14 @@
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.9;InternalName=;LegalCopyright=© 2022-2024 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.10;InternalName=;LegalCopyright=© 2022-2025 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <DCC_DcuOutput>..\Binaries\$(Platform)\$(Config)</DCC_DcuOutput>
         <DCC_ExeOutput>..\Binaries\$(Platform)\$(Config)</DCC_ExeOutput>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
-        <VerInfo_Build>9</VerInfo_Build>
+        <VerInfo_Build>10</VerInfo_Build>
         <PostBuildEvent><![CDATA[if exist "$(BDS)\Redist\win32\WebView2Loader.dll" (copy /Y "$(BDS)\Redist\win32\WebView2Loader.dll" "$(OUTPUTDIR)")
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
@@ -96,12 +96,12 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <BT_BuildType>Debug</BT_BuildType>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.9;InternalName=;LegalCopyright=© 2022-2024 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.10;InternalName=;LegalCopyright=© 2022-2025 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
         <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
-        <VerInfo_Build>9</VerInfo_Build>
+        <VerInfo_Build>10</VerInfo_Build>
         <PostBuildEvent><![CDATA[if exist "$(BDS)\Redist\win32\WebView2Loader.dll" (copy /Y "$(BDS)\Redist\win32\WebView2Loader.dll" "$(OUTPUTDIR)")
 $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
@@ -126,9 +126,9 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_DcuOutput>..\Binaries\$(Platform)\$(Config)</DCC_DcuOutput>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
-        <VerInfo_Build>9</VerInfo_Build>
+        <VerInfo_Build>10</VerInfo_Build>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.9;InternalName=;LegalCopyright=© 2022-2024 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.10;InternalName=;LegalCopyright=© 2022-2025 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
     </PropertyGroup>
@@ -136,11 +136,11 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
-        <VerInfo_Build>9</VerInfo_Build>
+        <VerInfo_Build>10</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.9;InternalName=;LegalCopyright=© 2022-2024 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.10;InternalName=;LegalCopyright=© 2022-2025 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -155,21 +155,21 @@ $(PostBuildEvent)]]></PostBuildEvent>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
-        <VerInfo_Build>9</VerInfo_Build>
+        <VerInfo_Build>10</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.9;InternalName=;LegalCopyright=© 2022-2024 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.10;InternalName=;LegalCopyright=© 2022-2025 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
-        <VerInfo_Build>9</VerInfo_Build>
+        <VerInfo_Build>10</VerInfo_Build>
         <VerInfo_AutoIncVersion>true</VerInfo_AutoIncVersion>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Icon_MainIcon>..\Icons\CodeCoverageWizard.ico</Icon_MainIcon>
-        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.9;InternalName=;LegalCopyright=© 2022-2024 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=Delphi Code Coverage Wizard Plus;FileVersion=2.2.0.10;InternalName=;LegalCopyright=© 2022-2025 Markus Humm and Team DCCWP;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=2.2.0.0;Comments=</VerInfo_Keys>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
     </PropertyGroup>
     <ItemGroup>
@@ -222,17 +222,12 @@ $(PostBuildEvent)]]></PostBuildEvent>
                     <Source Name="MainSource">DelphiCodeCoverageWizard.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k370.bpl">Microsoft Office 2000 Beispiele für gekapselte Komponenten für Automatisierungsserver</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp370.bpl">Microsoft Office XP Beispiele für gekapselte Komponenten für Automation Server</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="4">
-                <DeployFile LocalName="..\Binaries\Win32\Debug\DelphiCodeCoverageWizard.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>DelphiCodeCoverageWizard.exe</RemoteName>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
+            <Deployment Version="5">
+                <DeployFile LocalName="..\Binaries\Win32\Debug\DelphiCodeCoverageWizard.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
@@ -245,16 +240,6 @@ $(PostBuildEvent)]]></PostBuildEvent>
                         <Operation>0</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="AndroidClasses">
-                    <Platform Name="Android">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
-                    </Platform>
-                    <Platform Name="Android64">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
-                    </Platform>
-                </DeployClass>
                 <DeployClass Name="AndroidFileProvider">
                     <Platform Name="Android">
                         <RemoteDir>res\xml</RemoteDir>
@@ -262,12 +247,6 @@ $(PostBuildEvent)]]></PostBuildEvent>
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>res\xml</RemoteDir>
-                        <Operation>1</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidGDBServer">
-                    <Platform Name="Android">
-                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -360,6 +339,16 @@ $(PostBuildEvent)]]></PostBuildEvent>
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>res\values-v31</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashStylesV35">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values-v35</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>res\values-v35</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>

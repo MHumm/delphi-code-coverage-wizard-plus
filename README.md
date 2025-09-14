@@ -46,6 +46,9 @@ display a dialog you can use to add it to the Tools menus of all Delphi versions
 it finds on your computer. It will additionally ask if it shall associate the .DCCP project 
 file extension with the tool so you can open these files directly from file Explorer.
 
+Alternatively search for it in getIt package manager under Tools/GetIt package manager
+and install from there.
+
 ## How to use it?
 
 1. Make sure your project has detailed MAP-file generation turned on in linker settings.
