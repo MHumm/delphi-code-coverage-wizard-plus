@@ -468,6 +468,16 @@ type
     /// </summary>
     procedure SetProgramSourceFiles(const Value: IProgramSourceFiles);
     /// <summary>
+    ///   Returns the name of the DPROJ file used to specify what to test, only
+    ///   if used
+    /// </summary>
+    function  GetProjectFileName: string;
+    /// <summary>
+    ///   Sets the name of the DPROJ file used to specify what to test, only
+    ///   if used
+    /// </summary>
+    procedure SetProjectFileName(const Value: string);
+    /// <summary>
     ///   Sets the path to which the batch file and the other files to be
     ///   generated will be written to
     /// </summary>
@@ -729,6 +739,12 @@ type
     property ProgramSourceFiles : IProgramSourceFiles
       read   GetProgramSourceFiles
       write  SetProgramSourceFiles;
+    /// <summary>
+    ///   Name of the DPROJ file used to specify what to test, only if used
+    /// </summary>
+    property ProjectFileName : string
+      read   GetProjectFileName
+      write  SetProjectFileName;
     /// <summary>
     ///   List of excluded file masks -esm
     /// </summary>

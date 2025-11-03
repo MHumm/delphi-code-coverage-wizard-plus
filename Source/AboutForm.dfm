@@ -56,14 +56,14 @@ object FormAbout: TFormAbout
   object Label3: TLabel
     Left = 96
     Top = 64
-    Width = 364
+    Width = 365
     Height = 15
     Caption = #169' 2022-2025 Markus Humm and Team Delphi Code Coverage Wizard'
   end
   object Label4: TLabel
     Left = 16
     Top = 110
-    Width = 234
+    Width = 236
     Height = 30
     Caption = 
       'Based on the following works:'#13'Delphi Code Coverage Wizard from T' +
@@ -72,25 +72,25 @@ object FormAbout: TFormAbout
   object Label5: TLabel
     Left = 16
     Top = 166
-    Width = 271
+    Width = 273
     Height = 15
-    Caption = 'and an older version of Delphi Code Coverage from'
+    Caption = 'and an some version of Delphi Code Coverage from'
   end
   object LabelCmdLineParams: TLabel
     Left = 16
     Top = 212
-    Width = 444
+    Width = 455
     Height = 109
     Anchors = [akLeft, akTop, akRight]
     AutoSize = False
     Caption = 
-      'Available command line parameter:'#13'-? : shows this screen'#13'-O <Fil' +
-      'eName> : opens the specified project file, either a DCCP file or' +
-      ' if a dpr/dproj '#13'  is specified a corresponding DCCP file, if on' +
-      'e is found in the same directory'#13'- R <FileName> : opens and dire' +
-      'ctly runs the specified project file, either a DCCP '#13'   file or ' +
-      'if a dpr/dproj is specified a corresponding DCCP file, if one is' +
-      ' found in the '#13'   same directory'
+      'Available command line parameter:'#13#10'-? : shows this screen'#13#10'-O <F' +
+      'ileName> : opens the specified project file, either a DCCP file ' +
+      'or if a dpr/dproj '#13#10'  is specified a corresponding DCCP file, if' +
+      ' one is found in the same directory'#13#10'- R <FileName> : opens and ' +
+      'directly runs the specified project file, either a DCCP '#13#10'   fil' +
+      'e or if a dpr/dproj is specified a corresponding DCCP file, if o' +
+      'ne is found in the '#13#10'   same directory'
     WordWrap = True
   end
   object PanelBottom: TPanel

@@ -142,6 +142,9 @@ begin
     BatchParts.Add('-sd '  + GetPath(FSettings.ProgramSourceBasePath).QuotedString('"'));
     BatchParts.Add('-ife');
 
+    if not FSettings.ProjectFileName.IsEmpty then
+      BatchParts.Add('-dproj ' + GetPath(FSettings.ProjectFileName).QuotedString('"'));
+
     BatchParts.Add('-uf '  + (OutputPath + '_dcov_units.lst').QuotedString('"'));
     BatchParts.Add('-spf ' + (OutputPath + '_dcov_paths.lst').QuotedString('"'));
     BatchParts.Add('-od '  + GetPath(FSettings.ReportOutputPath).QuotedString('"'));

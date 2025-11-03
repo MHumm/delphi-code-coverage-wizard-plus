@@ -476,9 +476,9 @@ begin
   if (BDSVersion = '22.0') then
     Exit('11.x Alexandria');
   if (BDSVersion = '21.0') then
-    Exit('10.4 Sydney');
+    Exit('10.4.x Sydney');
   if (BDSVersion = '20.0') then
-    Exit('10.3 Rio');
+    Exit('10.3.x Rio');
   if (BDSVersion = '19.0') then
     Exit('10.2 Tokyo');
   if (BDSVersion = '18.0') then

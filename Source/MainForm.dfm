@@ -5,7 +5,7 @@ object FormMain: TFormMain
   ClientHeight = 505
   ClientWidth = 624
   Color = clBtnFace
-  Constraints.MinHeight = 426
+  Constraints.MinHeight = 500
   Constraints.MinWidth = 636
   DoubleBuffered = True
   Font.Charset = DEFAULT_CHARSET
@@ -236,14 +236,14 @@ object FormMain: TFormMain
             object LabelCodeCoveragePath: TLabel
               Left = 8
               Top = 176
-              Width = 140
+              Width = 139
               Height = 15
               Caption = 'Path to CodeCoverage.exe'
             end
             object LabelUnitTestExe: TLabel
               Left = 8
               Top = 24
-              Width = 212
+              Width = 211
               Height = 15
               Caption = 'Executable file of the unit test to analyze'
             end
@@ -361,16 +361,18 @@ object FormMain: TFormMain
             Caption = 'Directory with the source files of the project to analyze'
           end
           object LabelSourceFilesCaption: TLabel
-            Left = 6
+            Left = 5
             Top = 187
-            Width = 116
+            Width = 321
             Height = 15
-            Caption = 'Source files to analyze'
+            Caption = 
+              'Project file (.dproj) (optional instead of source file to analyz' +
+              'e)'
           end
           object LabelExcludeMasks: TLabel
             Left = 8
             Top = 78
-            Width = 200
+            Width = 199
             Height = 15
             Caption = 'File masks to exclude (optional, -esm)'
           end
@@ -387,6 +389,13 @@ object FormMain: TFormMain
             Width = 260
             Height = 15
             Caption = 'Code page (optional, leave empty otherwise, -cp)'
+          end
+          object Label5: TLabel
+            Left = 5
+            Top = 232
+            Width = 116
+            Height = 15
+            Caption = 'Source files to analyze'
           end
           object EditSourcePath: TEdit
             Left = 8
@@ -411,12 +420,12 @@ object FormMain: TFormMain
             OnClick = ButtonSourcePathClick
           end
           object CheckListBoxSource: TCheckListBox
-            Left = 8
-            Top = 208
+            Left = 6
+            Top = 253
             Width = 406
-            Height = 133
+            Height = 88
             Anchors = [akLeft, akTop, akRight, akBottom]
-            ItemHeight = 17
+            ItemHeight = 15
             TabOrder = 5
             OnClickCheck = CheckListBoxSourceClickCheck
           end
@@ -497,6 +506,28 @@ object FormMain: TFormMain
             TabOrder = 4
             OnChange = EditCodePageChange
           end
+          object EditDelphiProjectFile: TEdit
+            Left = 5
+            Top = 208
+            Width = 352
+            Height = 23
+            Anchors = [akLeft, akTop, akRight]
+            TabOrder = 9
+            OnChange = EditDelphiProjectFileChange
+          end
+          object ButtonProjectFile: TButton
+            Left = 363
+            Top = 207
+            Width = 50
+            Height = 25
+            Anchors = [akTop, akRight]
+            ImageAlignment = iaCenter
+            ImageIndex = 2
+            ImageName = 'Actions-document-open-folder-icon'
+            Images = VirtualImageListButtons16
+            TabOrder = 10
+            OnClick = ButtonProjectFileClick
+          end
         end
         object crd_Output: TCard
           Left = 0
@@ -538,14 +569,14 @@ object FormMain: TFormMain
             object LabelReportOutputPath: TLabel
               Left = 5
               Top = 69
-              Width = 317
+              Width = 318
               Height = 15
               Caption = 'Save generated reports (HTML, XML, EMMA...) to this folder:'
             end
             object LabelScriptOutputPath: TLabel
               Left = 5
               Top = 5
-              Width = 350
+              Width = 349
               Height = 15
               Caption = 'Batch output folder (files needed to execute DelphiCodeCoverage)'
             end
@@ -745,7 +776,7 @@ object FormMain: TFormMain
             object LabelMiscSettingsNote: TLabel
               Left = 8
               Top = 16
-              Width = 396
+              Width = 395
               Height = 15
               Caption = 
                 'Note: Be sure to have '#39'CodeCoverage.exe'#39' in your path or in the ' +
@@ -776,7 +807,7 @@ object FormMain: TFormMain
             object Label3AdditionalParamIndex: TLabel
               Left = 8
               Top = 80
-              Width = 164
+              Width = 163
               Height = 15
               Caption = 'Index of additional parameters:'
             end
@@ -1110,7 +1141,7 @@ object FormMain: TFormMain
           Align = alClient
           Caption = 'LabelTop'
           WordWrap = True
-          ExplicitWidth = 47
+          ExplicitWidth = 48
           ExplicitHeight = 15
         end
       end
@@ -1646,5 +1677,23 @@ object FormMain: TFormMain
     HideAfter = 3000
     Left = 80
     Top = 168
+  end
+  object FileOpenDialogDelphiProject: TFileOpenDialog
+    ClientGuid = '{D884646C-C408-4FC6-B8B4-90015E5F98D6}'
+    DefaultExtension = 'dproj'
+    FavoriteLinks = <>
+    FileTypes = <
+      item
+        DisplayName = 'Delphi project group'
+        FileMask = '*.dproj'
+      end
+      item
+        DisplayName = 'Any file'
+        FileMask = '*.*'
+      end>
+    Options = [fdoForceFileSystem, fdoPathMustExist, fdoFileMustExist, fdoDefaultNoMiniMode]
+    Title = 'Open Delphi project file'
+    Left = 514
+    Top = 366
   end
 end

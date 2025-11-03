@@ -322,6 +322,13 @@ type
     ///   which ones are actually selected to be included in the analysis.
     /// </summary>
     FProgramSourceFiles   : IProgramSourceFiles;
+
+    /// <summary>
+    ///   Name of the DPROJ file used to specify what to test, only if used
+    /// </summary>
+    [SettingsAttribute('SourceCodeFiles', 'ProjectFile')]
+    FProjectFileName      : string;
+
     /// <summary>
     ///   Code page for the source code files, only used if not 0
     /// </summary>
@@ -546,6 +553,16 @@ type
     ///   Sets the list of defined source code files for analysis
     /// </summary>
     procedure SetProgramSourceFiles(const Value: IProgramSourceFiles);
+    /// <summary>
+    ///   Returns the name of the DPROJ file used to specify what to test, only
+    ///   if used
+    /// </summary>
+    function  GetProjectFileName: string;
+    /// <summary>
+    ///   Sets the name of the DPROJ file used to specify what to test, only
+    ///   if used
+    /// </summary>
+    procedure SetProjectFileName(const Value: string);
     /// <summary>
     ///   Returns the path to which the batch file and the other files to be
     ///   generated will be written to
@@ -870,6 +887,13 @@ type
     property ProgramSourceFiles : IProgramSourceFiles
       read   GetProgramSourceFiles
       write  SetProgramSourceFiles;
+    /// <summary>
+    ///   Name of the DPROJ file used to specify what to test, only if used
+    /// </summary>
+    property ProjectFileName : string
+      read   GetProjectFileName
+      write  SetProjectFileName;
+
     /// <summary>
     ///   Code page for the source code files, only used if not 0
     /// </summary>
@@ -1196,6 +1220,11 @@ begin
   Result := FExecutableToAnalyze;
 end;
 
+function TProjectSettings.GetProjectFileName: string;
+begin
+  Result := FProjectFileName;
+end;
+
 function TProjectSettings.IsAnyDataDefined: Boolean;
 begin
   Result := IsExeAndMapDefined or //IsSourcePathAndFilesDefined or
@@ -1223,7 +1252,7 @@ end;
 procedure TProjectSettings.LoadFromXML(const FileName: string);
 var
   LDocument: IXMLDocument;
-  LUnitTestFiles, LSourceFiles, LOutput, LMisc, LNode: IXMLNode;
+  LUnitTestFiles, LSourceFiles, LProjectFile, LOutput, LMisc, LNode: IXMLNode;
   SourceFileName : string;
   IsSelected      : Boolean;
 begin
@@ -1250,18 +1279,23 @@ begin
       LNode := LSourceFiles.ChildNodes.FindNode('SourceFile');
       while Assigned(LNode) do
       begin
-        SourceFileName := LNode.Text;
-        if LNode.HasAttribute('Selected') then
-          IsSelected := StrToBool(LNode.Attributes['Selected'])
+        if (LNode.NodeName = 'ProjectFile') then
+          FProjectFileName := LNode.Text
         else
-          IsSelected := false;
+        begin
+          SourceFileName := LNode.Text;
+          if LNode.HasAttribute('Selected') then
+            IsSelected := StrToBool(LNode.Attributes['Selected'])
+          else
+            IsSelected := false;
 
-        FProgramSourceFiles.AddFile(SourceFileName, IsSelected);
+          FProgramSourceFiles.AddFile(SourceFileName, IsSelected);
+        end;
 
         LNode := LNode.NextSibling;
 
         // Skip code page node
-        if (LNode.NodeName = 'CodePage') then
+        if Assigned(LNode) and (LNode.NodeName = 'CodePage') then
           LNode := LNode.NextSibling;
       end;
     end;
@@ -1469,6 +1503,11 @@ begin
   end;
 end;
 
+procedure TProjectSettings.SetProjectFileName(const Value: string);
+begin
+  FProjectFileName := Value;
+end;
+
 procedure TProjectSettings.SetRelativeToScriptPath(const Value: Boolean);
 begin
   FRelativeToScriptPath := Value;
@@ -1545,7 +1584,7 @@ end;
 procedure TProjectSettings.SaveToXML(const FileName: TFileName);
 var
   LDocument: IXMLDocument;
-  LVersion, LSourceFiles, LOutput, LNodeElement: IXMLNode;
+  LVersion, LSourceFiles, LProjectFile, LOutput, LNodeElement: IXMLNode;
 begin
   Assert(FileName <> '', 'No file name for the XML file specified');
 
@@ -1577,6 +1616,14 @@ begin
     LNodeElement      := LSourceFiles.AddChild('SourceFile', -1);
     LNodeElement.Text := SourceFileItem.Filename;
     LNodeElement.SetAttribute('Selected', BoolToStr(SourceFileItem.Selected, true));
+  end;
+
+  // Project file name
+  if (not FProjectFileName.IsEmpty) then
+  begin
+    LProjectFile      := LDocument.DocumentElement.AddChild('SourceCodeFiles', -1);
+    LNodeElement      := LSourceFiles.AddChild('ProjectFile', -1);
+    LNodeElement.Text := FProjectFileName;
   end;
 
   // Output options

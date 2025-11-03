@@ -1,3 +1,0 @@
-CodeCoverage_x64.exe is still the old version without -ism support
-as I run into a compilation issue regarding JCL with this one, 
-which I still need to clear up.

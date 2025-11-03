@@ -162,6 +162,10 @@ type
     EditIncludeMasks: TEdit;
     LabelCodePage: TLabel;
     EditCodePage: TEdit;
+    Label5: TLabel;
+    EditDelphiProjectFile: TEdit;
+    ButtonProjectFile: TButton;
+    FileOpenDialogDelphiProject: TFileOpenDialog;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -242,6 +246,8 @@ type
     procedure CheckBoxIncludeFileExtensionClick(Sender: TObject);
     procedure EditExcludeMasksChange(Sender: TObject);
     procedure EditIncludeMasksChange(Sender: TObject);
+    procedure ButtonProjectFileClick(Sender: TObject);
+    procedure EditDelphiProjectFileChange(Sender: TObject);
   private
     /// <summary>
     ///   Manages application settings
@@ -615,6 +621,15 @@ begin
   SelectDeselectAllSourceFiles(false);
 end;
 
+procedure TFormMain.ButtonProjectFileClick(Sender: TObject);
+begin
+  if EditDelphiProjectFile.Text <> '' then
+    FileOpenDialogDelphiProject.FileName := EditDelphiProjectFile.Text;
+
+  if FileOpenDialogDelphiProject.Execute then
+    EditDelphiProjectFile.Text := FileOpenDialogDelphiProject.FileName;
+end;
+
 procedure TFormMain.b_RefreshSourceFilesClick(Sender: TObject);
 begin
   FProject.ProgramSourceFiles.UpdateSourceFilesList;
@@ -860,6 +875,15 @@ begin
     finally
       EditSourcePath.OnChange   := OnChangeBackup;
     end;
+
+    OnChangeBackup                 := EditDelphiProjectFile.OnChange;
+    EditDelphiProjectFile.OnChange := nil;
+    try
+      EditDelphiProjectFile.Text   := FProject.ProjectFileName;
+    finally
+      EditDelphiProjectFile.OnChange := OnChangeBackup;
+    end;
+
     EditExcludeMasks.Text       := FProject.ExcludedFileMasks;
     EditIncludeMasks.Text       := FProject.IncludedFileMasks;
     EditCodePage.Text           := FProject.CodePage.ToString;
@@ -1064,6 +1088,11 @@ end;
 procedure TFormMain.EditCommandLineParamsChange(Sender: TObject);
 begin
   FProject.ExeCommandLineParams := (Sender as TEdit).Text;
+end;
+
+procedure TFormMain.EditDelphiProjectFileChange(Sender: TObject);
+begin
+  FProject.ProjectFileName := (Sender as TEdit).Text;
 end;
 
 procedure TFormMain.EditExcludeMasksChange(Sender: TObject);
