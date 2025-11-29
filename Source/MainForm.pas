@@ -96,7 +96,6 @@ type
     FileOpenDialogMap: TFileOpenDialog;
     FileSaveDialogProject: TFileSaveDialog;
     FolderOpenDialog: TFileOpenDialog;
-    LabelSourceFilesCaption: TLabel;
     b_SelectAll: TButton;
     b_DeselectAll: TButton;
     b_RefreshSourceFiles: TButton;
@@ -163,9 +162,10 @@ type
     LabelCodePage: TLabel;
     EditCodePage: TEdit;
     Label5: TLabel;
-    EditDelphiProjectFile: TEdit;
-    ButtonProjectFile: TButton;
     FileOpenDialogDelphiProject: TFileOpenDialog;
+    EditDelphiProjectFile: TEdit;
+    LabelSourceFilesCaption: TLabel;
+    ButtonProjectFile: TButton;
     procedure ButtonAboutClick(Sender: TObject);
     procedure ButtonNewClick(Sender: TObject);
     procedure ButtonCancelClick(Sender: TObject);
@@ -453,6 +453,15 @@ type
     ///   already been asked and if not asks it and adds the extension if requested
     /// </summary>
     procedure DisplayAddFileExtension;
+    /// <summary>
+    ///   Checks whether the next button can be enabled and if enables it
+    /// </summary>
+    procedure SetNextButtonEnableState;
+    /// <summary>
+    ///   Sets the enabled state of the relevant controls on the source card,
+    ///   depending on whether a project file has been defined or not
+    /// </summary>
+    procedure SetSourceScreenComponentsEnabledState;
   public
   end;
 
@@ -709,17 +718,14 @@ begin
   case Index of
     0 : begin
           cp_Wizard.ActiveCard := crd_UnitTestExecutable;
-          ButtonNext.Enabled   := FProject.IsExeAndMapDefined;
           crd_UnitTestExecutableEnter(Sender);
         end;
     1 : begin
           cp_Wizard.ActiveCard := crd_Source;
-          ButtonNext.Enabled   := FProject.IsSourcePathAndFilesDefined;
           crd_SourceEnter(Sender);
         end;
     2 : begin
           cp_Wizard.ActiveCard := crd_Output;
-          ButtonNext.Enabled   := FProject.IsOutputSettingsDefined;
           crd_OutputEnter(Sender);
         end;
     3 : begin
@@ -734,6 +740,8 @@ begin
       MessageDlg(Format(rUnknownMenu, [Index]), mtError, [mbOK], -1);
   end;
 
+  ButtonPrevious.Enabled := (cp_Wizard.ActiveCardIndex > 0);
+  SetNextButtonEnableState;
   SetActiveWizardCardImageIndex(cImgActivePage);
 end;
 
@@ -764,8 +772,7 @@ begin
   cp_Main.ActiveCard        := crd_EditSettings;
   cp_Wizard.ActiveCardIndex := 0;
   ButtonPrevious.Enabled    := false;
-  ButtonNext.Enabled        := true;
-  ButtonPrevious.Enabled    := true;
+  ButtonNext.Enabled        := false;
   PreInitCodeCoverageExe;
 
   for var Item in ButtonGroup1.Items do
@@ -791,6 +798,7 @@ begin
       PrepareScriptOutputPathDisplay;
 
     SetMiscSettingsCheckIfActive;
+    SetNextButtonEnableState;
     SetFocusToFirstProjectCardControl;
   end;
 end;
@@ -1093,11 +1101,24 @@ end;
 procedure TFormMain.EditDelphiProjectFileChange(Sender: TObject);
 begin
   FProject.ProjectFileName := (Sender as TEdit).Text;
+  SetNextButtonEnableState;
+  SetSourceScreenComponentsEnabledState;
+end;
+
+procedure TFormMain.SetSourceScreenComponentsEnabledState;
+begin
+  EditExcludeMasks.Enabled     := EditDelphiProjectFile.Text = '';
+  EditIncludeMasks.Enabled     := EditDelphiProjectFile.Text = '';
+  CheckListBoxSource.Enabled   := EditDelphiProjectFile.Text = '';
+  b_SelectAll.Enabled          := EditDelphiProjectFile.Text = '';
+  b_DeselectAll.Enabled        := EditDelphiProjectFile.Text = '';
+  b_RefreshSourceFiles.Enabled := EditDelphiProjectFile.Text = '';
 end;
 
 procedure TFormMain.EditExcludeMasksChange(Sender: TObject);
 begin
   FProject.ExcludedFileMasks := (Sender as TEdit).Text;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.EditExeFileChange(Sender: TObject);
@@ -1113,11 +1134,13 @@ begin
   end;
 
   DisplayExeMapInputStatus;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.EditIncludeMasksChange(Sender: TObject);
 begin
   FProject.IncludedFileMasks := (Sender as TEdit).Text;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.EditMapFileChange(Sender: TObject);
@@ -1130,12 +1153,14 @@ procedure TFormMain.EditReportOutputFolderExit(Sender: TObject);
 begin
   FProject.ReportOutputPath := EditReportOutputFolder.Text;
   DisplayOutputSettingsStatus;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.EditScriptOutputFolderExit(Sender: TObject);
 begin
   FProject.ScriptsOutputPath := EditScriptOutputFolder.Text;
   DisplayOutputSettingsStatus;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.EditSourcePathChange(Sender: TObject);
@@ -1179,9 +1204,20 @@ begin
 end;
 
 procedure TFormMain.TimerSourcePathTimer(Sender: TObject);
+var
+  OnChangeBackup : TNotifyEvent;
 begin
   (Sender as TTimer).Enabled := false;
   DoSourcePathChange(FNewSourcePath);
+
+  OnChangeBackup := EditSourcePath.OnChange;
+  try
+    EditSourcePath.Text := FProject.ProgramSourceBasePath;
+  finally
+    EditSourcePath.OnChange := OnChangeBackup;
+  end;
+
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.DisplaySourceFiles;
@@ -1190,7 +1226,8 @@ begin
   FProject.ProgramSourceFiles.GetItemsList(CheckListBoxSource.Items);
 
   for var i := 0 to FProject.ProgramSourceFiles.Count - 1 do
-    CheckListBoxSource.Checked[i] := FProject.ProgramSourceFiles.IsSelected(i);
+    if (CheckListBoxSource.Items.Count > i) then
+      CheckListBoxSource.Checked[i] := FProject.ProgramSourceFiles.IsSelected(i);
 end;
 
 procedure TFormMain.DisplaySourceFilesStatus;
@@ -1354,12 +1391,14 @@ procedure TFormMain.CheckBoxEMMA21Click(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA21);
   UpdateEMMACheckBoxEnableStates;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.CheckBoxEMMAClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofEMMA);
   UpdateEMMACheckBoxEnableStates;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.UpdateEMMACheckBoxEnableStates;
@@ -1386,6 +1425,7 @@ procedure TFormMain.CheckBoxHTMLClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofHTML);
   UpdateHTMLCheckBoxEnableStates;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.CheckBoxIncludeFileExtensionClick(Sender: TObject);
@@ -1481,6 +1521,7 @@ procedure TFormMain.CheckBoxXMLClick(Sender: TObject);
 begin
   OutputFormatCheckStatusChanged((Sender as TCheckBox).Checked, ofXML);
   UpdateXMLCheckBoxEnableStates;
+  SetNextButtonEnableState;
 end;
 
 procedure TFormMain.CheckBoxXMLCombineMultipleClick(Sender: TObject);
@@ -1592,7 +1633,8 @@ procedure TFormMain.SetFocusToFirstProjectCardControl;
 begin
   for var i := 0 to cp_Wizard.ActiveCard.ControlCount - 1 do
   begin
-    if (cp_Wizard.ActiveCard.Controls[i] is TWinControl) then
+    if (cp_Wizard.ActiveCard.Controls[i] is TWinControl) and
+      cp_Wizard.ActiveCard.Controls[i].Enabled then
     begin
       (cp_Wizard.ActiveCard.Controls[i] as TWinControl).SetFocus;
       break;
@@ -1676,6 +1718,17 @@ begin
     MessageDlg(Format(rRunScriptError, [CallResult]), mtError, [mbOK], -1);
     cp_Main.ActiveCard   := crd_EditSettings;
     cp_Wizard.ActiveCard := crd_SaveAndRun;
+  end;
+end;
+
+procedure TFormMain.SetNextButtonEnableState;
+begin
+  case cp_Wizard.ActiveCardIndex of
+    0 : ButtonNext.Enabled := FProject.IsExeAndMapDefined;
+    1 : ButtonNext.Enabled := FProject.IsSourcePathAndFilesDefined;
+    2 : ButtonNext.Enabled := FProject.IsOutputSettingsDefined;
+    3 : ButtonNext.Enabled := true;
+    4 : ButtonNext.Enabled := false;
   end;
 end;
 

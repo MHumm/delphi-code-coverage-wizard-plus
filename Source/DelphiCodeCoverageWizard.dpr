@@ -32,7 +32,7 @@ begin
   begin
     Application.MainFormOnTaskbar := True;
     Application.CreateForm(Tdm_Icons, dm_Icons);
-    Application.CreateForm(TFormMain, FormMain);
-    Application.Run;
+  Application.CreateForm(TFormMain, FormMain);
+  Application.Run;
   end;
 end.

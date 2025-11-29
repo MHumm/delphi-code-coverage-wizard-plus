@@ -121,6 +121,10 @@ type
     ///   Updates the base path setting and if the value is really changed
     ///   updates the list of source files under that path.
     /// </summary>
+    /// <param name="Value">
+    ///   New path. If empty the base path will be set to path delim, which
+    ///   usually is \ in Windows
+    /// </param>
     procedure SetBasePath(const Value: TFilename);
     /// <summary>
     ///   Checks, whether the given file is in a path which contains one of the
@@ -1245,8 +1249,10 @@ end;
 
 function TProjectSettings.IsSourcePathAndFilesDefined: Boolean;
 begin
-  Result := (FProgramSourceFiles.BasePath <> '') and
-            (FProgramSourceFiles.SelectedCount > 0);
+  Result := ((FProgramSourceFiles.BasePath <> '') and
+             (FProgramSourceFiles.SelectedCount > 0)) or
+            ((not FProjectFileName.IsEmpty) and
+             (FProgramSourceFiles.BasePath <> ''));
 end;
 
 procedure TProjectSettings.LoadFromXML(const FileName: string);
@@ -1770,7 +1776,8 @@ begin
   AList.BeginUpdate;
   try
     for SourceFileItem in FItemList do
-      AList.Add(SourceFileItem.Filename);
+      if not SourceFileItem.Filename.IsEmpty then
+        AList.Add(SourceFileItem.Filename);
   finally
     AList.EndUpdate;
   end;
@@ -1820,7 +1827,7 @@ var
 begin
   NewValue := Value;
 
-  if not string(NewValue).EndsWith(System.SysUtils.PathDelim) then
+  if (not string(NewValue).EndsWith(System.SysUtils.PathDelim)) then
     NewValue := NewValue + System.SysUtils.PathDelim;
 
   if (FBasePath <> NewValue) then

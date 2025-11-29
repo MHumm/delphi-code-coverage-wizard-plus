@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{EB221752-E7EB-4749-8EFD-863662B9B3D5}</ProjectGuid>
         <ProjectVersion>20.3</ProjectVersion>
@@ -228,6 +228,12 @@ $(PostBuildEvent)]]></PostBuildEvent>
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="..\Binaries\Win32\Debug\DelphiCodeCoverageWizard.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="..\Binaries\Win32\Debug\DelphiCodeCoverageWizard.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>DelphiCodeCoverageWizard.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>

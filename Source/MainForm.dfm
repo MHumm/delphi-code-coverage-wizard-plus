@@ -354,38 +354,29 @@ object FormMain: TFormMain
             424
             394)
           object LabelSourceFilesPath: TLabel
-            Left = 8
-            Top = 16
+            Left = 5
+            Top = 64
             Width = 286
             Height = 15
             Caption = 'Directory with the source files of the project to analyze'
           end
-          object LabelSourceFilesCaption: TLabel
-            Left = 5
-            Top = 187
-            Width = 321
-            Height = 15
-            Caption = 
-              'Project file (.dproj) (optional instead of source file to analyz' +
-              'e)'
-          end
           object LabelExcludeMasks: TLabel
-            Left = 8
-            Top = 78
+            Left = 5
+            Top = 126
             Width = 199
             Height = 15
             Caption = 'File masks to exclude (optional, -esm)'
           end
           object Label4: TLabel
-            Left = 8
-            Top = 118
+            Left = 5
+            Top = 166
             Width = 236
             Height = 15
             Caption = 'Include only units listed here (optional, -ism)'
           end
           object LabelCodePage: TLabel
-            Left = 8
-            Top = 158
+            Left = 5
+            Top = 206
             Width = 260
             Height = 15
             Caption = 'Code page (optional, leave empty otherwise, -cp)'
@@ -397,18 +388,27 @@ object FormMain: TFormMain
             Height = 15
             Caption = 'Source files to analyze'
           end
+          object LabelSourceFilesCaption: TLabel
+            Left = 5
+            Top = 6
+            Width = 321
+            Height = 15
+            Caption = 
+              'Project file (.dproj) (optional instead of source file to analyz' +
+              'e)'
+          end
           object EditSourcePath: TEdit
-            Left = 8
-            Top = 37
+            Left = 5
+            Top = 85
             Width = 352
             Height = 23
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 0
+            TabOrder = 2
             OnChange = EditSourcePathChange
           end
           object ButtonSourcePath: TButton
-            Left = 366
-            Top = 36
+            Left = 363
+            Top = 84
             Width = 50
             Height = 25
             Anchors = [akTop, akRight]
@@ -416,17 +416,17 @@ object FormMain: TFormMain
             ImageIndex = 2
             ImageName = 'Actions-document-open-folder-icon'
             Images = VirtualImageListButtons16
-            TabOrder = 1
+            TabOrder = 3
             OnClick = ButtonSourcePathClick
           end
           object CheckListBoxSource: TCheckListBox
-            Left = 6
+            Left = 5
             Top = 253
-            Width = 406
+            Width = 412
             Height = 88
             Anchors = [akLeft, akTop, akRight, akBottom]
-            ItemHeight = 15
-            TabOrder = 5
+            ItemHeight = 17
+            TabOrder = 7
             OnClickCheck = CheckListBoxSourceClickCheck
           end
           object b_SelectAll: TButton
@@ -441,7 +441,7 @@ object FormMain: TFormMain
             ImageName = 'Actions-edit-select-all-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 6
+            TabOrder = 8
             OnClick = b_SelectAllClick
           end
           object b_DeselectAll: TButton
@@ -456,7 +456,7 @@ object FormMain: TFormMain
             ImageName = 'Actions-edit-clear-list-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 7
+            TabOrder = 9
             OnClick = b_DeselectAllClick
           end
           object b_RefreshSourceFiles: TButton
@@ -471,53 +471,53 @@ object FormMain: TFormMain
             ImageName = 'Actions-view-refresh-icon'
             ImageMargins.Left = 5
             Images = VirtualImageListButtons32
-            TabOrder = 8
+            TabOrder = 10
             OnClick = b_RefreshSourceFilesClick
           end
           object EditExcludeMasks: TEdit
-            Left = 280
-            Top = 75
+            Left = 277
+            Top = 123
             Width = 137
             Height = 23
             Hint = 'File masks, space delimited'
             Anchors = [akLeft, akTop, akRight]
             NumbersOnly = True
-            TabOrder = 2
+            TabOrder = 4
             OnChange = EditExcludeMasksChange
           end
           object EditIncludeMasks: TEdit
-            Left = 280
-            Top = 115
+            Left = 277
+            Top = 163
             Width = 137
             Height = 23
             Hint = 
               'If used only include files matching the file masks specified her' +
               'e'
             NumbersOnly = True
-            TabOrder = 3
+            TabOrder = 5
             OnChange = EditIncludeMasksChange
           end
           object EditCodePage: TEdit
-            Left = 280
-            Top = 155
+            Left = 277
+            Top = 203
             Width = 66
             Height = 23
             NumbersOnly = True
-            TabOrder = 4
+            TabOrder = 6
             OnChange = EditCodePageChange
           end
           object EditDelphiProjectFile: TEdit
             Left = 5
-            Top = 208
+            Top = 27
             Width = 352
             Height = 23
             Anchors = [akLeft, akTop, akRight]
-            TabOrder = 9
+            TabOrder = 0
             OnChange = EditDelphiProjectFileChange
           end
           object ButtonProjectFile: TButton
             Left = 363
-            Top = 207
+            Top = 26
             Width = 50
             Height = 25
             Anchors = [akTop, akRight]
@@ -525,7 +525,7 @@ object FormMain: TFormMain
             ImageIndex = 2
             ImageName = 'Actions-document-open-folder-icon'
             Images = VirtualImageListButtons16
-            TabOrder = 10
+            TabOrder = 1
             OnClick = ButtonProjectFileClick
           end
         end
@@ -545,6 +545,7 @@ object FormMain: TFormMain
             Width = 424
             Height = 394
             HorzScrollBar.Visible = False
+            VertScrollBar.Position = 91
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -555,34 +556,34 @@ object FormMain: TFormMain
               394)
             object Bevel1: TBevel
               Left = 93
-              Top = 133
+              Top = 42
               Width = 321
               Height = 1
             end
             object LabelOutputFormatsCaption: TLabel
               Left = 5
-              Top = 125
+              Top = 34
               Width = 82
               Height = 15
               Caption = 'Output formats'
             end
             object LabelReportOutputPath: TLabel
               Left = 5
-              Top = 69
+              Top = -22
               Width = 318
               Height = 15
               Caption = 'Save generated reports (HTML, XML, EMMA...) to this folder:'
             end
             object LabelScriptOutputPath: TLabel
               Left = 5
-              Top = 5
+              Top = -86
               Width = 349
               Height = 15
               Caption = 'Batch output folder (files needed to execute DelphiCodeCoverage)'
             end
             object ButtonReportOutputFolder: TButton
               Left = 355
-              Top = 89
+              Top = -2
               Width = 50
               Height = 25
               Anchors = [akTop, akRight]
@@ -595,7 +596,7 @@ object FormMain: TFormMain
             end
             object ButtonScriptOutputFolder: TButton
               Left = 355
-              Top = 25
+              Top = -66
               Width = 50
               Height = 25
               Anchors = [akTop, akRight]
@@ -609,7 +610,7 @@ object FormMain: TFormMain
             end
             object CheckBoxEMMA: TCheckBox
               Left = 8
-              Top = 148
+              Top = 57
               Width = 297
               Height = 17
               Caption = 'EMMA coverage output as '#39'coverage.es'#39'  (-emma)'
@@ -618,7 +619,7 @@ object FormMain: TFormMain
             end
             object CheckBoxHTML: TCheckBox
               Left = 8
-              Top = 436
+              Top = 345
               Width = 385
               Height = 17
               Caption = 'HTML coverage output as '#39'CodeCoverage_Summary.html'#39' (-html)'
@@ -627,7 +628,7 @@ object FormMain: TFormMain
             end
             object CheckBoxMeta: TCheckBox
               Left = 29
-              Top = 180
+              Top = 89
               Width = 249
               Height = 17
               Caption = 'META data and coverage data (-meta)'
@@ -637,7 +638,7 @@ object FormMain: TFormMain
             end
             object CheckBoxXML: TCheckBox
               Left = 8
-              Top = 276
+              Top = 185
               Width = 377
               Height = 17
               Caption = 'XML coverage output as '#39'CodeCoverage_Summary.xml'#39' (-xml)'
@@ -646,7 +647,7 @@ object FormMain: TFormMain
             end
             object EditReportOutputFolder: TEdit
               Left = 5
-              Top = 90
+              Top = -1
               Width = 344
               Height = 23
               Anchors = [akLeft, akTop, akRight]
@@ -655,7 +656,7 @@ object FormMain: TFormMain
             end
             object EditScriptOutputFolder: TEdit
               Left = 5
-              Top = 26
+              Top = -65
               Width = 344
               Height = 23
               Anchors = [akLeft, akTop, akRight]
@@ -665,7 +666,7 @@ object FormMain: TFormMain
             end
             object CheckBoxEMMA21: TCheckBox
               Left = 8
-              Top = 212
+              Top = 121
               Width = 393
               Height = 17
               Caption = 'EMMA 2.1 coverage output as '#39'coverage.es'#39'  (-emma21)'
@@ -674,7 +675,7 @@ object FormMain: TFormMain
             end
             object CheckBoxOpenEMMAFileExtern: TCheckBox
               Left = 8
-              Top = 244
+              Top = 153
               Width = 385
               Height = 17
               Caption = 
@@ -686,7 +687,7 @@ object FormMain: TFormMain
             end
             object CheckBoxOpenXMLFileExtern: TCheckBox
               Left = 24
-              Top = 308
+              Top = 217
               Width = 385
               Height = 17
               Caption = 
@@ -698,7 +699,7 @@ object FormMain: TFormMain
             end
             object CheckBoxOpenHTMLFileExtern: TCheckBox
               Left = 24
-              Top = 468
+              Top = 377
               Width = 385
               Height = 17
               Caption = 
@@ -710,7 +711,7 @@ object FormMain: TFormMain
             end
             object CheckBoxXMLLines: TCheckBox
               Left = 24
-              Top = 340
+              Top = 249
               Width = 385
               Height = 17
               Caption = 'Add source code line information to generated XML file (-lcl)'
@@ -720,7 +721,7 @@ object FormMain: TFormMain
             end
             object CheckBoxXMLCombineMultiple: TCheckBox
               Left = 24
-              Top = 372
+              Top = 281
               Width = 393
               Height = 17
               Caption = 
@@ -732,7 +733,7 @@ object FormMain: TFormMain
             end
             object CheckBoxXMLJacocoFormat: TCheckBox
               Left = 24
-              Top = 404
+              Top = 313
               Width = 393
               Height = 17
               Caption = 'XML: output in Jacoco format (-jacoco)'
@@ -1087,6 +1088,7 @@ object FormMain: TFormMain
           BevelInner = bvNone
           BevelOuter = bvNone
           BorderStyle = bsNone
+          ButtonHeight = 36
           ButtonOptions = [gboFullSize, gboShowCaptions]
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
