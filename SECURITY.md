@@ -8,7 +8,9 @@ The following versions are currently supported with security fixes:
 | -------- | ------------------ |
 | 1.0      | :x:                | 
 | 1.1      | :x:                | 
-| 2.0      | :white_check_mark: | 
+| 2.0      | :x:                | 
+| 2.1      | :x:                | 
+| 2.2      | :white_check_mark: | 
 
 ## Reporting a Vulnerability
 

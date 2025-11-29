@@ -1,10 +1,10 @@
 Delphi Code Coverage Wizard
-Version 2.1
+Version 2.2
 
 This work is based on prior art from TridenT and on the code coverage
 library/tool, which is included in binary form.
 
-Copyright (c) 2022-2023 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
+Copyright (c) 2022-2025 Markus Humm (markus [dot] humm [at] googlemail [dot] com) (main contact)
 
 Thanks to all testers and feedback providers from german Delphipraxis.net forums!
 
